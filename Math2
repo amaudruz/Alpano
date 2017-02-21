@@ -38,6 +38,28 @@ public interface Math2 {
     }
     
     public static double firstIntervalContainingRoot(DoubleUnaryOperator f, double minX, double maxX, double dX){
+    
+        for (int i = minX; i <= maxX; i+dX) {
+        
+            if (f.applyAsDouble(i) < 0 && (f.applyAsDouble(i+dX) > 0){
+                return i;
+            }
+            
+            if (f.applyAsDouble(i) > 0 && (f.applyAsDouble(i+dX) <0){
+                return i;
+            }
+            
+            if (f.applyAsDouble(i) == 0) {
+                return i;
+            }
+            
+            if (f.applyAsDouble(i+dX) == 0 && i <= maxX - dX) {
+                return (i+dX);
+            }
+
+        }
+        
+        return Double.POSITIVE_INFINITY;
         
     }
 }
