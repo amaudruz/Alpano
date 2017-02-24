@@ -7,7 +7,7 @@ import static ch.epfl.alpano.Preconditions.checkArgument;
  * 
  * @author Louis Amaudruz (271808)
  * @author Mathieu Chevalley (274698)
- * james harden
+ * 
  */
 
 
