@@ -10,6 +10,7 @@ import static ch.epfl.alpano.Preconditions.checkArgument;
  *
  */
 
+
 public interface Azimuth {
 
     /**

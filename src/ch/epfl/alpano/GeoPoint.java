@@ -14,7 +14,7 @@ import static ch.epfl.alpano.Azimuth.*;
  *
  */
 public final class GeoPoint {
-
+    final Sitring s;
     final double longitude;
     final double latitude;
     
