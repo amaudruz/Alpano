@@ -4,6 +4,7 @@ package ch.epfl.alpano;
  *  Interface to convert radians to meters, and vice versa
  * @author Louis Amaudruz (271808)
  * @author Mathieu Chevalley (274698)
+ * james harden
  */
 public interface Distance {
     
