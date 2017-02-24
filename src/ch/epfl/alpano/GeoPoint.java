@@ -14,9 +14,9 @@ import static ch.epfl.alpano.Azimuth.*;
  *
  */
 public final class GeoPoint {
-    final Sitring s;
-    final double longitude;
-    final double latitude;
+
+    private final double longitude;
+    private final double latitude;
     
     /**
      * Builder
@@ -24,7 +24,7 @@ public final class GeoPoint {
      * @param latitude
      * @throws IllegalArgumentException if longitude or latitude is not properly formated
      */
-    GeoPoint(double longitude, double latitude){
+    public GeoPoint(double longitude, double latitude){
         checkArgument(longitude <= PI && longitude >= -PI);
         checkArgument(latitude <= PI/2 && latitude >= -PI/2);
         
