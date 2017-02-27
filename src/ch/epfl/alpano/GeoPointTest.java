@@ -32,6 +32,13 @@ public class GeoPointTest {
         assertEquals(-52.95, p.azimuthTo(p2)*180/Math.PI, 0.01);
     }
     
+    @Test 
+    public void ToStringTest() {
+        GeoPoint p = new GeoPoint(0.11573,0.81194);
+        assertEquals("(6.631, 46.521)", system.ou.print(p),0);
+        
+    }
+    
     
     
 }
