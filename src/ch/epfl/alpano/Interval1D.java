@@ -1,8 +1,9 @@
+
 package ch.epfl.alpano;
 import static ch.epfl.alpano.Preconditions.*;
 
 /**
- * Create a one dimasional interval (immutable class)
+ * Create a on dimasional interval (immutable class)
  * @author Mathieu Chevalley (274698)
  *
  */
@@ -56,37 +57,5 @@ public final class Interval1D {
     public int size(){
         return includedTo - includedFrom + 1;
     }
-    
-    public int sizeOfIntersectionWith(Interval1D that){
-        if(this.contains(that.includedFrom)){
-            
-        }
-    }
-    
-    public Interval1D boundingUnion(Interval1D that){
-        
-    }
-    
-    public boolean isUnionableWith(Interval1D that){
-        
-    }
-    
-    public Interval1D union(Interval1D that){
-        
-    }
-    
-    @Override
-    public boolean equals(Object thatO){
-        
-    }
-    
-    @Override
-    public int hashCode(){
-        
-    }
-    
-    @Override
-    public String toString(){
-        
-    }
 }
+
