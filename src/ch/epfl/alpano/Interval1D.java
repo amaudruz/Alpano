@@ -1,6 +1,9 @@
 
 package ch.epfl.alpano;
 import static ch.epfl.alpano.Preconditions.*;
+import static java.lang.Math.*;
+
+import java.util.Objects;
 
 /**
  * Create a on dimasional interval (immutable class)
@@ -56,6 +59,66 @@ public final class Interval1D {
      */
     public int size(){
         return includedTo - includedFrom + 1;
+    }
+    
+    public int sizeOfIntersectionWith(Interval1D that){
+        if(this.contains(that.includedFrom)){
+            if(this.contains(that.includedTo)){
+                return that.size();
+            }
+            else{
+                return includedTo - that.includedFrom + 1;
+            }
+        }
+        else if(that.contains(includedFrom)){
+            if(that.contains(includedTo)){
+                return this.size();
+            }
+            else{
+                return that.includedTo - includedFrom + 1;
+            }
+        }
+        else{
+            return 0;
+        }
+    }
+    
+    public Interval1D boundingUnion(Interval1D that){
+        return new Interval1D(min(includedFrom, that.includedFrom), max(includedTo, that.includedTo));
+    }
+    
+    public boolean isUnionableWith(Interval1D that){
+        return (this.boundingUnion(that)).size() == this.size() + that.size() - this.sizeOfIntersectionWith(that);
+    }
+    
+    public Interval1D union(Interval1D that){
+        checkArgument(this.isUnionableWith(that));
+        return this.boundingUnion(that);
+    }
+    
+    @Override
+    public boolean equals(Object thatO){
+        if(thatO instanceof Interval1D){
+            if(thatO.getClass().equals(this.getClass())){
+                return ( ((Interval1D)thatO).includedFrom == includedFrom && ((Interval1D)thatO).includedTo == includedTo);
+            }
+            else{
+                return false;
+            }
+        }
+        else{
+            return false;
+        }
+    }
+    
+    @Override
+    public int hashCode(){
+        return Objects.hash(includedFrom(), includedTo());
+    }
+    
+    @Override
+    public String toString(){
+        return "["+includedFrom+".."+includedTo+"]";
     }
 }
 
