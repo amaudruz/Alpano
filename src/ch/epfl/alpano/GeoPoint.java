@@ -67,7 +67,8 @@ public final class GeoPoint {
      * @return the azimuth
      */
     public double azimuthTo(GeoPoint that){
-        double angle = atan2(sin(longitude - that.longitude)*cos(that.latitude),(cos(latitude)*sin(that.latitude)-sin(latitude)*cos(that.latitude)*cos(longitude-that.longitude)));
+        double angle = atan2(sin(longitude - that.longitude)*cos(that.latitude),
+                (cos(latitude)*sin(that.latitude)-sin(latitude)*cos(that.latitude)*cos(longitude-that.longitude)));
         System.out.println(angle);
         return fromMath(canonicalize(angle));
     }

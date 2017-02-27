@@ -40,7 +40,7 @@ public interface Math2 {
      */
     public static double haversin(double x){
         double sinus = Math.sin(x/2);
-        return sinus * sinus;
+        return sq(sinus);
     }
     
     /**

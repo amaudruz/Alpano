@@ -28,4 +28,8 @@ public final class Interval2D {
     public int size(){
         return iX.size() * iY.size();
     }
+    
+    public int sizeOfIntersectionWith(Interval2D that){
+        return 0;
+    }
 }
