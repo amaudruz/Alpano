@@ -67,8 +67,8 @@ public final class GeoPoint {
      * @return the azimuth
      */
     public double azimuthTo(GeoPoint that){
-        double angle = atan2(sin(longitude - that.longitude)*cos(that.latitude),(cos(latitude)*sin(that.latitude)-sin(latitude)*cos(that.latitude)*cos(longitude-that.longitude)));
-        System.out.println(angle);
+        double angle = atan2(sin(longitude - that.longitude)*cos(that.latitude),(cos(latitude)*sin(that.latitude)-(sin(latitude)*cos(that.latitude)*cos(longitude-that.longitude))));
+        System.out.println(angle + " azimuth");
         return fromMath(canonicalize(angle));
     }
     
@@ -76,10 +76,10 @@ public final class GeoPoint {
     @Override
     public String toString(){
        
-        double latDegree = floor(latitude * 180/PI * 1000) / 1000;
-        double lonDegree = floor(longitude * 180/PI * 1000) / 1000;
+        double latDegree = latitude * 180/PI;
+        double lonDegree = longitude * 180/PI;
         Locale l = null;
-        return String.format(l,"[%.4f; %.4f]", lonDegree, latDegree);
+        return String.format(l,"[%.3f, %.3f]", lonDegree, latDegree);
     }
     
 }

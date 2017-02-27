@@ -33,6 +33,7 @@ public interface Azimuth {
     public static double canonicalize(double azimuth){
         
         while(azimuth >= 2*PI){
+            //System.out.println("kk");
             azimuth -= 2*PI;
         }
         while(azimuth < 0){
