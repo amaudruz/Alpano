@@ -57,10 +57,66 @@ public class Interval1DTests {
 		
 	}
 	
-	
+	@Test
 	public void isUnionableTests() {
 		
+		Interval1D i = new Interval1D(0,1);
+		Interval1D i2 = new Interval1D(0,0);
+		Interval1D i3 = new Interval1D(2,5);
+		
+		assertTrue(i.isUnionableWith(i2));
+		assertTrue(!(i2.isUnionableWith(i3)));
+		assertTrue((i3.isUnionableWith(i)));
+		assertTrue(i.isUnionableWith(i) && i2.isUnionableWith(i2) 
+				&& i3.isUnionableWith(i3));
+		
+		
 	}
+	
+	@Test
+	public void EqualsOverrideTests() {
+		Interval1D i = new Interval1D(0,1);
+		Interval1D i2 = new Interval1D(0,0);
+		Interval1D i3 = new Interval1D(2,5);
+		Interval1D i4 = new Interval1D(2,5);
+
+		
+		assertTrue(!i.equals(i2));
+		assertTrue(i2.equals(i2));
+		assertTrue(!(i3.equals(i)));
+		assertTrue((i3.equals(i4)));
+		
+		}
+	
+	@Test
+	public void BoundingUnionTests() {
+		Interval1D i = new Interval1D(0,1);
+		Interval1D i2 = new Interval1D(0,0);
+		Interval1D i3 = new Interval1D(2,5);
+		Interval1D i4 = new Interval1D(4,5);
+		Interval1D i5 = new Interval1D(10,100);
+		
+		assertTrue(i.boundingUnion(i2).equals(i));
+		assertTrue(i2.boundingUnion(i3).equals(new Interval1D(0, 5)) && i3.boundingUnion(i2).equals(new Interval1D(0, 5)));
+		assertTrue(i5.boundingUnion(i3).equals(new Interval1D(2, 100)));
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void UnionTests() {
+		Interval1D i = new Interval1D(0,1);
+		Interval1D i2 = new Interval1D(0,0);
+		Interval1D i3 = new Interval1D(2,5);
+		Interval1D i4 = new Interval1D(4,5);
+
+		
+		Interval1D g = i.union(i4);
+		
+		assertTrue(i.union(i3).equals(new Interval1D(0, 5)));
+		assertTrue(i.union(i2).equals(new Interval1D(0,1)));
+		
+	}
+	
+	
 	
 	
 
