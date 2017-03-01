@@ -6,7 +6,7 @@ import static java.lang.Math.*;
 import java.util.Objects;
 
 /**
- * Create a on dimasional interval (immutable class)
+ * Create a one dimasional interval (immutable class)
  * @author Mathieu Chevalley (274698)
  *
  */
@@ -61,6 +61,11 @@ public final class Interval1D {
         return includedTo - includedFrom + 1;
     }
     
+    /**
+     * 
+     * @param that an other interval
+     * @return the size of the intersection between this and that
+     */
     public int sizeOfIntersectionWith(Interval1D that){
         if(this.contains(that.includedFrom)){
             if(this.contains(that.includedTo)){
@@ -83,14 +88,30 @@ public final class Interval1D {
         }
     }
     
+    /**
+     * 
+     * @param that an other interval
+     * @return the bounding union of this and that
+     */
     public Interval1D boundingUnion(Interval1D that){
         return new Interval1D(min(includedFrom, that.includedFrom), max(includedTo, that.includedTo));
     }
     
+    /**
+     * 
+     * @param that an other interval
+     * @return true if this and that are unionable 
+     */
     public boolean isUnionableWith(Interval1D that){
         return (this.boundingUnion(that)).size() == this.size() + that.size() - this.sizeOfIntersectionWith(that);
     }
     
+    /**
+     * 
+     * @param that an other interval
+     * @throws IllegalArgumentException if the two interval are not unionable
+     * @return the union of both intervals
+     */
     public Interval1D union(Interval1D that){
         checkArgument(this.isUnionableWith(that));
         return this.boundingUnion(that);

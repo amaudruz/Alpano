@@ -12,6 +12,7 @@ public class Interval1DTests {
 		Interval1D i = new Interval1D(1,0);
 	}
 	
+	@Test
 	public void containsTest() {
 		Interval1D i = new Interval1D(0,1);
 		Interval1D ii = new Interval1D(0,0);
@@ -24,6 +25,7 @@ public class Interval1DTests {
 	
 	}
 	
+	@Test
 	public  void sizeTests() {
 		Interval1D i = new Interval1D(0,1);
 		Interval1D ii = new Interval1D(0,0);
@@ -33,7 +35,7 @@ public class Interval1DTests {
 		
 	}
 	
-	
+	@Test
 	public void IntersectionSizeTests() {
 		Interval1D i = new Interval1D(0,1);
 		Interval1D i2 = new Interval1D(0,0);

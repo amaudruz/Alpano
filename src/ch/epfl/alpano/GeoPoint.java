@@ -9,6 +9,7 @@ import static ch.epfl.alpano.Distance.*;
 import static ch.epfl.alpano.Azimuth.*;
 /**
  * Represents a point on earth surface
+ * (immutable class)
  * @author Louis Amaudruz (271808)
  * @author Mathieu Chevalley (274698)
  *
