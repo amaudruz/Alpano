@@ -9,13 +9,13 @@ import static java.lang.Math.*;
 import static java.util.Objects.requireNonNull;
 import static ch.epfl.alpano.dem.DiscreteElevationModel.sampleIndex;
 
-final class ContinuousElevationModel {
+final public class ContinuousElevationModel {
 
     private final DiscreteElevationModel dem;
     private static final double d = toMeters(1/SAMPLES_PER_RADIAN);
 
     
-    ContinuousElevationModel(DiscreteElevationModel dem){
+    public ContinuousElevationModel(DiscreteElevationModel dem){
         
         this.dem = requireNonNull(dem);
     }
