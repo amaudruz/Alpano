@@ -52,12 +52,16 @@ public final class GeoPoint {
     /**
      * Compute the distance between two points
      * @param that - an other point
+     * @throws NullPointerException if that is null
      * @return the distance in meters
      */
     public double distanceTo(GeoPoint that){
         /*double angle = 2 * asin(sqrt(
                 haversin(angularDistance(latitude, that.latitude) + cos(latitude)*cos(that.latitude)*haversin(angularDistance(longitude, that.longitude)))
                 ));*/
+        if(that == null){
+            throw new NullPointerException();
+        }
         double angle = 2 * asin(sqrt(haversin(latitude- that.latitude) + cos(latitude)*cos(that.latitude)*haversin(longitude- that.longitude)));
         return toMeters(angle);
     }
@@ -65,9 +69,13 @@ public final class GeoPoint {
     /**
      * Give the azimuth from the current to a given position
      * @param that - the other position
+     * @throws NullPointerException if that is null
      * @return the azimuth
      */
     public double azimuthTo(GeoPoint that){
+        if(that == null){
+            throw new NullPointerException();
+        }
         double angle = atan2(sin(longitude - that.longitude)*cos(that.latitude),
                 (cos(latitude)*sin(that.latitude)-sin(latitude)*cos(that.latitude)*cos(longitude-that.longitude)));
         //System.out.println(angle);

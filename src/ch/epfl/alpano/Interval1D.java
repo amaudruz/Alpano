@@ -63,9 +63,13 @@ public final class Interval1D {
     /**
      * 
      * @param that an other interval
+     * @throws NullPointerException if that is null
      * @return the size of the intersection between this and that
      */
     public int sizeOfIntersectionWith(Interval1D that){
+        if(that == null){
+            throw new NullPointerException();
+        }
         if(this.contains(that.includedFrom)){
             if(this.contains(that.includedTo)){
                 return that.size();
@@ -90,18 +94,26 @@ public final class Interval1D {
     /**
      * 
      * @param that an other interval
+     * @throws NullPointerException if that is null
      * @return the bounding union of this and that
      */
     public Interval1D boundingUnion(Interval1D that){
+        if(that == null){
+            throw new NullPointerException();
+        }
         return new Interval1D(min(includedFrom, that.includedFrom), max(includedTo, that.includedTo));
     }
     
     /**
      * 
      * @param that an other interval
+     * @throws NullPointerException if that is null
      * @return true if this and that are unionable 
      */
     public boolean isUnionableWith(Interval1D that){
+        if(that == null){
+            throw new NullPointerException();
+        }
         return (this.boundingUnion(that)).size() == this.size() + that.size() - this.sizeOfIntersectionWith(that);
     }
     
@@ -109,15 +121,22 @@ public final class Interval1D {
      * 
      * @param that an other interval
      * @throws IllegalArgumentException if the two interval are not unionable
+     * @throws NullPointerException if that is null
      * @return the union of both intervals
      */
     public Interval1D union(Interval1D that){
         checkArgument(this.isUnionableWith(that));
+        if(that == null){
+            throw new NullPointerException();
+        }
         return this.boundingUnion(that);
     }
     
     @Override
     public boolean equals(Object thatO){
+        if(thatO == null){
+            throw new NullPointerException();
+        }
         if(thatO instanceof Interval1D){
             if(thatO.getClass().equals(this.getClass())){
                 return ( ((Interval1D)thatO).includedFrom == includedFrom && ((Interval1D)thatO).includedTo == includedTo);

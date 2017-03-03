@@ -63,27 +63,39 @@ public final class Interval2D {
     /**
      * 
      * @param that an other interval
+     * @throws NullPointerException if that is null
      * @return the size of their intersection
      */
     public int sizeOfIntersectionWith(Interval2D that){
+        if(that == null){
+            throw new NullPointerException();
+        }
         return iX.sizeOfIntersectionWith(that.iX) * iY.sizeOfIntersectionWith(that.iY);
     }
     
     /**
      * 
      * @param that an other interval
+     * @throws NullPointerException if that is null
      * @return the bounding union of both intervals
      */
     public Interval2D boundingUnion(Interval2D that){
+        if(that == null){
+            throw new NullPointerException();
+        }
         return new Interval2D(iX.boundingUnion(that.iX), iY.boundingUnion(that.iY));
     }
     
     /**
      * 
      * @param that an other interval
+     * @throws NullPointerException if that is null
      * @return true if this and that are unionable
      */
     public boolean isUnionableWith(Interval2D that){
+        if(that == null){
+            throw new NullPointerException();
+        }
         return this.size() + that.size() - sizeOfIntersectionWith(that) == this.boundingUnion(that).size();
     }
     
@@ -91,15 +103,22 @@ public final class Interval2D {
      * 
      * @param that an other interval
      * @throws IllegalArgumentException if this and that are not unionable
+     * @throws NullPointerException if that is null
      * @return the union of both intervals
      */
     public Interval2D union(Interval2D that){
+        if(that == null){
+            throw new NullPointerException();
+        }
         checkArgument(this.isUnionableWith(that));
         return this.boundingUnion(that);
     }
     
     @Override
     public boolean equals(Object thatO){
+        if(thatO == null){
+            throw new NullPointerException();
+        }
         if(!(thatO instanceof Interval2D)){
             return false;
         }
