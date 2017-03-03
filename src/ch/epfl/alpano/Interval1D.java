@@ -12,7 +12,6 @@ import java.util.Objects;
  */
 public final class Interval1D {
 
-    //Je sais pas s'il faut faire comme ça ou créer un tableau de int
     private final int includedFrom; 
     private final int includedTo;
     

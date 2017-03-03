@@ -113,7 +113,7 @@ public final class Interval2D {
     
     @Override
     public int hashCode(){
-        return Objects.hash(iX.hashCode(), iY.hashCode());
+        return Objects.hash(iX, iY);
     }
     
     @Override

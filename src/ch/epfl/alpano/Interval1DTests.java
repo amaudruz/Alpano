@@ -85,6 +85,7 @@ public class Interval1DTests {
 		assertTrue(i2.equals(i2));
 		assertTrue(!(i3.equals(i)));
 		assertTrue((i3.equals(i4)));
+		assertTrue(!i.equals("s"));
 		
 		}
 	

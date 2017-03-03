@@ -113,6 +113,7 @@ public class Interval2DTests {
 		assertTrue(!(ii2.equals(ii4)));
 		assertTrue((ii.equals(ii)));
 		assertTrue((ii.equals(ii6)));
+		assertTrue(!ii.equals("huiuh"));
 
 
 
