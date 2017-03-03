@@ -2,6 +2,8 @@ package ch.epfl.alpano;
 import java.util.Objects;
 import static java.util.Objects.requireNonNull;
 
+import ch.epfl.alpano.Interval2D;
+
 final class CompositeDiscreteElevationModel implements DiscreteElevationModel{
 	
 	private Interval2D MNT;

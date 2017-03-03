@@ -1,5 +1,7 @@
 package ch.epfl.alpano;
 
+import ch.epfl.alpano.Interval2D;
+
 public interface DiscreteElevationModel extends AutoCloseable{
 	
 	public static int SAMPLES_PER_DEGREE = 3600;
