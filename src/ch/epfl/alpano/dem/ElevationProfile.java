@@ -49,8 +49,8 @@ public class ElevationProfile {
 	public GeoPoint positionAt(double x) {
 		checkArgument(x > 0 && x <= length);
 		int x1 = (int)(x/4096);
-		double longitude = lerp(this.positions[x1].longitude(), this.positions[x1 + 1].longitude(), x / 4096 * (x1 + 1));
-		double latitude = lerp(this.positions[x1].latitude(), this.positions[x1 + 1].latitude(), x / 4096 * (x1 + 1));
+		double longitude = lerp(this.positions[x1].longitude(), this.positions[x1 + 1].longitude(), x - x1 * 4096 / 4096);
+		double latitude = lerp(this.positions[x1].latitude(), this.positions[x1 + 1].latitude(), x - x1 * 4096/ 4096);
 		return new GeoPoint(longitude, latitude);
 	}
 
