@@ -1,4 +1,4 @@
-package ch.epfl.alpano;
+package ch.epfl.alpano.dem;
 import java.util.Objects;
 import static java.util.Objects.requireNonNull;
 
@@ -23,12 +23,13 @@ final class CompositeDiscreteElevationModel implements DiscreteElevationModel{
 	@Override
 	public Interval2D extent() {
 		return this.MNT;
+		
 	}
 
 	@Override
 	public double elevationSample(int x, int y) {
 		// TODO Auto-generated method stub
-			if (this.MNT.iX().contains(x) && this.MNT.iY().contains(y)) {
+			if (this.MNT.contains(x,y)) {
 				if (this.dem1.extent().contains(x, y)) {
 					return dem1.elevationSample(x, y);
 					}

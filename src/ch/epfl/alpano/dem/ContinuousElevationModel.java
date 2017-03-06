@@ -29,19 +29,19 @@ final public class ContinuousElevationModel {
         double z01 = elevationAtIndex(x, y + 1);
         double z10 = elevationAtIndex(x + 1, y);
         double z11 = elevationAtIndex(x + 1, y + 1);
-        return bilerp(z00, z10, z01, z11, xp, yp);
+        return bilerp(z00, z10, z01, z11, xp - x, yp -y);
     }
     
     public double slopeAt(GeoPoint p){
         double xp = sampleIndex(p.longitude());
         double yp = sampleIndex(p.latitude());
-        int x = (int) floor(xp);
-        int y = (int) floor(yp);
+        int x = (int) xp;
+        int y = (int) yp;
         double z00 = slopeAtIndex(x,y);
         double z01 = slopeAtIndex(x, y + 1);
         double z10 = slopeAtIndex(x + 1, y);
         double z11 = slopeAtIndex(x + 1, y + 1);
-        return bilerp(z00, z10, z01, z11, xp, yp);
+        return bilerp(z00, z10, z01, z11, xp - x, yp - y);
     }
     
     private double elevationAtIndex(int x, int y){
@@ -54,6 +54,6 @@ final public class ContinuousElevationModel {
     }
     
     private double slopeAtIndex(int x,int y){
-        return acos(d / sqrt(sq(elevationAtIndex(x,y) - elevationAtIndex(x + 1, y)) + sq(elevationAtIndex(x,y) - elevationAtIndex(x, y + 1)) + sq(d)));
+        return acos(d / (sqrt(sq(elevationAtIndex(x,y) - elevationAtIndex(x + 1, y)) + sq(elevationAtIndex(x,y) - elevationAtIndex(x, y + 1)) + sq(d))));
     }
 }

@@ -1,3 +1,4 @@
+package ch.epfl.alpano.dem;
 import static java.awt.image.BufferedImage.TYPE_INT_RGB;
 import static java.lang.Math.*;
 
@@ -6,6 +7,10 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+
+import ch.epfl.alpano.GeoPoint;
+import ch.epfl.alpano.Interval1D;
+import ch.epfl.alpano.Interval2D;
 
 public final class DrawDEM {
   @SuppressWarnings("resource")

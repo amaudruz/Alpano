@@ -1,5 +1,7 @@
-package ch.epfl.alpano;
+package ch.epfl.alpano.dem;
 import static java.lang.Math.*;
+
+import ch.epfl.alpano.Interval2D;
 
 final class WavyDEM implements DiscreteElevationModel {
 	  private final static double PERIOD = 100, HEIGHT = 1000;
