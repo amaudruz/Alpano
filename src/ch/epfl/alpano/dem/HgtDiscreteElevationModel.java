@@ -14,11 +14,11 @@ import static ch.epfl.alpano.Azimuth.*;
 
 public final class HgtDiscreteElevationModel implements DiscreteElevationModel {
 
-    private final ShortBuffer b;
-    private final FileInputStream s;
-    private final Interval2D e;
-    int fromLa;
-    int fromLo;
+    private final ShortBuffer buffer;
+    private final FileInputStream fileStream;
+    private final Interval2D extent;
+    private final int fromLa;
+    private final int fromLo;
     
     public HgtDiscreteElevationModel(File file) throws IOException{
         String fileName = file.getName();
@@ -47,29 +47,29 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel {
             throw new IllegalArgumentException("should be a .hgt");
         }
         
-        e = new Interval2D(new Interval1D(fromLo * 3600, (fromLo + 1) * 3600), new Interval1D(fromLa * 3600, (fromLa + 1) * 3600));
-        s = new FileInputStream(file);
-        long l = file.length();
-        if(l != 25934402){
+        extent = new Interval2D(new Interval1D(fromLo * 3600, (fromLo + 1) * 3600), new Interval1D(fromLa * 3600, (fromLa + 1) * 3600));
+        fileStream = new FileInputStream(file);
+        long length = file.length();
+        if(length != 25934402){
             throw new IllegalArgumentException("wrong length");
         }
-        b = s.getChannel().map(MapMode.READ_ONLY, 0, l).asShortBuffer();
+        buffer = fileStream.getChannel().map(MapMode.READ_ONLY, 0, length).asShortBuffer();
     }
     
     @Override
     public void close() throws Exception {
-        s.close();
+        fileStream.close();
     }
 
     @Override
     public Interval2D extent() {
-        return e;
+        return extent;
     }
 
     @Override
     public double elevationSample(int x, int y) {
         int index = (x - fromLo*3600)  + ((fromLa + 1)*3600 - y) * 3601;
-        return b.get(index);
+        return buffer.get(index);
     }
 
 }

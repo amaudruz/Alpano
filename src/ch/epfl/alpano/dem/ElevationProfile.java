@@ -1,4 +1,4 @@
-	 package ch.epfl.alpano.dem;
+package ch.epfl.alpano.dem;
 
 
 import static ch.epfl.alpano.Azimuth.isCanonical;
@@ -10,15 +10,15 @@ import static ch.epfl.alpano.Math2.*;
 import ch.epfl.alpano.GeoPoint;
 
 
-public class ElevationProfile {
-	private ContinuousElevationModel elevationModel;
-	private GeoPoint[] positions;
-	private GeoPoint origin;
-	private double azimuth;
-	private double length;
+public final class ElevationProfile {
+	private final ContinuousElevationModel elevationModel;
+	private final GeoPoint[] positions;
+	private final GeoPoint origin;
+	private final double azimuth;
+	private final double length;
 
 	
-	ElevationProfile(ContinuousElevationModel elevationModel, GeoPoint origin, double azimuth, double length) {
+	public ElevationProfile(ContinuousElevationModel elevationModel, GeoPoint origin, double azimuth, double length) {
 		checkArgument(isCanonical(azimuth));
 		this.azimuth = requireNonNull(azimuth);
 		this.length = requireNonNull(length);
@@ -26,7 +26,7 @@ public class ElevationProfile {
 		this.elevationModel = requireNonNull(elevationModel);
 		
 		this.positions = new GeoPoint[(int)(length/4096)];
-		for (int i = 0 ; i < this.positions.length -1 ; ++i) {
+		for (int i = 0 ; i < this.positions.length - 1 ; ++i) {
 			double longitude = asin((sin(origin.longitude())*cos(toRadians(length *i)))
 					+ (cos(origin.longitude()) * sin(toRadians(length*i)) *cos(azimuth)));
 			double latitude = floorMod((origin.latitude() - (asin((sin(azimuth) * sin(length*i)) / cos(longitude)) + PI)), 2*PI) -PI; 
