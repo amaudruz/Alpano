@@ -1,4 +1,4 @@
-package ch.epfl.alpano.dem;
+	 package ch.epfl.alpano.dem;
 
 
 import static ch.epfl.alpano.Azimuth.isCanonical;
