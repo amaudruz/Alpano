@@ -9,17 +9,32 @@ import static java.lang.Math.*;
 import static java.util.Objects.requireNonNull;
 import static ch.epfl.alpano.dem.DiscreteElevationModel.sampleIndex;
 
+/**
+ * Class that represents a continuous elevation model which gives the elevation at any point in a area
+ * Which s an expansion to the DEM 
+ * 
+ * @author Louis Amaudruz (271808)
+ * @author Mathieu Chevalley (274698)
+ *
+ */
+
 final public class ContinuousElevationModel {
 
     private final DiscreteElevationModel dem;
     private static final double d = toMeters(1/SAMPLES_PER_RADIAN);
 
-    
+   
     public ContinuousElevationModel(DiscreteElevationModel dem){
         
         this.dem = requireNonNull(dem);
     }
     
+    /**Gives the elevation at any point in the boundaries of the DEM using bilinear interpolation
+     * 
+     * 
+     * @param p : the Geopoint giving the location 
+     * @return the elevation at the wanted location
+     */
     public double elevationAt(GeoPoint p){
         double xp = sampleIndex(p.longitude());
         double yp = sampleIndex(p.latitude());
@@ -31,7 +46,13 @@ final public class ContinuousElevationModel {
         double z11 = elevationAtIndex(x + 1, y + 1);
         return bilerp(z00, z10, z01, z11, xp - x, yp -y);
     }
-    
+    /**
+     * Gives the slope at any point in the boundaries of the DEM using bilinear interpolation
+     * 
+     * @param p : the Geopoint giving the location
+     * @return the elevation at the wanted location
+     */
+
     public double slopeAt(GeoPoint p){
         double xp = sampleIndex(p.longitude());
         double yp = sampleIndex(p.latitude());
@@ -44,6 +65,14 @@ final public class ContinuousElevationModel {
         return bilerp(z00, z10, z01, z11, xp - x, yp - y);
     }
     
+    /** 
+     * Gives the elevation at the location indicated if it is in the boundaries
+     * 
+     * @param x : the first coordinate of the location
+     * @param y : the second coordinate of the location 
+     * @return the wanted elevation if the location is in te boundaries of the DEM, else 0.
+     */
+    
     private double elevationAtIndex(int x, int y){
         if(dem.extent().contains(x,y)){
             return dem.elevationSample(x, y);
@@ -53,6 +82,13 @@ final public class ContinuousElevationModel {
         }
     }
     
+    /**
+     * Gives slope at the location indicated
+     * 
+     * @param x : the first coordinate of the wanted location 
+     * @param y : the second coordinate of the wanted location 
+     * @return the slope at the wanted location
+     */
     private double slopeAtIndex(int x,int y){
         return acos(d / (sqrt(sq(elevationAtIndex(x,y) - elevationAtIndex(x + 1, y)) + sq(elevationAtIndex(x,y) - elevationAtIndex(x, y + 1)) + sq(d))));
     }
