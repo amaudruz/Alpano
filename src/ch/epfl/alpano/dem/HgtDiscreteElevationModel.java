@@ -17,8 +17,8 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel {
     private final ShortBuffer buffer;
     private final FileInputStream fileStream;
     private final Interval2D extent;
-    private final int fromLa;
-    private final int fromLo;
+    private int fromLa;
+    private int fromLo;
     
     public HgtDiscreteElevationModel(File file) throws IOException{
         String fileName = file.getName();
