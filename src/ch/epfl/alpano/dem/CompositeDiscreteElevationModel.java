@@ -4,12 +4,25 @@ import static java.util.Objects.requireNonNull;
 
 import ch.epfl.alpano.Interval2D;
 
+
+/**Class thet represents a union of two DEM, implements discrete elevation model.
+ * 
+ * @author Louis Amaudruz (271808)
+ * @author Mathieu Chevalley (274698)
+ * 
+ *
+ */
 final class CompositeDiscreteElevationModel implements DiscreteElevationModel{
 	
 	private Interval2D MNT;
 	private DiscreteElevationModel dem1;
 	private DiscreteElevationModel dem2;
 
+	/**Construct a dem with the union of the intervals and their elevations
+	 * 
+	 * @param dem1 : first dem
+	 * @param dem2 :second dem
+	 */
 	CompositeDiscreteElevationModel(DiscreteElevationModel dem1, DiscreteElevationModel dem2) {
 		
 		this.MNT = 	requireNonNull(dem1.extent()).union(dem2.extent());

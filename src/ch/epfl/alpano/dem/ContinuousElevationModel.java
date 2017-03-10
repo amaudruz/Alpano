@@ -23,7 +23,10 @@ final public class ContinuousElevationModel {
     private final DiscreteElevationModel dem;
     private static final double d = toMeters(1/SAMPLES_PER_RADIAN);
 
-   
+   /**Will only use a DEM for then use bilinear interpolation for the continuous elevation model
+    * 
+    * @param dem : the DEM used
+    */
     public ContinuousElevationModel(DiscreteElevationModel dem){
         
         this.dem = requireNonNull(dem);
