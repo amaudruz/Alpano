@@ -1,14 +1,12 @@
 package ch.epfl.alpano.dem;
 
 
-import static ch.epfl.alpano.Azimuth.isCanonical;
+import static ch.epfl.alpano.Azimuth.*;
 import static ch.epfl.alpano.Preconditions.checkArgument;
 import static java.util.Objects.*;
-import static java.lang.Math.*;
 import static ch.epfl.alpano.Math2.*;
 
 import ch.epfl.alpano.GeoPoint;
-
 
 public final class ElevationProfile {
 	private final ContinuousElevationModel elevationModel;
@@ -53,5 +51,7 @@ public final class ElevationProfile {
 		double latitude = lerp(this.positions[x1].latitude(), this.positions[x1 + 1].latitude(), x - x1 * 4096/ 4096);
 		return new GeoPoint(longitude, latitude);
 	}
+   
+
 
 }
