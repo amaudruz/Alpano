@@ -5,7 +5,7 @@ import ch.epfl.alpano.Interval2D;
 import ch.epfl.alpano.dem.ContinuousElevationModel;
 import ch.epfl.alpano.dem.DiscreteElevationModel;
 
-public final class SignatureChecks_03 {
+final class SignatureChecks_03 {
     private SignatureChecks_03() {}
 
     String checkDiscElevationModel(DiscreteElevationModel d) throws Exception {

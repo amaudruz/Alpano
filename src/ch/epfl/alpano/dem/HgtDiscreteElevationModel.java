@@ -14,8 +14,7 @@ import static ch.epfl.alpano.Azimuth.*;
 
 public final class HgtDiscreteElevationModel implements DiscreteElevationModel {
 
-    private final ShortBuffer buffer;
-    private final FileInputStream fileStream;
+    private ShortBuffer buffer;
     private final Interval2D extent;
     private int fromLa;
     private int fromLo;
@@ -43,22 +42,25 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel {
         catch(NumberFormatException e){
             throw new IllegalArgumentException();
         }
+        
         if(fileName.substring(7, 10).equals(".hgt")){
             throw new IllegalArgumentException("should be a .hgt");
         }
         
         extent = new Interval2D(new Interval1D(fromLo * 3600, (fromLo + 1) * 3600), new Interval1D(fromLa * 3600, (fromLa + 1) * 3600));
-        fileStream = new FileInputStream(file);
-        long length = file.length();
-        if(length != 25934402){
-            throw new IllegalArgumentException("wrong length");
+       
+        try(FileInputStream fileStream = new FileInputStream(file)){
+            long length = file.length();
+            if(length != 25934402){
+                throw new IllegalArgumentException("wrong length");
+            }
+            buffer = fileStream.getChannel().map(MapMode.READ_ONLY, 0, length).asShortBuffer();
         }
-        buffer = fileStream.getChannel().map(MapMode.READ_ONLY, 0, length).asShortBuffer();
     }
     
     @Override
-    public void close() throws Exception {
-        fileStream.close();
+    public void close(){
+        buffer = null;
     }
 
     @Override
