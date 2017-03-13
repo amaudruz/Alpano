@@ -9,22 +9,17 @@ import static ch.epfl.alpano.Math2.*;
 import ch.epfl.alpano.Distance;
 
 import ch.epfl.alpano.GeoPoint;
-import ch.epfl.alpano.Math2;
 
 
-public class ElevationProfile {
-	private ContinuousElevationModel elevationModel;
-	private GeoPoint[] positions;
-	private GeoPoint origin;
-	private double azimuth;
-	private double length;
+public final class ElevationProfile {
+	private final ContinuousElevationModel elevationModel;
+	private final GeoPoint[] positions;
+	private final double length;
 
 	
-	ElevationProfile(ContinuousElevationModel elevationModel, GeoPoint origin, double azimuth, double length) {
+	public ElevationProfile(ContinuousElevationModel elevationModel, GeoPoint origin, double azimuth, double length) {
 		checkArgument(isCanonical(azimuth) && length >0);
-		this.azimuth = requireNonNull(azimuth);
 		this.length = requireNonNull(length);
-		this.origin = requireNonNull(origin);
 		this.elevationModel = requireNonNull(elevationModel);
 		
 		this.positions = new GeoPoint[(int)((length/4096)) + 1];
@@ -51,7 +46,7 @@ public class ElevationProfile {
 	}
 	
 	
-	public GeoPoint positionAt(double x) {
+	private GeoPoint positionAt(double x) {
 		checkArgument(x <= length);
 		int x1 = (int)(x/4096.0);
 		if (x1  == (int) ((length/4096))) {
