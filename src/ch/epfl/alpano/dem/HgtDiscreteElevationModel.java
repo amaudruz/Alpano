@@ -26,16 +26,16 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel {
             throw new IllegalArgumentException("Should begin by N or S");
         }
         if(fileName.charAt(3) != 'E' && fileName.charAt(3) != 'W'){
-            throw new IllegalArgumentException("Should be by E or W");
+            throw new IllegalArgumentException("Should be E or W");
         }
         try{
             fromLa = Integer.parseInt(fileName.substring(1, 3));
             if(fileName.charAt(0) != 'N'){
-                fromLa = (int) canonicalize(-fromLa);
+                fromLa = (int) (-fromLa);
             }
             fromLo = Integer.parseInt(fileName.substring(4, 7));
             if(fileName.charAt(3) == 'W'){
-                fromLo = (int) canonicalize(-fromLo);
+                fromLo = (int) (-fromLo);
             }
 
         }
