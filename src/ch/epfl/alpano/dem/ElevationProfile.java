@@ -2,7 +2,6 @@ package ch.epfl.alpano.dem;
 
 
 import static ch.epfl.alpano.Azimuth.*;
-import static ch.epfl.alpano.Distance.toRadians;
 import static ch.epfl.alpano.Preconditions.checkArgument;
 import static java.util.Objects.*;
 import static java.lang.Math.*;
