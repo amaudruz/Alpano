@@ -19,9 +19,12 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel {
     private int fromLa;
     private int fromLo;
     
-    public HgtDiscreteElevationModel(File file) throws IOException{
+    public HgtDiscreteElevationModel(File file){
         String fileName = file.getName();
         
+        if(fileName.length() != 11){
+            throw new IllegalArgumentException("wrong length");
+        }
         if(fileName.charAt(0) != 'N' && fileName.charAt(0) != 'S'){
             throw new IllegalArgumentException("Should begin by N or S");
         }
@@ -43,7 +46,7 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel {
             throw new IllegalArgumentException();
         }
         
-        if(fileName.substring(7, 10).equals(".hgt")){
+        if(!fileName.substring(7).equals(".hgt")){
             throw new IllegalArgumentException("should be a .hgt");
         }
         
@@ -55,6 +58,9 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel {
                 throw new IllegalArgumentException("wrong length");
             }
             buffer = fileStream.getChannel().map(MapMode.READ_ONLY, 0, length).asShortBuffer();
+        }
+        catch(IOException e){
+            throw new IllegalArgumentException();
         }
     }
     
@@ -70,7 +76,7 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel {
 
     @Override
     public double elevationSample(int x, int y) {
-        int index = (x - fromLo*3600)  + ((fromLa + 1)*3600 - y) * 3601;
+        int index = Math.abs(x - fromLo*3600)  + Math.abs(y - (fromLa + 1)*3600) * 3601;
         return buffer.get(index);
     }
 

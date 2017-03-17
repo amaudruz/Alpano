@@ -19,8 +19,9 @@ public final class ElevationProfile {
 	
 	public ElevationProfile(ContinuousElevationModel elevationModel, GeoPoint origin, double azimuth, double length) {
 		checkArgument(isCanonical(azimuth) && length >0);
-		this.length = requireNonNull(length);
+		this.length = length;
 		this.elevationModel = requireNonNull(elevationModel);
+		requireNonNull(origin);
 		
 		this.positions = new GeoPoint[(int)((length/4096)) + 1];
 		for (int i = 0 ; i < this.positions.length   ; ++i) {
@@ -34,36 +35,34 @@ public final class ElevationProfile {
 	}
 	
 	public double slopeAt(double x) {
-		checkArgument(x <= length);
+		checkArgument(x <= length && x >= 0);
 		GeoPoint p =  this.positionAt(x);
 		return this.elevationModel.slopeAt(p);
 	}
 	
 	public double elevationAt(double x) {
-		checkArgument(x <= length);
+		checkArgument(x <= length && x >= 0);
 		GeoPoint p =  this.positionAt(x);
 		return this.elevationModel.elevationAt(p);
 	}
 	
 	
-	private GeoPoint positionAt(double x) {
-		checkArgument(x <= length);
+	public GeoPoint positionAt(double x) {
+		checkArgument(x <= length && x >= 0);
 		int x1 = (int)(x/4096.0);
-		if (x1  == (int) ((length/4096))) {
-			double longitude = lerp(this.positions[x1-1].longitude(), 
-					this.positions[x1 ].longitude(),( x - (4096 *x1)) / 4096) ;
-			double latitude = lerp(this.positions[x1-1].latitude(), this.positions[x1 ].latitude(), ( x - (4096 *x1)) / 4096);
+		
+		if (x1  >= this.positions.length - 1) {
+			double longitude = lerp(this.positions[this.positions.length - 2].longitude(), 
+					this.positions[this.positions.length - 1].longitude(),( x - (4096 *x1)) / 4096) ;
+			double latitude = lerp(this.positions[this.positions.length - 2].latitude(), this.positions[this.positions.length - 1].latitude(), ( x - (4096 *x1)) / 4096);
 			return new GeoPoint(longitude, latitude);
 		}
+		
 		double longitude = lerp(this.positions[x1].longitude(), this.positions[x1 + 1].longitude(),( x - (4096 *x1)) / 4096) ;
 		double latitude = lerp(this.positions[x1].latitude(), this.positions[x1 + 1].latitude(), ( x - (4096 *x1)) / 4096);
 		return new GeoPoint(longitude, latitude);
 		
-		
-		
 	}
-	
-    
 	
 	
 }
