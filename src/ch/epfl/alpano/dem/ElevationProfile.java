@@ -11,12 +11,26 @@ import ch.epfl.alpano.Distance;
 import ch.epfl.alpano.GeoPoint;
 
 
+/** Class used for a representation of the elevations and slopes at any point in a straight line
+ * beginning from an original location to a wanted length
+ * 
+ * @author Louis Amaudruz (271808)
+ * @author Mathieu Chevalley (274698)
+ * 
+ *
+ */
 public final class ElevationProfile {
 	private final ContinuousElevationModel elevationModel;
 	private final GeoPoint[] positions;
 	private final double length;
 
-	
+	/**
+	 * 
+	 * @param elevationModel : the elevation model which will give us the elevations and slopes
+	 * @param origin : the origin location from which begin the straight line
+	 * @param azimuth : the orientation of the straight line
+	 * @param length : the length of the straight line
+	 */
 	public ElevationProfile(ContinuousElevationModel elevationModel, GeoPoint origin, double azimuth, double length) {
 		checkArgument(isCanonical(azimuth) && length >0);
 		this.length = length;
@@ -34,12 +48,24 @@ public final class ElevationProfile {
 		}
 	}
 	
+	/** Compute the slope at a certain distance from the original location 
+	 * 
+	 * @param x : the distance from the original location
+	 * @return the slope at a wanted distance from the original location
+	 */
+	
 	public double slopeAt(double x) {
 		checkArgument(x <= length && x >= 0);
 		GeoPoint p =  this.positionAt(x);
 		return this.elevationModel.slopeAt(p);
 	}
 	
+	
+	/** Compute the elevation at a certain distance from the original location 
+	 * 
+	 * @param x : the distance from the original location
+	 * @return the elevation at a wanted distance from the original location
+	 */
 	public double elevationAt(double x) {
 		checkArgument(x <= length && x >= 0);
 		GeoPoint p =  this.positionAt(x);
@@ -47,6 +73,12 @@ public final class ElevationProfile {
 	}
 	
 	
+	
+	/** Compute the location at a certain distance from the origin location using bilinear interpolation
+	 * 
+	 * @param x : the distance from the original location
+	 * @return he location (GeoPoint) at a certain distance from the origin
+	 */
 	public GeoPoint positionAt(double x) {
 		checkArgument(x <= length && x >= 0);
 		int x1 = (int)(x/4096.0);
