@@ -2,6 +2,7 @@ package ch.epfl.alpano;
 
 import static java.util.Objects.requireNonNull;
 import static java.lang.Math.*;
+import ch.epfl.alpano.Math2;
 
 public final class PanoramaParameters {
 	
@@ -30,23 +31,34 @@ public final class PanoramaParameters {
 	
 	public double azimuthForX(double x) {
 		Preconditions.checkArgument(x > 0 && x <= this.width -1);
-		return this.centerAzimuth() + (anglePerPixels()*(x -(width/2))); 
+		return Math2.floorMod(this.centerAzimuth() + (anglePerPixels()*(x -(width/2))), 2*PI); 
 	}
 	
 	
 	public double xForAzimuth(double a) { 	
-		Preconditions.checkArgument(a > this.centerAzimuth-(this.horizontalFieldOfView/2) && a < this.centerAzimuth+(this.horizontalFieldOfView/2));  	
-		return (width/2) + ((a -this.centerAzimuth)/  anglePerPixels());
+		if (this.centerAzimuth -(this.horizontalFieldOfView/2) < 0) {
+			Preconditions.checkArgument(( a >= Math2.floorMod(this.centerAzimuth-(this.horizontalFieldOfView/2), 2*PI) && a <= (2 * PI)) ||
+			(a >= 0 && a <= this.centerAzimuth+(this.horizontalFieldOfView/2)));
+		}
+		
+		if (this.centerAzimuth +(this.horizontalFieldOfView/2) > 2*PI) {
+			Preconditions.checkArgument(( a >= this.centerAzimuth-(this.horizontalFieldOfView/2)  && a <= 0) ||
+			(a >= 0 && a <= Math2.floorMod(this.centerAzimuth+(this.horizontalFieldOfView/2), 2 * PI)));
+		}
+		
+		return (Math2.angularDistance(a, this.centerAzimuth)/this.anglePerPixels()) +((this.width-1)/2);
+			
+		
 	}
 	
 	public double altitudeForY(double y) {
 		Preconditions.checkArgument(y >= 0 && y < this.height);
-		return y * anglePerPixels();
+		return (y - this.height/2) * this.anglePerPixels();
 	}
 	
 	public double yForAltitude(double a) {
 		Preconditions.checkArgument(a >= 0 && a <= this.verticalFieldOfView() );
-		return (a / this.anglePerPixels());
+		return (this.height/2)+(a /this.anglePerPixels());
 	}
 	
 	boolean isValidSampleIndex(int x, int y) {
