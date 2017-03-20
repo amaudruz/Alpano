@@ -2,7 +2,8 @@ package ch.epfl.alpano;
 
 import static java.util.Objects.requireNonNull;
 import static java.lang.Math.*;
-import ch.epfl.alpano.Math2;
+import static ch.epfl.alpano.Math2.*;
+import static ch.epfl.alpano.Preconditions.*;
 
 public final class PanoramaParameters {
 	
@@ -15,9 +16,11 @@ public final class PanoramaParameters {
 	private final int height;
 	
 	public PanoramaParameters(GeoPoint observerPosition, int observerElevation, double centerAzimuth,double horizontalFieldOfView,int maxDistance, int width, int height) {
-		Preconditions.checkArgument(Azimuth.isCanonical(centerAzimuth));
-		Preconditions.checkArgument(maxDistance > 0 & width > 0 & height > 0);
-		Preconditions.checkArgument(horizontalFieldOfView > 0 && horizontalFieldOfView <= 2*PI);
+		checkArgument(Azimuth.isCanonical(centerAzimuth));
+		checkArgument(maxDistance > 0 && width > 0 && height > 0);
+		checkArgument(horizontalFieldOfView > 0 && horizontalFieldOfView <= PI2);
+		checkArgument(observerElevation >= 0);
+		
 		this.observerPosition = requireNonNull(observerPosition);
 		this.observerElevation = observerElevation;
 		this.centerAzimuth = centerAzimuth;
@@ -30,59 +33,52 @@ public final class PanoramaParameters {
 	}
 	
 	public double azimuthForX(double x) {
-		Preconditions.checkArgument(x > 0 && x <= this.width -1);
-		return Math2.floorMod(this.centerAzimuth() + (anglePerPixels()*(x -(width/2))), 2*PI); 
+		checkArgument(x > 0 && x <= width() -1);
+		return floorMod(centerAzimuth() + (anglePerPixels()*(x -(width()/2))), PI2); 
 	}
 	
 	
 	public double xForAzimuth(double a) { 	
-		if (this.centerAzimuth -(this.horizontalFieldOfView/2) < 0) {
-			Preconditions.checkArgument(( a >= Math2.floorMod(this.centerAzimuth-(this.horizontalFieldOfView/2), 2*PI) && a <= (2 * PI)) ||
-			(a >= 0 && a <= this.centerAzimuth+(this.horizontalFieldOfView/2)));
+		if (centerAzimuth() - (horizontalFieldOfView()/2) < 0) {
+			checkArgument(( a >= floorMod(centerAzimuth() - (horizontalFieldOfView()/2), PI2) && a <= (PI2)) ||
+			(a >= 0 && a <= centerAzimuth() + (horizontalFieldOfView()/2)));
 		}
 		
-		if (this.centerAzimuth +(this.horizontalFieldOfView/2) > 2*PI) {
-			Preconditions.checkArgument(( a >= this.centerAzimuth-(this.horizontalFieldOfView/2)  && a <= 0) ||
-			(a >= 0 && a <= Math2.floorMod(this.centerAzimuth+(this.horizontalFieldOfView/2), 2 * PI)));
+		if (centerAzimuth() + (horizontalFieldOfView()/2) > PI2) {
+			checkArgument(( a >= centerAzimuth() - (horizontalFieldOfView()/2)  && a <= 0) ||
+			(a >= 0 && a <= floorMod(centerAzimuth() + (horizontalFieldOfView()/2), PI2)));
 		}
 		
-		return (Math2.angularDistance(a, this.centerAzimuth)/this.anglePerPixels()) +((this.width-1)/2);
-			
-		
+		return (angularDistance(a, centerAzimuth()) / anglePerPixels()) +((width() - 1) / 2);
+
 	}
 	
 	public double altitudeForY(double y) {
-		Preconditions.checkArgument(y >= 0 && y < this.height);
-		return (y - this.height/2) * this.anglePerPixels();
+		checkArgument(y >= 0 && y < height());
+		
+		double altitude = (y - height()/2) * anglePerPixels();
+		assert(altitude >= 0 && altitude <= verticalFieldOfView());
+		
+		return altitude;
 	}
 	
 	public double yForAltitude(double a) {
-		Preconditions.checkArgument(a >= 0 && a <= this.verticalFieldOfView() );
-		return (this.height/2)+(a /this.anglePerPixels());
+		checkArgument(a >= 0 && a <= verticalFieldOfView());
+		
+		double y = (height()/2) + (a /anglePerPixels());
+		assert(y >= 0 && y < height());
+		
+		return y;
 	}
 	
 	boolean isValidSampleIndex(int x, int y) {
-		return ( x >= 0 && x < this.width && y >= 0 && y < this.height );
-		}
-	
-	int linearSampleIndex(int x, int y) {
-		return (y*this.width) + x ;
+		return ( x >= 0 && x < width() && y >= 0 && y < height() );
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	int linearSampleIndex(int x, int y) {
+		return (y * width()) + x ;
+	}
+				
 	public GeoPoint observerPosition() {
 		return this.observerPosition;
 	}
