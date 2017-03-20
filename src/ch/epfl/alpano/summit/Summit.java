@@ -1,6 +1,7 @@
 package ch.epfl.alpano.summit;
 
 import ch.epfl.alpano.GeoPoint;
+import static ch.epfl.alpano.Preconditions.*;
 
 /**
  * Class that represents a summit (immutable)
@@ -20,9 +21,7 @@ public final class Summit {
      * @param elevation (in metres)
      */
     public Summit(String name, GeoPoint position, int elevation){
-        if(elevation < 0 || position == null || name.isEmpty()){
-            throw new IllegalArgumentException();
-        }
+        checkArgument(elevation >= 0 && position != null && !name.isEmpty());
         this.name = name;
         this.position = position;
         this.elevation = elevation;
@@ -51,6 +50,6 @@ public final class Summit {
     
     @Override
     public String toString(){
-        return name + " (" + position.longitude() + "," + position.latitude() + ") " + elevation;
+        return name + " " + position + " " + elevation;
     }
 }
