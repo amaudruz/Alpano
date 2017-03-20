@@ -12,6 +12,11 @@ import ch.epfl.alpano.Interval1D;
 import ch.epfl.alpano.Interval2D;
 import static ch.epfl.alpano.Azimuth.*;
 
+/**
+ * DEM from an hgt file (immutable class)
+ * @author Mathieu Chevalley (274698)
+ *
+ */
 public final class HgtDiscreteElevationModel implements DiscreteElevationModel {
 
     private ShortBuffer buffer;
@@ -19,6 +24,12 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel {
     private int fromLa;
     private int fromLo;
     
+    /**
+     * public builder
+     * @param file the hgt file
+     * @throws IllegalArgumentException if the file name is not properly
+     * formated, or if an error occurs when reading the file
+     */
     public HgtDiscreteElevationModel(File file){
         String fileName = file.getName();
         
@@ -76,8 +87,13 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel {
 
     @Override
     public double elevationSample(int x, int y) {
-        int index = Math.abs(x - fromLo*3600)  + Math.abs(y - (fromLa + 1)*3600) * 3601;
-        return buffer.get(index);
+        if(extent.contains(x, y)){
+            int index = Math.abs(x - fromLo*3600)  + Math.abs(y - (fromLa + 1)*3600) * 3601;
+            return buffer.get(index);
+        }
+        else{
+            throw new IllegalArgumentException("not in the extent");
+        }
     }
 
 }

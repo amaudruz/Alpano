@@ -13,10 +13,21 @@ import java.util.List;
 
 import ch.epfl.alpano.GeoPoint;
 
+/**
+ * Class used to read a file containing summits (cannot be instanciate)
+ * @author Mathieu Chevalley (274698)
+ *
+ */
 public class GazetteerParser {
 
     private GazetteerParser(){}
     
+    /**
+     * read the summits from a file
+     * @param file
+     * @return a list of summit
+     * @throws IOException
+     */
     public static List<Summit> readSummitsFrom(File file) throws IOException{
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.US_ASCII));
         List<Summit> summits = new ArrayList<Summit>();
@@ -30,6 +41,10 @@ public class GazetteerParser {
     }
     
     private static Summit readSummitLine(String line){
+        if(line.isEmpty()){
+            throw new IllegalArgumentException();
+        }
+        
         String trimedLine = line.trim();
         String name = trimedLine.substring(26);
         

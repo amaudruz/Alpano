@@ -1,53 +1,134 @@
 package ch.epfl.alpano.dem;
 
-import java.io.File;
+import static java.lang.Math.PI;
+import static java.lang.Math.toRadians;
+import static org.junit.Assert.assertEquals;
 
-import javax.imageio.ImageIO;
+import org.junit.Test;
 
 import ch.epfl.alpano.GeoPoint;
-import ch.epfl.alpano.dem.DiscreteElevationModel;
-import static java.awt.image.BufferedImage.TYPE_INT_RGB;
+import ch.epfl.alpano.Interval1D;
+import ch.epfl.alpano.Interval2D;
 
-import java.awt.image.BufferedImage;
+public class ElevationProfileTest {
+    @Test(expected = NullPointerException.class)
+    public void constructorFailsWhenElevationModelIsNull() {
+        new ElevationProfile(null, new GeoPoint(0,0), 0, 100);
+    }
 
+    @Test(expected = NullPointerException.class)
+    public void constructorFailsWhenOriginIsNull() {
+        new ElevationProfile(newConstantSlopeDEM(), null, 0, 100);
+    }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void constructorFailsWhenAzimuthIsNotCanonical() {
+        new ElevationProfile(newConstantSlopeDEM(), new GeoPoint(0,0), 6.3, 100);
+    }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void constructorFailsWhenLengthIsZero() {
+        new ElevationProfile(newConstantSlopeDEM(), new GeoPoint(0,0), 0, 0);
+    }
 
-final class ElevationProfileTest {
-	  final static File HGT_FILE = new File("N46E006.hgt");
-	  final static double MAX_ELEVATION = 1_500;
-	  final static int LENGTH = 111_000;
-	  final static double AZIMUTH = Math.toRadians(27.97);
-	  final static double LONGITUDE = Math.toRadians(6.15432);
-	  final static double LATITUDE = Math.toRadians(46.20562);
-	  final static int WIDTH = 800, HEIGHT = 100;
+    @Test(expected = IllegalArgumentException.class)
+    public void elevationAtFailsWhenXIsTooBig() {
+        ElevationProfile p = new ElevationProfile(newConstantSlopeDEM(), new GeoPoint(0,0), 0, 100);
+        p.elevationAt(101);
+    }
 
-	  public static void main(String[] as) throws Exception {
+    @Test
+    public void elevationAtWorksOnConstantSlopeDEMGoingNorth() {
+        ElevationProfile p = new ElevationProfile(newConstantSlopeDEM(), new GeoPoint(0,0), 0, 100_000);
+        for (int i = 0; i < 100; ++i) {
+            double x = 100d * i;
+            assertEquals(x, p.elevationAt(x), 1e-5);
+        }
+    }
 
-		  DiscreteElevationModel dDEM =
-	      new HgtDiscreteElevationModel(HGT_FILE);
-	    ContinuousElevationModel cDEM =
-	      new ContinuousElevationModel(dDEM);
-	    GeoPoint o =
-	      new GeoPoint(LONGITUDE, LATITUDE);
-	    ElevationProfile p =
-	      new ElevationProfile(cDEM, o, AZIMUTH, LENGTH);
+    @Test
+    public void elevationAtWorksOnConstantSlopeDEMGoingSouth() {
+        ElevationProfile p = new ElevationProfile(newConstantSlopeDEM(), new GeoPoint(0,0), PI, 100_000);
+        for (int i = 0; i < 100; ++i) {
+            double x = 100d * i;
+            assertEquals(-x, p.elevationAt(x), 1e-5);
+        }
+    }
 
-	    int BLACK = 0x00_00_00, WHITE = 0xFF_FF_FF;
+    @Test
+    public void elevationAtWorksOnConstantSlopeDEMGoingEast() {
+        ElevationProfile p = new ElevationProfile(newConstantSlopeDEM(), new GeoPoint(0,0), PI/2d, 100_000);
+        for (int i = 0; i < 100; ++i) {
+            double x = 100d * i;
+            assertEquals(x, p.elevationAt(x), 1e-5);
+        }
+    }
 
-	    BufferedImage i =
-	      new BufferedImage(WIDTH, HEIGHT, TYPE_INT_RGB);
-	    for (int x = 0; x < WIDTH; ++x) {
-	      double pX = x * (double) LENGTH / (WIDTH - 1);
-	      double pY = p.elevationAt(pX);
-	      int yL = (int)((pY / MAX_ELEVATION) * (HEIGHT - 1));
-	      for (int y = 0; y < HEIGHT; ++y) {
-	        int color = y < yL ? BLACK : WHITE;
-	        i.setRGB(x, HEIGHT - 1 - y, color);
-	      }
-	    }
-	    dDEM.close();
+    @Test
+    public void elevationAtWorksOnConstantSlopeDEMGoingWest() {
+        ElevationProfile p = new ElevationProfile(newConstantSlopeDEM(), new GeoPoint(0,0), 3d*PI/2d, 100_000);
+        for (int i = 0; i < 100; ++i) {
+            double x = 100d * i;
+            assertEquals(-x, p.elevationAt(x), 1e-5);
+        }
+    }
 
-	    ImageIO.write(i, "png", new File("profile.png"));
-	  }
-	}
+    @Test(expected = IllegalArgumentException.class)
+    public void positionAtFailsWhenXIsTooBig() {
+        ElevationProfile p = new ElevationProfile(newConstantSlopeDEM(), new GeoPoint(0,0), 0, 100);
+        p.positionAt(101);
+    }
+
+    @Test
+    public void positionAtProducesConstantLongitudeWhenGoingNorth() {
+        double lon = toRadians(3);
+        ElevationProfile p = new ElevationProfile(newConstantSlopeDEM(), new GeoPoint(lon,toRadians(40)), 0, 100_000);
+        for (int i = 0; i < 100; ++i) {
+            double x = 500d * i;
+            assertEquals(lon, p.positionAt(x).longitude(), 1e-5);
+        }
+    }
+
+    @Test
+    public void positionAtProducesConstantLongitudeWhenGoingSouth() {
+        double lon = toRadians(3);
+        ElevationProfile p = new ElevationProfile(newConstantSlopeDEM(), new GeoPoint(lon,toRadians(40)), PI, 100_000);
+        for (int i = 0; i < 100; ++i) {
+            double x = 500d * i;
+            assertEquals(lon, p.positionAt(x).longitude(), 1e-5);
+        }
+    }
+
+    @Test
+    public void positionAtProducesConstantLatitudeWhenGoingEast() {
+        double lat = toRadians(40);
+        ElevationProfile p = new ElevationProfile(newConstantSlopeDEM(), new GeoPoint(toRadians(3),lat), PI/2d, 100_000);
+        for (int i = 0; i < 100; ++i) {
+            double x = 500d * i;
+            assertEquals(lat, p.positionAt(x).latitude(), 1e-4);
+        }
+    }
+
+    @Test
+    public void positionAtProducesConstantLatitudeWhenGoingWest() {
+        double lat = toRadians(40);
+        ElevationProfile p = new ElevationProfile(newConstantSlopeDEM(), new GeoPoint(toRadians(3),lat), 3d*PI/2d, 100_000);
+        for (int i = 0; i < 100; ++i) {
+            double x = 500d * i;
+            assertEquals(lat, p.positionAt(x).latitude(), 1e-4);
+        }
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void slopeAtFailsWhenXIsNegative() {
+        ElevationProfile p = new ElevationProfile(newConstantSlopeDEM(), new GeoPoint(0,0), 0, 100);
+        p.positionAt(-1);
+    }
+
+    private static ContinuousElevationModel newConstantSlopeDEM() {
+        Interval2D extent = new Interval2D(
+                new Interval1D(-10_000, 10_000),
+                new Interval1D(-10_000, 10_000));
+        return new ContinuousElevationModel(new ConstantSlopeDEM(extent));
+    }
+}
