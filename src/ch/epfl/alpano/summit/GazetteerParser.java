@@ -1,6 +1,7 @@
 package ch.epfl.alpano.summit;
 
 import java.io.BufferedReader;
+import static ch.epfl.alpano.Preconditions.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -41,32 +42,25 @@ public class GazetteerParser {
     }
     
     public static Summit readSummitLine(String line){
-        if(line.isEmpty() || line.length() < 34){
-            throw new IllegalArgumentException();
-        }
-        
+        checkArgument(!line.isEmpty() && line.length() > 36);
         try{
-            
-            String trimedLine = line.trim();
-            String name = trimedLine.substring(26);
-            System.out.println(trimedLine);
-            System.out.println(name);
-            for(int i = 0; i < trimedLine.length(); ++i){
-                System.out.println((char) trimedLine.charAt(i) + " " + i);
-            }
-            
-            String longitude = trimedLine.substring(0, 7);
+
+            String longitude = line.substring(0, 9).trim();
             String[] hms = longitude.split(":");
             double longi = toRadians(Integer.parseInt(hms[0]), Integer.parseInt(hms[1]), Integer.parseInt(hms[2]));
-            System.out.println(longitude);
-            String latitude = trimedLine.substring(7,15);
+
+            String latitude = line.substring(10,18).trim();
             hms = latitude.split(":");
             double lati = toRadians(Integer.parseInt(hms[0]), Integer.parseInt(hms[1]), Integer.parseInt(hms[2]));
-            System.out.println(latitude);
+
             GeoPoint position = new GeoPoint(longi, lati);
             
-            int elevation = Integer.parseInt(trimedLine.substring(15, 19));
-            System.out.println(elevation);
+
+            int elevation = Integer.parseInt(line.substring(20, 24).trim());
+            
+            String name = line.substring(36).trim();
+            
+            
             return new Summit(name, position, elevation);
         }
         catch(Exception e){
@@ -75,8 +69,9 @@ public class GazetteerParser {
         
     }
     
-    private static double toRadians(double degrees, double minutes, double seconds){
+    public static double toRadians(double degrees, double minutes, double seconds){
         double degree = degrees + minutes / 60 + seconds / 3600;
         return degree * Math.PI/180;
     }
+    
 }
