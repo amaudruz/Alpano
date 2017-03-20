@@ -40,27 +40,38 @@ public class GazetteerParser {
         return Collections.unmodifiableList(summits);
     }
     
-    private static Summit readSummitLine(String line){
-        if(line.isEmpty()){
+    public static Summit readSummitLine(String line){
+        if(line.isEmpty() || line.length() < 34){
             throw new IllegalArgumentException();
         }
         
-        String trimedLine = line.trim();
-        String name = trimedLine.substring(26);
-        
-        String longitude = trimedLine.substring(0, 7);
-        String[] hms = longitude.split(":");
-        double longi = toRadians(Integer.parseInt(hms[0]), Integer.parseInt(hms[1]), Integer.parseInt(hms[2]));
-        
-        String latitude = trimedLine.substring(7,15);
-        hms = latitude.split(":");
-        double lati = toRadians(Integer.parseInt(hms[0]), Integer.parseInt(hms[1]), Integer.parseInt(hms[2]));
-        
-        GeoPoint position = new GeoPoint(longi, lati);
-        
-        int elevation = Integer.parseInt(trimedLine.substring(15, 19));
-        
-        return new Summit(name, position, elevation);
+        try{
+            
+            String trimedLine = line.trim();
+            String name = trimedLine.substring(26);
+            System.out.println(trimedLine);
+            System.out.println(name);
+            for(int i = 0; i < trimedLine.length(); ++i){
+                System.out.println((char) trimedLine.charAt(i) + " " + i);
+            }
+            
+            String longitude = trimedLine.substring(0, 7);
+            String[] hms = longitude.split(":");
+            double longi = toRadians(Integer.parseInt(hms[0]), Integer.parseInt(hms[1]), Integer.parseInt(hms[2]));
+            System.out.println(longitude);
+            String latitude = trimedLine.substring(7,15);
+            hms = latitude.split(":");
+            double lati = toRadians(Integer.parseInt(hms[0]), Integer.parseInt(hms[1]), Integer.parseInt(hms[2]));
+            System.out.println(latitude);
+            GeoPoint position = new GeoPoint(longi, lati);
+            
+            int elevation = Integer.parseInt(trimedLine.substring(15, 19));
+            System.out.println(elevation);
+            return new Summit(name, position, elevation);
+        }
+        catch(Exception e){
+            throw new IllegalArgumentException("line wrongly formated");
+        }
         
     }
     

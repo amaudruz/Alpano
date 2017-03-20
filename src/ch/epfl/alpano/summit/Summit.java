@@ -29,7 +29,6 @@ public final class Summit {
     }
     
     /**
-     * 
      * @return name of the summit
      */
     public String name(){
@@ -37,7 +36,6 @@ public final class Summit {
     }
     
     /**
-     * 
      * @return position of the summit
      */
     public GeoPoint position(){
@@ -45,7 +43,6 @@ public final class Summit {
     }
     
     /**
-     * 
      * @return the elevation of the summit
      */
     public int elevation(){

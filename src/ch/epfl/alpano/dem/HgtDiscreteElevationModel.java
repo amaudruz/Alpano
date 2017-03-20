@@ -1,6 +1,8 @@
 package ch.epfl.alpano.dem;
 
 import java.io.File;
+
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -12,11 +14,18 @@ import ch.epfl.alpano.Interval1D;
 import ch.epfl.alpano.Interval2D;
 import static ch.epfl.alpano.Azimuth.*;
 
-/**
- * DEM from an hgt file (immutable class)
+
+
+
+/**A class that represents a discrete elevation model taken from a certain file
+ * 
+ * @author Louis Amaudruz (271808)
  * @author Mathieu Chevalley (274698)
- *
+ * 
+ * @implements DiscreteElevationModel
  */
+
+
 public final class HgtDiscreteElevationModel implements DiscreteElevationModel {
 
     private ShortBuffer buffer;
@@ -24,11 +33,13 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel {
     private int fromLa;
     private int fromLo;
     
+
     /**
      * public builder
      * @param file the hgt file
      * @throws IllegalArgumentException if the file name is not properly
      * formated, or if an error occurs when reading the file
+     *
      */
     public HgtDiscreteElevationModel(File file){
         String fileName = file.getName();
