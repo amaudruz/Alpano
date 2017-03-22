@@ -26,8 +26,9 @@ final public class ContinuousElevationModel {
    /**Will only use a DEM for then use bilinear interpolation for the continuous elevation model
     * 
     * @param dem : the DEM used
+    * @throws NullPointerExcpetion if the dem is <code>null</code>
     */
-    public ContinuousElevationModel(DiscreteElevationModel dem){
+    public ContinuousElevationModel(DiscreteElevationModel dem) {
         
         this.dem = requireNonNull(dem);
     }
@@ -37,8 +38,9 @@ final public class ContinuousElevationModel {
      * 
      * @param p : the Geopoint giving the location 
      * @return the elevation at the wanted location
+     * 
      */
-    public double elevationAt(GeoPoint p){
+    public double elevationAt(GeoPoint p) {
         double xp = sampleIndex(p.longitude());
         double yp = sampleIndex(p.latitude());
         
@@ -59,7 +61,7 @@ final public class ContinuousElevationModel {
      * @return the elevation at the wanted location
      */
 
-    public double slopeAt(GeoPoint p){
+    public double slopeAt(GeoPoint p) {
         double xp = sampleIndex(p.longitude());
         double yp = sampleIndex(p.latitude());
         
@@ -74,31 +76,16 @@ final public class ContinuousElevationModel {
         return bilerp(z00, z10, z01, z11, xp - x, yp - y);
     }
     
-    /** 
-     * Gives the elevation at the location indicated if it is in the boundaries
-     * 
-     * @param x : the first coordinate of the location
-     * @param y : the second coordinate of the location 
-     * @return the wanted elevation if the location is in te boundaries of the DEM, else 0.
-     */
-    
-    private double elevationAtIndex(int x, int y){
-        if(dem.extent().contains(x,y)){
+    private double elevationAtIndex(int x, int y) {
+        if(dem.extent().contains(x,y)) {
             return dem.elevationSample(x, y);
         }
-        else{
+        else {
             return 0;
         }
     }
     
-    /**
-     * Gives slope at the location indicated
-     * 
-     * @param x : the first coordinate of the wanted location 
-     * @param y : the second coordinate of the wanted location 
-     * @return the slope at the wanted location
-     */
-    private double slopeAtIndex(int x,int y){
+    private double slopeAtIndex(int x,int y) {
         return acos(d / (sqrt(sq(elevationAtIndex(x,y) - elevationAtIndex(x + 1, y)) + sq(elevationAtIndex(x,y) - elevationAtIndex(x, y + 1)) + sq(d))));
     }
 }

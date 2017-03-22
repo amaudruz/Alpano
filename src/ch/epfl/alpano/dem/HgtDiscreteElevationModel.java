@@ -22,7 +22,7 @@ import static ch.epfl.alpano.Azimuth.*;
  * @author Louis Amaudruz (271808)
  * @author Mathieu Chevalley (274698)
  * 
- * @implements DiscreteElevationModel
+ * @see DiscreteElevationModel
  */
 
 
@@ -41,53 +41,56 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel {
      * formated, or if an error occurs when reading the file
      *
      */
-    public HgtDiscreteElevationModel(File file){
+    public HgtDiscreteElevationModel(File file) {
         String fileName = file.getName();
         
-        if(fileName.length() != 11){
+        if(fileName.length() != 11) {
             throw new IllegalArgumentException("wrong length");
         }
-        if(fileName.charAt(0) != 'N' && fileName.charAt(0) != 'S'){
+        if(fileName.charAt(0) != 'N' && fileName.charAt(0) != 'S') {
             throw new IllegalArgumentException("Should begin by N or S");
         }
-        if(fileName.charAt(3) != 'E' && fileName.charAt(3) != 'W'){
+        if(fileName.charAt(3) != 'E' && fileName.charAt(3) != 'W') {
             throw new IllegalArgumentException("Should be E or W");
         }
-        try{
+        try {
             fromLa = Integer.parseInt(fileName.substring(1, 3));
-            if(fileName.charAt(0) != 'N'){
+            if(fileName.charAt(0) != 'N') {
                 fromLa = (int) (-fromLa);
             }
             fromLo = Integer.parseInt(fileName.substring(4, 7));
-            if(fileName.charAt(3) == 'W'){
+            if(fileName.charAt(3) == 'W') {
                 fromLo = (int) (-fromLo);
             }
 
         }
-        catch(NumberFormatException e){
+        catch(NumberFormatException e) {
             throw new IllegalArgumentException();
         }
         
-        if(!fileName.substring(7).equals(".hgt")){
+        if(!fileName.substring(7).equals(".hgt")) {
             throw new IllegalArgumentException("should be a .hgt");
         }
         
         extent = new Interval2D(new Interval1D(fromLo * 3600, (fromLo + 1) * 3600), new Interval1D(fromLa * 3600, (fromLa + 1) * 3600));
        
-        try(FileInputStream fileStream = new FileInputStream(file)){
+        try(FileInputStream fileStream = new FileInputStream(file)) {
+            
             long length = file.length();
-            if(length != 25934402){
+            
+            if(length != 25934402) {
                 throw new IllegalArgumentException("wrong length");
             }
+            
             buffer = fileStream.getChannel().map(MapMode.READ_ONLY, 0, length).asShortBuffer();
         }
-        catch(IOException e){
+        catch(IOException e) {
             throw new IllegalArgumentException();
         }
     }
     
     @Override
-    public void close(){
+    public void close() {
         buffer = null;
     }
 

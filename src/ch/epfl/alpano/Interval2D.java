@@ -1,11 +1,12 @@
 package ch.epfl.alpano;
+import static java.util.Objects.requireNonNull;
 import static ch.epfl.alpano.Preconditions.*;
 import java.util.Objects;
 /**
  * Create a two dimensional interval given two one dimensional intervals (cartesian product)
  * Immutable class
  * @author Mathieu Chevalley (274698)
- *
+ * @see Interval1D
  */
 public final class Interval2D {
 
@@ -19,11 +20,8 @@ public final class Interval2D {
      * @throws NullPointerException if either of the intervals are null
      */
     public Interval2D(Interval1D iX, Interval1D iY){
-        if(iX == null || iY == null){
-            throw new NullPointerException();
-        }
-        this.iX = iX;
-        this.iY = iY;
+        this.iX = requireNonNull(iX);
+        this.iY = requireNonNull(iY);
     }
     
     /**
@@ -63,55 +61,47 @@ public final class Interval2D {
     /**
      * 
      * @param that an other interval
-     * @throws NullPointerException if that is null
      * @return the size of their intersection
+     * @throws NullPointerException if that is null
      */
     public int sizeOfIntersectionWith(Interval2D that){
-        if(that == null){
-            throw new NullPointerException();
-        }
+        requireNonNull(that);
         return iX.sizeOfIntersectionWith(that.iX) * iY.sizeOfIntersectionWith(that.iY);
     }
     
     /**
      * 
      * @param that an other interval
-     * @throws NullPointerException if that is null
      * @return the bounding union of both intervals
+     * @throws NullPointerException if that is null
      */
     public Interval2D boundingUnion(Interval2D that){
-        if(that == null){
-            throw new NullPointerException();
-        }
+        requireNonNull(that);
         return new Interval2D(iX.boundingUnion(that.iX), iY.boundingUnion(that.iY));
     }
     
     /**
      * 
      * @param that an other interval
+     * @return <code>true</code> iff this and that are unionable
      * @throws NullPointerException if that is null
-     * @return true if this and that are unionable
      */
     public boolean isUnionableWith(Interval2D that){
-        if(that == null){
-            throw new NullPointerException();
-        }
+        requireNonNull(that);
         return this.size() + that.size() - sizeOfIntersectionWith(that) == this.boundingUnion(that).size();
     }
     
     /**
      * 
      * @param that an other interval
+     * @return the union of both intervals
      * @throws IllegalArgumentException if this and that are not unionable
      * @throws NullPointerException if that is null
-     * @return the union of both intervals
      */
     public Interval2D union(Interval2D that){
-        if(that == null){
-            throw new NullPointerException();
-        }
-        checkArgument(this.isUnionableWith(that));
-        return this.boundingUnion(that);
+        requireNonNull(that);
+        checkArgument(isUnionableWith(that));
+        return boundingUnion(that);
     }
     
     @Override

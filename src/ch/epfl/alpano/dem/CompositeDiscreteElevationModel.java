@@ -5,14 +5,14 @@ import static java.util.Objects.requireNonNull;
 import ch.epfl.alpano.Interval2D;
 
 
-/**Class thet represents a union of two DEM, implements discrete elevation model.
+/**Class that represents a union of two DEM, implements discrete elevation model.
  * 
  * @author Louis Amaudruz (271808)
  * @author Mathieu Chevalley (274698)
  * 
- * @implements DiscreteElevationModel
+ * @see DiscreteElevationModel
  */
-final class CompositeDiscreteElevationModel implements DiscreteElevationModel{
+final class CompositeDiscreteElevationModel implements DiscreteElevationModel {
 	
 	private final Interval2D MNT;
 	private final DiscreteElevationModel dem1;
@@ -29,10 +29,8 @@ final class CompositeDiscreteElevationModel implements DiscreteElevationModel{
 		this.dem1 = requireNonNull(dem1);
 		this.dem2 = requireNonNull(dem2);
 		
-
-		
-		
 	}
+	
 	@Override
 	public Interval2D extent() {
 		return this.MNT;
@@ -42,19 +40,19 @@ final class CompositeDiscreteElevationModel implements DiscreteElevationModel{
 	@Override
 	public double elevationSample(int x, int y) {
 
-			if (this.MNT.contains(x,y)) {
-				if (this.dem1.extent().contains(x, y)) {
-					return dem1.elevationSample(x, y);
-				}
-				else {
-					return dem2.elevationSample(x, y);
-				}
-				
+		if (this.MNT.contains(x,y)) {
+			if (this.dem1.extent().contains(x, y)) {
+				return dem1.elevationSample(x, y);
+			}
+			else {
+				return dem2.elevationSample(x, y);
 			}
 			
-			else {
-				throw new IllegalArgumentException("the point does not belong to the MNT");
-			}
+		}
+		
+		else {
+			throw new IllegalArgumentException("the point does not belong to the MNT");
+		}
 			
 	}
 

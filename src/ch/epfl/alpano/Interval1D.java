@@ -1,5 +1,6 @@
 
 package ch.epfl.alpano;
+import static java.util.Objects.requireNonNull;
 import static ch.epfl.alpano.Preconditions.*;
 import static java.lang.Math.*;
 
@@ -8,7 +9,7 @@ import java.util.Objects;
 /**
  * Create a one dimasional interval (immutable class)
  * @author Mathieu Chevalley (274698)
- *
+ *  
  */
 public final class Interval1D {
 
@@ -46,7 +47,7 @@ public final class Interval1D {
     /**
      * Check if v is in the interval
      * @param v
-     * @return true if v is inside
+     * @return <code>true</code> if v is inside, <code>false</code> otherwise
      */
     public boolean contains(int v){
         return v >= includedFrom() && v <= includedTo();
@@ -67,9 +68,7 @@ public final class Interval1D {
      * @return the size of the intersection between this and that
      */
     public int sizeOfIntersectionWith(Interval1D that){
-        if(that == null){
-            throw new NullPointerException();
-        }
+        requireNonNull(that);
         
         if(this.contains(that.includedFrom())){
             if(this.contains(that.includedTo())){
@@ -99,9 +98,7 @@ public final class Interval1D {
      * @return the bounding union of this and that
      */
     public Interval1D boundingUnion(Interval1D that){
-        if(that == null){
-            throw new NullPointerException();
-        }
+        requireNonNull(that);
         return new Interval1D(min(includedFrom(), that.includedFrom()), max(includedTo(), that.includedTo()));
     }
     
@@ -112,9 +109,7 @@ public final class Interval1D {
      * @return true if this and that are unionable 
      */
     public boolean isUnionableWith(Interval1D that){
-        if(that == null){
-            throw new NullPointerException();
-        }
+        requireNonNull(that);
         return (this.boundingUnion(that)).size() == this.size() + that.size() - this.sizeOfIntersectionWith(that);
     }
     
@@ -126,18 +121,16 @@ public final class Interval1D {
      * @return the union of both intervals
      */
     public Interval1D union(Interval1D that){
+        requireNonNull(that);
         checkArgument(isUnionableWith(that));
-        if(that == null){
-            throw new NullPointerException();
-        }
+        
         return boundingUnion(that);
     }
     
     @Override
     public boolean equals(Object thatO){
-        if(thatO == null){
-            throw new NullPointerException();
-        }
+        requireNonNull(thatO);
+
         if(thatO instanceof Interval1D){
             if(thatO.getClass().equals(this.getClass())){
                 return (((Interval1D)thatO).includedFrom() == includedFrom() && ((Interval1D)thatO).includedTo() == includedTo());

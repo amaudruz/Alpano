@@ -1,6 +1,7 @@
 package ch.epfl.alpano.summit;
 
 import ch.epfl.alpano.GeoPoint;
+import static java.util.Objects.requireNonNull;
 import static ch.epfl.alpano.Preconditions.*;
 
 /**
@@ -19,11 +20,13 @@ public final class Summit {
      * @param name of the summit
      * @param position 
      * @param elevation (in metres)
+     * @throws IllegalArgumentException if elevation is negative
+     * @throws NullPointerExcpetion if name or position is null 
      */
     public Summit(String name, GeoPoint position, int elevation) {
-        checkArgument(elevation >= 0 && position != null && name != null);
-        this.name = name;
-        this.position = position;
+        checkArgument(elevation >= 0);
+        this.name = requireNonNull(name);
+        this.position = requireNonNull(position);
         this.elevation = elevation;
     }
     

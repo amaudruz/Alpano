@@ -27,7 +27,7 @@ public class GazetteerParser {
      * read the summits from a file
      * @param file
      * @return a list of summit
-     * @throws IOException
+     * @throws IOException if input is wrongly formatted or unreadable
      */
     public static List<Summit> readSummitsFrom(File file) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.US_ASCII));

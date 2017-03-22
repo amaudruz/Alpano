@@ -30,6 +30,8 @@ public final class ElevationProfile {
 	 * @param origin : the origin location from which begin the straight line
 	 * @param azimuth : the orientation of the straight line
 	 * @param length : the length of the straight line
+	 * @throws IllegalArgumentExcpetion if the azimuth is not canonical or the length is non positive
+	 * @throws NullPointerException if elevationModel or origin is <code>null</code>
 	 */
 	public ElevationProfile(ContinuousElevationModel elevationModel, GeoPoint origin, double azimuth, double length) {
 		checkArgument(isCanonical(azimuth) && length >0);
@@ -48,16 +50,17 @@ public final class ElevationProfile {
 		}
 	}
 	
-	/** Compute the slope at a certain distance from the original location 
-	 * 
+	/** 
+	 * Compute the slope at a certain distance from the original location 
 	 * @param x : the distance from the original location
 	 * @return the slope at a wanted distance from the original location
+	 * @throws IllegalArgumentExcpetion if x is negative is bigger than the length
 	 */
 	
 	public double slopeAt(double x) {
 		checkArgument(x <= length && x >= 0);
-		GeoPoint p =  this.positionAt(x);
-		return this.elevationModel.slopeAt(p);
+		GeoPoint p =  positionAt(x);
+		return elevationModel.slopeAt(p);
 	}
 	
 	
@@ -65,11 +68,12 @@ public final class ElevationProfile {
 	 * 
 	 * @param x : the distance from the original location
 	 * @return the elevation at a wanted distance from the original location
-	 */
+	 * @throws IllegalArgumentExcpetion if x is negative is bigger than the length
+	*/
 	public double elevationAt(double x) {
 		checkArgument(x <= length && x >= 0);
-		GeoPoint p =  this.positionAt(x);
-		return this.elevationModel.elevationAt(p);
+		GeoPoint p =  positionAt(x);
+		return elevationModel.elevationAt(p);
 	}
 	
 	
@@ -78,6 +82,7 @@ public final class ElevationProfile {
 	 * 
 	 * @param x : the distance from the original location
 	 * @return he location (GeoPoint) at a certain distance from the origin
+	 * @throws IllegalArgumentExcpetion if x is negative is bigger than the length
 	 */
 	public GeoPoint positionAt(double x) {
 		checkArgument(x <= length && x >= 0);

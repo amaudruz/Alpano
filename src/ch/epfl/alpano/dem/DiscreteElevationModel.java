@@ -3,22 +3,26 @@ package ch.epfl.alpano.dem;
 import ch.epfl.alpano.Interval2D;
 
 /**
+ *An interface used for the used methods and constants of a DEM
  * 
  * @author Louis Amaudruz (271808)
  * @author Mathieu Chevalley (274698)
  * 
- * @extends AutoClosable
+ * @see AutoClosable
  *
- *An interface used for the used methods and constants of a DEM
  */
 
-public interface DiscreteElevationModel extends AutoCloseable{
+public interface DiscreteElevationModel extends AutoCloseable {
 	
 	public static int SAMPLES_PER_DEGREE = 3600;
 	
 	public static double SAMPLES_PER_RADIAN = (SAMPLES_PER_DEGREE * 180/Math.PI) ;
 	
-	
+	/**
+	 * Returns the index corresponding to an angle
+	 * @param angle
+	 * @return index
+	 */
 	public static double sampleIndex(double angle) {
 		
 		
@@ -26,8 +30,8 @@ public interface DiscreteElevationModel extends AutoCloseable{
 	}
 	
 	/**
-	 * 
 	 * @return the area of the DEM
+	 * @see Interval2D
 	 */
 	abstract Interval2D extent();
 	
@@ -46,13 +50,11 @@ public interface DiscreteElevationModel extends AutoCloseable{
 	 * @param that the other DEM
 	 * @return the union between the DEM this and an other DEM that
 	 * @throws IllegalArgumentException from the builder of a union between two DEM
-	 * 	
 	 */
 	default DiscreteElevationModel union(DiscreteElevationModel that)throws IllegalArgumentException {
-		//Interval2D union = this.extent().union(that.extent());
 		return new CompositeDiscreteElevationModel(this, that);
+	
 	}
-	
-	
+		
 
 }
