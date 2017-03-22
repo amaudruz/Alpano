@@ -49,7 +49,7 @@ public final class Interval1D {
      * @return true if v is inside
      */
     public boolean contains(int v){
-        return v >= includedFrom && v <= includedTo;
+        return v >= includedFrom() && v <= includedTo();
     }
     
     /**
@@ -57,7 +57,7 @@ public final class Interval1D {
      * @return number of elements of the interval
      */
     public int size(){
-        return includedTo - includedFrom + 1;
+        return includedTo() - includedFrom() + 1;
     }
     
     /**
@@ -70,20 +70,21 @@ public final class Interval1D {
         if(that == null){
             throw new NullPointerException();
         }
-        if(this.contains(that.includedFrom)){
-            if(this.contains(that.includedTo)){
+        
+        if(this.contains(that.includedFrom())){
+            if(this.contains(that.includedTo())){
                 return that.size();
             }
             else{
-                return includedTo - that.includedFrom + 1;
+                return includedTo() - that.includedFrom() + 1;
             }
         }
-        else if(that.contains(includedFrom)){
-            if(that.contains(includedTo)){
+        else if(that.contains(includedFrom())){
+            if(that.contains(includedTo())){
                 return this.size();
             }
             else{
-                return that.includedTo - includedFrom + 1;
+                return that.includedTo() - includedFrom() + 1;
             }
         }
         else{
@@ -101,7 +102,7 @@ public final class Interval1D {
         if(that == null){
             throw new NullPointerException();
         }
-        return new Interval1D(min(includedFrom, that.includedFrom), max(includedTo, that.includedTo));
+        return new Interval1D(min(includedFrom(), that.includedFrom()), max(includedTo(), that.includedTo()));
     }
     
     /**
@@ -125,11 +126,11 @@ public final class Interval1D {
      * @return the union of both intervals
      */
     public Interval1D union(Interval1D that){
-        checkArgument(this.isUnionableWith(that));
+        checkArgument(isUnionableWith(that));
         if(that == null){
             throw new NullPointerException();
         }
-        return this.boundingUnion(that);
+        return boundingUnion(that);
     }
     
     @Override
@@ -139,7 +140,7 @@ public final class Interval1D {
         }
         if(thatO instanceof Interval1D){
             if(thatO.getClass().equals(this.getClass())){
-                return ( ((Interval1D)thatO).includedFrom == includedFrom && ((Interval1D)thatO).includedTo == includedTo);
+                return (((Interval1D)thatO).includedFrom() == includedFrom() && ((Interval1D)thatO).includedTo() == includedTo());
             }
             else{
                 return false;

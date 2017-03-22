@@ -31,9 +31,10 @@ public class GazetteerParser {
      */
     public static List<Summit> readSummitsFrom(File file) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.US_ASCII));
-        List<Summit> summits = new ArrayList<Summit>();
+        List<Summit> summits = new ArrayList<>();
+        
         String line = "";
-        while((line = reader.readLine()) != null){
+        while((line = reader.readLine()) != null) {
             summits.add(readSummitLine(line));
         }
         
@@ -41,10 +42,11 @@ public class GazetteerParser {
         return Collections.unmodifiableList(summits);
     }
     
-    public static Summit readSummitLine(String line) throws IOException {
-        checkArgument(!line.isEmpty() && line.length() > 36);
+    private static Summit readSummitLine(String line) throws IOException {
+       
         try {
-
+            checkArgument(!line.isEmpty() && line.length() > 36);
+            
             String longitude = line.substring(0, 9).trim();
             String[] hms = longitude.split(":");
             double longi = toRadians(Integer.parseInt(hms[0]), Integer.parseInt(hms[1]), Integer.parseInt(hms[2]));
@@ -69,7 +71,7 @@ public class GazetteerParser {
         
     }
     
-    public static double toRadians(double degrees, double minutes, double seconds) {
+    private static double toRadians(double degrees, double minutes, double seconds) {
         checkArgument(degrees >= 0 && minutes >= 0 && seconds >= 0);
         double degree = degrees + minutes / 60 + seconds / 3600;
         return degree * Math.PI/180;

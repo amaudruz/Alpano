@@ -20,8 +20,8 @@ public final class Summit {
      * @param position 
      * @param elevation (in metres)
      */
-    public Summit(String name, GeoPoint position, int elevation){
-        checkArgument(elevation >= 0 && position != null && !name.isEmpty());
+    public Summit(String name, GeoPoint position, int elevation) {
+        checkArgument(elevation >= 0 && position != null && name != null);
         this.name = name;
         this.position = position;
         this.elevation = elevation;
@@ -30,26 +30,26 @@ public final class Summit {
     /**
      * @return name of the summit
      */
-    public String name(){
+    public String name() {
         return name;
     }
     
     /**
      * @return position of the summit
      */
-    public GeoPoint position(){
+    public GeoPoint position() {
         return position;
     }
     
     /**
      * @return the elevation of the summit
      */
-    public int elevation(){
+    public int elevation() {
         return elevation;
     }
     
     @Override
-    public String toString(){
+    public String toString() {
         return name() + " " + position() + " " + elevation();
     }
 }

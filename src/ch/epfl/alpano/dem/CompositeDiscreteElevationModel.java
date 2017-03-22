@@ -10,7 +10,7 @@ import ch.epfl.alpano.Interval2D;
  * @author Louis Amaudruz (271808)
  * @author Mathieu Chevalley (274698)
  * 
- *
+ * @implements DiscreteElevationModel
  */
 final class CompositeDiscreteElevationModel implements DiscreteElevationModel{
 	

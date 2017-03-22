@@ -10,18 +10,18 @@ import org.junit.Test;
 
 public class GazetteerParserTests {
 
-    @Test(expected = IllegalArgumentException.class)
-    public void readLineEmpty(){
+    @Test(expected = IOException.class)
+    public void readLineEmpty() throws IOException{
         GazetteerParser.readSummitLine("");
     }
     
-    @Test(expected = IllegalArgumentException.class)
-    public void readLineTrivial(){
+    @Test(expected = IOException.class)
+    public void readLineTrivial() throws IOException{
         GazetteerParser.readSummitLine("20134 summit");
     }
     
     @Test
-    public void readLineOnNonTrivial(){
+    public void readLineOnNonTrivial() throws IOException{
         System.out.println(GazetteerParser.readSummitLine("  7:56:53 46:35:33  2472  H1 C02 D0 LAUBERHORN"));
 
     }
@@ -30,9 +30,7 @@ public class GazetteerParserTests {
     @Test
     public void readFile() throws IOException{
         List<Summit> s = GazetteerParser.readSummitsFrom(new File("alps.txt"));
-        for(Summit t : s){
-            System.out.println(t);
-        }
+        s.forEach(System.out::println);
     }
     
     @Test
