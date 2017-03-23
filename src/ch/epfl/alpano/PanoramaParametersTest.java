@@ -50,6 +50,10 @@ public class PanoramaParametersTest {
 		assertEquals((this.width-1)/2.0, james1.xForAzimuth(this.centerAzi), 0.000001);
 		assertEquals(0,james1.xForAzimuth((11*Math.PI/6.0) + 0.000000000000014), 0.00001);
 		assertEquals(this.width-1,james1.xForAzimuth((Math.PI/6.0) ), 0.00001);
+		    //assertEquals(0, james1.xForAzimuth(james1.azimuthForX(0)),1e-10);
+		for(int i = 0; i < width; i++){
+		    assertEquals(i, james1.xForAzimuth(james1.azimuthForX(i)), 1e-10);
+		}
 
 	}
 	
@@ -72,7 +76,12 @@ public class PanoramaParametersTest {
 		assertEquals((this.height-1)/2.0, james1.yForAltitude(0), 0.000001);
 		assertEquals((this.height-1), james1.yForAltitude(-((this.height-1)/2.0)*james1.anglePerPixels()), 0.00001);
 		assertEquals(0, james1.yForAltitude(((this.height-1)/2.0)*james1.anglePerPixels()), 0.00001);
+		assertEquals(5, james1.yForAltitude(james1.altitudeForY(5)),0);
+		for(int i = 0; i < height; i++){
+		    assertEquals(i, james1.yForAltitude(james1.altitudeForY(i)), 1e-10);
+		}
 	}
+	
 	
 	@Test
 	public void TestaltitudeForY() {

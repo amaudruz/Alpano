@@ -35,28 +35,37 @@ public final class PanoramaParameters {
 	
 	public double azimuthForX(double x) {
 		checkArgument(x >= 0 && x <= width() -1);
-		return floorMod(centerAzimuth() + (anglePerPixels()*(x -((width()-1)/2.0))), PI2); 
+		
+		double azimuth = floorMod(centerAzimuth() + (anglePerPixels()*(x -((width()-1)/2.0))), PI2);
+		//azimuth = Azimuth.canonicalize(azimuth);
+		assert(Math.abs(Math2.angularDistance(azimuth, centerAzimuth()) )<= horizontalFieldOfView/2 + 1e-10);
+		
+		return azimuth; 
 	}
 	
 	
 	public double xForAzimuth(double a) { 	
-		Preconditions.checkArgument(Math.abs(Math2.angularDistance(a, centerAzimuth()) )<= horizontalFieldOfView/2);
+		checkArgument(Math.abs(Math2.angularDistance(a, centerAzimuth()) )<= horizontalFieldOfView/2 + 1e-10);
 		
-		return (angularDistance(centerAzimuth(),a ) / anglePerPixels()) +((width() -1) / 2.0);
+		double x = (angularDistance(centerAzimuth(),a ) / anglePerPixels()) +((width() -1) / 2.0);
+		assert(x >= 0 && x <= width() - 1);
+		
+		return x;
 
 	}
 	
 	public double altitudeForY(double y) {
-		checkArgument(y >= 0 && y < height());
+		checkArgument(y >= 0 && y <= height() - 1);
 		
 		double altitude = (( (height()-1)/2.0) - y )* anglePerPixels();
-		assert(Math.abs(altitude) <= this.verticalFieldOfView()/2);
+		assert(Math.abs(altitude) <= verticalFieldOfView()/2);
 		
 		return altitude;
 	}
 	
 	public double yForAltitude(double a) {
-		checkArgument(Math.abs(a) <=verticalFieldOfView()/2);
+		checkArgument(Math.abs(a) <= verticalFieldOfView()/2);
+		
 		double y = ((height()-1)/2.0) + (-1)*(a /anglePerPixels());
 		assert(y >= 0 && y < height());
 		
@@ -68,6 +77,7 @@ public final class PanoramaParameters {
 	}
 	
 	int linearSampleIndex(int x, int y) {
+	    checkArgument(isValidSampleIndex(x,y));
 		return (y * width()) + x ;
 	}
 				
@@ -99,11 +109,11 @@ public final class PanoramaParameters {
 	}
 	
 	public double anglePerPixels() {
-		return this.horizontalFieldOfView/ (this.width-1);
+		return horizontalFieldOfView() / (width() - 1);
 	}
 	
 	public double verticalFieldOfView() {
-		return anglePerPixels()*(this.height-1);
+		return anglePerPixels() * (height() - 1);
 	}
 	
 }
