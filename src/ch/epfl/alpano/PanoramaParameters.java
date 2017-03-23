@@ -1,5 +1,6 @@
 package ch.epfl.alpano;
 
+
 import static java.util.Objects.requireNonNull;
 import static java.lang.Math.*;
 import static ch.epfl.alpano.Math2.*;
@@ -27,45 +28,36 @@ public final class PanoramaParameters {
 		this.horizontalFieldOfView  = horizontalFieldOfView;
 		this.maxDistance = maxDistance;
 		this.width = width;
-		this.height = height;
+		this.height = height;	
 		
 		
 	}
 	
 	public double azimuthForX(double x) {
-		checkArgument(x > 0 && x <= width() -1);
-		return floorMod(centerAzimuth() + (anglePerPixels()*(x -(width()/2))), PI2); 
+		checkArgument(x >= 0 && x <= width() -1);
+		return floorMod(centerAzimuth() + (anglePerPixels()*(x -((width()-1)/2.0))), PI2); 
 	}
 	
 	
 	public double xForAzimuth(double a) { 	
-		if (centerAzimuth() - (horizontalFieldOfView()/2) < 0) {
-			checkArgument(( a >= floorMod(centerAzimuth() - (horizontalFieldOfView()/2), PI2) && a <= (PI2)) ||
-			(a >= 0 && a <= centerAzimuth() + (horizontalFieldOfView()/2)));
-		}
+		Preconditions.checkArgument(Math.abs(Math2.angularDistance(a, centerAzimuth()) )<= horizontalFieldOfView/2);
 		
-		if (centerAzimuth() + (horizontalFieldOfView()/2) > PI2) {
-			checkArgument(( a >= centerAzimuth() - (horizontalFieldOfView()/2)  && a <= 0) ||
-			(a >= 0 && a <= floorMod(centerAzimuth() + (horizontalFieldOfView()/2), PI2)));
-		}
-		
-		return (angularDistance(a, centerAzimuth()) / anglePerPixels()) +((width() - 1) / 2);
+		return (angularDistance(centerAzimuth(),a ) / anglePerPixels()) +((width() -1) / 2.0);
 
 	}
 	
 	public double altitudeForY(double y) {
 		checkArgument(y >= 0 && y < height());
 		
-		double altitude = (y - height()/2) * anglePerPixels();
-		assert(altitude >= 0 && altitude <= verticalFieldOfView());
+		double altitude = (( (height()-1)/2.0) - y )* anglePerPixels();
+		assert(Math.abs(altitude) <= this.verticalFieldOfView()/2);
 		
 		return altitude;
 	}
 	
 	public double yForAltitude(double a) {
-		checkArgument(a >= 0 && a <= verticalFieldOfView());
-		
-		double y = (height()/2) + (a /anglePerPixels());
+		checkArgument(Math.abs(a) <=verticalFieldOfView()/2);
+		double y = ((height()-1)/2.0) + (-1)*(a /anglePerPixels());
 		assert(y >= 0 && y < height());
 		
 		return y;
@@ -103,7 +95,7 @@ public final class PanoramaParameters {
 	}
 	
 	public int height() {
-		return this.height();
+		return this.height;
 	}
 	
 	public double anglePerPixels() {
