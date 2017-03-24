@@ -9,14 +9,29 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.function.DoubleUnaryOperator;
 
+/**
+ * Class that computes a panorama
+ * @author Mathieu Chevalley (274698)
+ * @see Panorama
+ */
 public final class PanoramaComputer {
     
     private final ContinuousElevationModel dem;
     
+    /**
+     * Public builder
+     * @param dem a continuous elevation model used to compute the panorama
+     * @throws NullPointerException if the dem is null
+     */
     public PanoramaComputer(ContinuousElevationModel dem) {
        this.dem = requireNonNull(dem); 
     }
 
+    /**
+     * Function that computes the panorama
+     * @param parameters the parameters of the panorama
+     * @return the panorama
+     */
     public Panorama computePanorama(PanoramaParameters parameters) {
         Panorama.Builder panoBuilder = new Panorama.Builder(parameters);
         
@@ -42,6 +57,13 @@ public final class PanoramaComputer {
         return panoBuilder.build();
     }
     
+    /**
+     * 
+     * @param profile 
+     * @param ray0 initial elevation
+     * @param raySlope slope of the function
+     * @return a function computing the distance between the ground and the ray
+     */
     public static DoubleUnaryOperator rayToGroundDistance(ElevationProfile profile, double ray0, double raySlope) {
         DoubleUnaryOperator function = (double x) -> {
             return ray0 +  x * raySlope - profile.elevationAt(x) + sq(x) * (1 - 0.13)/(2 * EARTH_RADIUS );

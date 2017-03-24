@@ -85,8 +85,10 @@ public final class PanoramaParameters {
 	
 	/**
 	 * 
-	 * @param y
-	 * @return
+	 * @param y the vertical index
+	 * @return the corresponding altitude
+	 * @throws IllegalArgumentException if y is not in the field
+	 * @see yForAltitude
 	 */
 	public double altitudeForY(double y) {
 		checkArgument(y >= 0 && y <= height() - 1);
@@ -97,6 +99,13 @@ public final class PanoramaParameters {
 		return altitude;
 	}
 	
+	/**
+	 * 
+	 * @param a the altitude 
+	 * @return the corresponding index
+	 * @throws IllegalArgumentException if the altitude is not in the field
+	 * @see altitudeForY
+	 */
 	public double yForAltitude(double a) {
 		checkArgument(Math.abs(a) <= verticalFieldOfView()/2);
 		
@@ -114,38 +123,76 @@ public final class PanoramaParameters {
 	    assert(isValidSampleIndex(x,y));
 		return (y * width()) + x ;
 	}
-				
+		
+	/**
+	 * 
+	 * @return the observer position
+	 */
 	public GeoPoint observerPosition() {
 		return this.observerPosition;
 	}
 	
+	/**
+	 * 
+	 * @return the observer elevation in meters
+	 */
 	public int observerElevation() {
 		return this.observerElevation;
 	}
+	
+	/**
+	 * 
+	 * @return the central azimuth
+	 */
 	public double centerAzimuth(){
 		return this.centerAzimuth;
 	}
 	
+	/**
+	 * 
+	 * @return the horizontal fiel of view
+	 */
 	public double horizontalFieldOfView() {
 		return this.horizontalFieldOfView;
 	
 	}
 	
+	/**
+	 * 
+	 * @return the maximum distance from the observer
+	 */
 	public int maxDistance() {
 		return this.maxDistance;
 	}
+	
+	/**
+	 * 
+	 * @return the field width
+	 */
 	public int width() {
 		return this.width;
 	}
 	
+	/**
+	 * 
+	 * @return the field height
+	 */
 	public int height() {
 		return this.height;
 	}
 	
+	/**
+	 * 
+	 * @return rate of angle per pixels
+	 */
 	public double anglePerPixels() {
 		return horizontalFieldOfView() / (width() - 1);
 	}
 	
+	/**
+	 * 
+	 * @return the vertical field of view
+	 */
 	public double verticalFieldOfView() {
 		return anglePerPixels() * (height() - 1);
 	}
