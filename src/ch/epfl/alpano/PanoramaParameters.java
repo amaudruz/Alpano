@@ -30,7 +30,7 @@ public final class PanoramaParameters {
 	 * @param maxDistance
 	 * @param width
 	 * @param height
-	 * @throws IllegalArgumentExcpetion if azimuth is not canonical, or if maxDistance, width or height are negative
+	 * @throws IllegalArgumentException if azimuth is not canonical, or if maxDistance, width or height are negative
 	 * or if horizontalFieldOfView is less than 0 or greater that 2*pi
 	 * @throws NullPointerException if observerPosition is null
 	 */

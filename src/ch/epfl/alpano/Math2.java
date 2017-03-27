@@ -11,6 +11,9 @@ import static ch.epfl.alpano.Preconditions.checkArgument;;
  */
 public interface Math2 {
     
+    /**
+     * double of pi
+     */
     double PI2 = 2 * Math.PI;
     
     /**
@@ -29,8 +32,7 @@ public interface Math2 {
      * @return the modulo
      */
     public static double floorMod(double x, double y){
-        double mod = x - y * Math.floor(x/y);
-        return mod;
+        return x - y * Math.floor(x/y);
     }
 
     /**
@@ -39,8 +41,7 @@ public interface Math2 {
      * @return the corresponding haversin
      */
     public static double haversin(double x){
-        double sinus = Math.sin(x/2);
-        return sq(sinus);
+        return sq(Math.sin(x/2));
     }
     
     /**
@@ -77,9 +78,7 @@ public interface Math2 {
     public static double bilerp(double z00, double z10, double z01, double z11,
             double x, double y){
         
-        double lerp1 = lerp(z00, z10, x);
-        double lerp2 = lerp(z01, z11, x);
-        return lerp(lerp1, lerp2, y);
+        return lerp(lerp(z00, z10, x), lerp(z01, z11, x), y);
         
     }
     
@@ -93,7 +92,7 @@ public interface Math2 {
      */
     public static double firstIntervalContainingRoot(DoubleUnaryOperator f, double minX, double maxX, double dX){
         
-        for (double i = minX; i <= maxX; i = i+dX) {
+        for (double i = minX; i <= maxX - dX; i = i+dX) {
             
             if (f.applyAsDouble(i) * f.applyAsDouble(i+dX) <= 0){
                 return i;            
@@ -110,20 +109,19 @@ public interface Math2 {
      * @param x1 lower bound
      * @param x2 upper bound
      * @param epsilon a size giving the precision
+     * @return the lower bound of the interval
      * @throws IllegalArgumentException if the given interval do not contain a root
      * @throws IllegalArgumentException if epsilon is not positive
-     * @return the lower bound of the interval
      */
     public static double improveRoot(DoubleUnaryOperator f, double x1, double x2, double epsilon){
         checkArgument(f.applyAsDouble(x1) * f.applyAsDouble(x2) < 0);
-           
-        
         checkArgument(epsilon > 0);
         
-        double xm = (x1 + x2)/2;
+        double xm = (x1 + x2)/2.0;
         
         
-        if(Math.abs(x1 - x2) < epsilon){
+        if(Math.abs(x1 - x2) <= epsilon){
+
             return x1;
         }
         
@@ -133,7 +131,7 @@ public interface Math2 {
         else if(f.applyAsDouble(xm) * f.applyAsDouble(x2) < 0){
             return improveRoot(f, xm, x2, epsilon);
         }
-        
+
         return xm;
     }
 }

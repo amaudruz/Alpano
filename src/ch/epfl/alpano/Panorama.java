@@ -163,7 +163,7 @@ public final class Panorama {
          * @param distance that corresponds to the index
          * @return this
          * @throws IllegalStateException if already built 
-         * @throws IndexOutOfBoundsExcpetion if the index are out of the field
+         * @throws IndexOutOfBoundsException if the index are out of the field
          */
         public Builder setDistanceAt(int x, int y, float distance) {
             requireNonBuild();
@@ -179,7 +179,7 @@ public final class Panorama {
          * @param longitude that corresponds to the index
          * @return this
          * @throws IllegalStateException if already built 
-         * @throws IndexOutOfBoundsExcpetion if the index are out of the field
+         * @throws IndexOutOfBoundsException if the index are out of the field
          */
         public Builder setLongitudeAt(int x, int y, float longitude) {
             requireNonBuild();
@@ -195,7 +195,7 @@ public final class Panorama {
          * @param latitude that corresponds to the index
          * @return this
          * @throws IllegalStateException if already built 
-         * @throws IndexOutOfBoundsExcpetion if the index are out of the field
+         * @throws IndexOutOfBoundsException if the index are out of the field
          */
         public Builder setLatitudeAt(int x, int y, float latitude) {
             requireNonBuild();
@@ -211,7 +211,7 @@ public final class Panorama {
          * @param elevation that corresponds to the index
          * @return this
          * @throws IllegalStateException if already built 
-         * @throws IndexOutOfBoundsExcpetion if the index are out of the field
+         * @throws IndexOutOfBoundsException if the index are out of the field
          */
         public Builder setElevationAt(int x, int y, float elevation) {
             requireNonBuild();
@@ -227,7 +227,7 @@ public final class Panorama {
          * @param slope that corresponds to the index
          * @return this
          * @throws IllegalStateException if already built 
-         * @throws IndexOutOfBoundsExcpetion if the index are out of the field
+         * @throws IndexOutOfBoundsException if the index are out of the field
          */
         public Builder setSlopeAt(int x, int y, float slope) {
             requireNonBuild();
@@ -243,6 +243,7 @@ public final class Panorama {
          */
         public Panorama build() {
             requireNonBuild();
+            build = true;
             return new Panorama(parameters, distance, longitude, latitude, elevation, slope);
         }
         

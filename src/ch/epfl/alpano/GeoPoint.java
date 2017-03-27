@@ -1,5 +1,6 @@
 package ch.epfl.alpano;
 import static ch.epfl.alpano.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 import static java.lang.Math.*;
 
 import java.util.Locale;
@@ -56,12 +57,7 @@ public final class GeoPoint {
      * @return the distance in meters
      */
     public double distanceTo(GeoPoint that){
-        /*double angle = 2 * asin(sqrt(
-                haversin(angularDistance(latitude, that.latitude) + cos(latitude)*cos(that.latitude)*haversin(angularDistance(longitude, that.longitude)))
-                ));*/
-        if(that == null){
-            throw new NullPointerException();
-        }
+        requireNonNull(that);
         double angle = 2 * asin(sqrt(haversin(latitude- that.latitude) + cos(latitude)*cos(that.latitude)*haversin(longitude- that.longitude)));
         return toMeters(angle);
     }
@@ -73,12 +69,10 @@ public final class GeoPoint {
      * @return the azimuth
      */
     public double azimuthTo(GeoPoint that){
-        if(that == null){
-            throw new NullPointerException();
-        }
+        requireNonNull(that);
         double angle = atan2(sin(longitude - that.longitude)*cos(that.latitude),
                 (cos(latitude)*sin(that.latitude)-sin(latitude)*cos(that.latitude)*cos(longitude-that.longitude)));
-        //System.out.println(angle);
+
         return fromMath(canonicalize(angle));
     }
     
@@ -86,12 +80,8 @@ public final class GeoPoint {
     @Override
     public String toString(){
        
-        //double latDegree = floor(latitude * 180/PI * 1000) / 1000;
-        //double lonDegree = floor(longitude * 180/PI * 1000) / 1000;
-        double latDegree =latitude * 180/PI;
-        double lonDegree = longitude * 180/PI;
         Locale l = null;
-        return String.format(l,"[%.3f; %.3f]", lonDegree, latDegree);
+        return String.format(l,"[%.3f; %.3f]", longitude * 180/PI, latitude * 180/PI);
     }
     
 }

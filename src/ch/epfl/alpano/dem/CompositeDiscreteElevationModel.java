@@ -20,8 +20,9 @@ final class CompositeDiscreteElevationModel implements DiscreteElevationModel {
 
 	/**Construct a dem with the union of the intervals and their elevations
 	 * 
-	 * @param dem1 : first dem
-	 * @param dem2 :second dem
+	 * @param dem1  first dem
+	 * @param dem2  second dem
+	 * @throws NullPointerException if dem1 or dem2 is <code>null</code>
 	 */
 	CompositeDiscreteElevationModel(DiscreteElevationModel dem1, DiscreteElevationModel dem2) {
 		
@@ -40,8 +41,8 @@ final class CompositeDiscreteElevationModel implements DiscreteElevationModel {
 	@Override
 	public double elevationSample(int x, int y) {
 
-		if (this.MNT.contains(x,y)) {
-			if (this.dem1.extent().contains(x, y)) {
+		if (extent().contains(x,y)) {
+			if (dem1.extent().contains(x, y)) {
 				return dem1.elevationSample(x, y);
 			}
 			else {

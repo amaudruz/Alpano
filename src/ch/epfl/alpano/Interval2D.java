@@ -47,7 +47,7 @@ public final class Interval2D {
      * @return true if this contains the pair
      */
     public boolean contains(int x, int y){
-        return iX.contains(x) && iY.contains(y);
+        return iX().contains(x) && iY().contains(y);
     }
     
     /**
@@ -55,7 +55,7 @@ public final class Interval2D {
      * @return the size of the interval
      */
     public int size(){
-        return iX.size() * iY.size();
+        return iX().size() * iY().size();
     }
     
     /**
@@ -66,7 +66,7 @@ public final class Interval2D {
      */
     public int sizeOfIntersectionWith(Interval2D that){
         requireNonNull(that);
-        return iX.sizeOfIntersectionWith(that.iX) * iY.sizeOfIntersectionWith(that.iY);
+        return iX().sizeOfIntersectionWith(that.iX()) * iY().sizeOfIntersectionWith(that.iY());
     }
     
     /**
@@ -77,7 +77,7 @@ public final class Interval2D {
      */
     public Interval2D boundingUnion(Interval2D that){
         requireNonNull(that);
-        return new Interval2D(iX.boundingUnion(that.iX), iY.boundingUnion(that.iY));
+        return new Interval2D(iX().boundingUnion(that.iX()), iY().boundingUnion(that.iY()));
     }
     
     /**
@@ -88,7 +88,7 @@ public final class Interval2D {
      */
     public boolean isUnionableWith(Interval2D that){
         requireNonNull(that);
-        return this.size() + that.size() - sizeOfIntersectionWith(that) == this.boundingUnion(that).size();
+        return size() + that.size() - sizeOfIntersectionWith(that) == boundingUnion(that).size();
     }
     
     /**
@@ -99,21 +99,19 @@ public final class Interval2D {
      * @throws NullPointerException if that is null
      */
     public Interval2D union(Interval2D that){
-        requireNonNull(that);
-        checkArgument(isUnionableWith(that));
+        checkArgument(isUnionableWith(requireNonNull(that)));
         return boundingUnion(that);
     }
     
     @Override
     public boolean equals(Object thatO){
-        if(thatO == null){
-            throw new NullPointerException();
-        }
+        requireNonNull(thatO);
+        //TODO bonne méthode?
         if(!(thatO instanceof Interval2D)){
             return false;
         }
-        if(thatO.getClass() == this.getClass()){
-            return iX.equals(((Interval2D)thatO).iX) && iY.equals(((Interval2D)thatO).iY);
+        if(thatO.getClass() == getClass()){
+            return iX().equals(((Interval2D)thatO).iX()) && iY().equals(((Interval2D)thatO).iY());
         }
         else{
             return false;
@@ -122,11 +120,11 @@ public final class Interval2D {
     
     @Override
     public int hashCode(){
-        return Objects.hash(iX, iY);
+        return Objects.hash(iX(), iY());
     }
     
     @Override
     public String toString(){
-        return iX.toString() + "x" + iY.toString();
+        return iX() + "x" + iY();
     }
 }

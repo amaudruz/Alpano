@@ -3,19 +3,25 @@ package ch.epfl.alpano.dem;
 import ch.epfl.alpano.Interval2D;
 
 /**
- *An interface used for the used methods and constants of a DEM
+ * An interface used for the used methods and constants of a DEM
  * 
  * @author Louis Amaudruz (271808)
  * @author Mathieu Chevalley (274698)
  * 
- * @see AutoClosable
+ * @see AutoCloseable
  *
  */
 
 public interface DiscreteElevationModel extends AutoCloseable {
-	
+    
+	/**
+	 * number of sample per degree
+	 */
 	public static int SAMPLES_PER_DEGREE = 3600;
 	
+	/**
+	 * number of sample per radian
+	 */
 	public static double SAMPLES_PER_RADIAN = (SAMPLES_PER_DEGREE * 180/Math.PI) ;
 	
 	/**
@@ -41,6 +47,7 @@ public interface DiscreteElevationModel extends AutoCloseable {
 	 * @param x : the first of the location
 	 * @param y : the second coordinate of the location
 	 * @return the elevation at the location
+	 * @throws IllegalArgumentException if the sample is not in the extent
 	 */
 	abstract double elevationSample(int x, int y);
 	
@@ -49,7 +56,7 @@ public interface DiscreteElevationModel extends AutoCloseable {
 	 * 
 	 * @param that the other DEM
 	 * @return the union between the DEM this and an other DEM that
-	 * @throws IllegalArgumentException from the builder of a union between two DEM
+	 * @throws IllegalArgumentException if this and that are not unioable
 	 */
 	default DiscreteElevationModel union(DiscreteElevationModel that)throws IllegalArgumentException {
 		return new CompositeDiscreteElevationModel(this, that);

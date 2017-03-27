@@ -24,7 +24,7 @@ public final class Summit {
      * @throws NullPointerException if name or position is null 
      */
     public Summit(String name, GeoPoint position, int elevation) {
-        checkArgument(elevation >= 0);
+        //checkArgument(elevation >= 0);
         this.name = requireNonNull(name);
         this.position = requireNonNull(position);
         this.elevation = elevation;

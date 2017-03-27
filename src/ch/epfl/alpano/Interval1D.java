@@ -69,7 +69,7 @@ public final class Interval1D {
      */
     public int sizeOfIntersectionWith(Interval1D that){
         requireNonNull(that);
-        
+        //TODO est-ce que c'est la méthode la plus rapide?
         if(this.contains(that.includedFrom())){
             if(this.contains(that.includedTo())){
                 return that.size();
@@ -110,15 +110,15 @@ public final class Interval1D {
      */
     public boolean isUnionableWith(Interval1D that){
         requireNonNull(that);
-        return (this.boundingUnion(that)).size() == this.size() + that.size() - this.sizeOfIntersectionWith(that);
+        return (boundingUnion(that)).size() == size() + that.size() - sizeOfIntersectionWith(that);
     }
     
     /**
      * 
      * @param that an other interval
+     * @return the union of both intervals
      * @throws IllegalArgumentException if the two interval are not unionable
      * @throws NullPointerException if that is null
-     * @return the union of both intervals
      */
     public Interval1D union(Interval1D that){
         requireNonNull(that);
@@ -130,7 +130,7 @@ public final class Interval1D {
     @Override
     public boolean equals(Object thatO){
         requireNonNull(thatO);
-
+        //TODO c'est la bonne méthode?
         if(thatO instanceof Interval1D){
             if(thatO.getClass().equals(this.getClass())){
                 return (((Interval1D)thatO).includedFrom() == includedFrom() && ((Interval1D)thatO).includedTo() == includedTo());
@@ -151,7 +151,7 @@ public final class Interval1D {
     
     @Override
     public String toString(){
-        return "["+includedFrom+".."+includedTo+"]";
+        return "["+includedFrom()+".."+includedTo()+"]";
     }
 }
 

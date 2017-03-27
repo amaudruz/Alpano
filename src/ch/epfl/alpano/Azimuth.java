@@ -1,5 +1,6 @@
 package ch.epfl.alpano;
 import static java.lang.Math.PI;
+import static ch.epfl.alpano.Math2.PI2;
 import static ch.epfl.alpano.Preconditions.checkArgument;
 
 /**
@@ -16,11 +17,11 @@ public interface Azimuth {
     /**
      * 
      * @param azimuth
-     * @return true if the azimuth is canonical (between 0 and 2pi)
+     * @return <code>true</code> if the azimuth is canonical (between 0 and 2pi)
      */
     public static boolean isCanonical(double azimuth){
         
-        return azimuth >= 0 && azimuth < 2*PI;
+        return azimuth >= 0 && azimuth < PI2;
         
     }
     
@@ -32,12 +33,11 @@ public interface Azimuth {
      */
     public static double canonicalize(double azimuth){
         
-        while(azimuth >= 2*PI){
-            //System.out.println("kk");
-            azimuth -= 2*PI;
+        while(azimuth >= PI2){
+            azimuth -= PI2;
         }
         while(azimuth < 0){
-            azimuth += 2*PI;
+            azimuth += PI2;
         }
         
         return azimuth;
@@ -52,14 +52,14 @@ public interface Azimuth {
     public static double toMath(double azimuth){
         checkArgument(isCanonical(azimuth));
         
-        return canonicalize(2 * PI - azimuth);
+        return canonicalize(PI2 - azimuth);
     }
     
     /**
      * Return the azimuth in the geographical manner
-     * @param mathematical angle
-     * @throws IllegalArguementException if the angle is not canonical
+     * @param angle mathematical angle
      * @return the correct azimuth
+     * @throws IllegalArgumentException if the angle is not canonical
      */
     public static double fromMath(double angle){
         checkArgument(isCanonical(angle));
@@ -71,12 +71,12 @@ public interface Azimuth {
      * Return a string that represents the octant in which the azimuth is
      * 
      * @param azimuth
-     * @param n - north string
-     * @param e - east string
-     * @param s - south string
-     * @param w - west string
+     * @param n north string
+     * @param e east string
+     * @param s south string
+     * @param w west string
+     * @return a <code>String</code> position 
      * @throws IllegalArgumentException if azimuth is not canonical
-     * @return a string position 
      */
     public static String toOctantString(double azimuth, String n, String e, String s, String w){
         checkArgument(isCanonical(azimuth));

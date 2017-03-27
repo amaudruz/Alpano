@@ -1,127 +1,167 @@
 package ch.epfl.alpano;
 
-import static org.junit.Assert.*;
+import static ch.epfl.test.TestRandomizer.RANDOM_ITERATIONS;
+import static ch.epfl.test.TestRandomizer.newRandom;
+import static java.lang.Math.PI;
+import static java.lang.Math.floorMod;
+import static java.lang.Math.nextUp;
+import static java.lang.Math.toRadians;
+import static org.junit.Assert.assertEquals;
+
+import java.util.Random;
 
 import org.junit.Test;
 
 public class PanoramaParametersTest {
-	
-	private final GeoPoint origin = new GeoPoint(0,0);
-	private final double centerAzi = 0;
-	private final double horizontalvue = Math.PI/3;
-	private final int width = 40;
-	private final int height = 20;
-	
-	
-	@Test(expected = IllegalArgumentException.class)
-	public void ExceptionsTestBuilderAzimut() {
-		PanoramaParameters james = new PanoramaParameters(origin, 
-				0, -1, this.horizontalvue, 1000, this.width, this.height);
-		
-	}
-	
-	@Test(expected = IllegalArgumentException.class)
-	public void ExceptionsTestazimutForX() {
-		PanoramaParameters james1 = new PanoramaParameters(origin, 
-				0, 1, this.horizontalvue, 1000, this.width, this.height);
-		james1.azimuthForX(40);
-	
-	}
-	
-	@Test(expected = IllegalArgumentException.class)
-	public void ExceptionsTestXForazimuth() {
-		PanoramaParameters james1 = new PanoramaParameters(origin, 
-				0, 0, this.horizontalvue, 1000, this.width, this.height);
-		james1.xForAzimuth((20 * Math.PI/11 + 0.001));
-	
-	}
-	@Test(expected = IllegalArgumentException.class)
-	public void ExceptionsTestXForazimuth2() {
-		PanoramaParameters james1 = new PanoramaParameters(origin, 
-				0, Math.PI/6, this.horizontalvue, 1000, this.width, this.height);
-		james1.xForAzimuth((6.28));
-	
-	}
-	
-	@Test
-	public void TestXForazimuth() {
-		PanoramaParameters james1 = new PanoramaParameters(origin, 
-				0, 0, this.horizontalvue, 1000, this.width, this.height);
-		assertEquals((this.width-1)/2.0, james1.xForAzimuth(this.centerAzi), 0.000001);
-		assertEquals(0,james1.xForAzimuth((11*Math.PI/6.0) + 0.000000000000014), 0.00001);
-		assertEquals(this.width-1,james1.xForAzimuth((Math.PI/6.0) ), 0.00001);
-		    //assertEquals(0, james1.xForAzimuth(james1.azimuthForX(0)),1e-10);
-		for(int i = 0; i < width; i++){
-		    assertEquals(i, james1.xForAzimuth(james1.azimuthForX(i)), 1e-10);
-		}
+    // Default (and valid) arguments for constructor
+    private static GeoPoint O_POS() { return new GeoPoint(toRadians(4), toRadians(4)); }
+    private static int O_EL = 1000;
+    private static double C_AZ = toRadians(180);
+    private static double H_FOV = toRadians(60);
+    private static int MAX_D = 1000;
+    private static int W = 100, H = 100;
 
-	}
-	
-	@Test
-	public void TestazimuthForX() {
-		PanoramaParameters james1 = new PanoramaParameters(origin, 
-				0, 0, this.horizontalvue, 1000, this.width, this.height);
-		
-		assertEquals(this.centerAzi, james1.azimuthForX((this.width-1)/2.0), 0.000001);
-		assertEquals((11*Math.PI/6.0) , james1.azimuthForX(0), 0.000001);
-		assertEquals(Math.PI/6, james1.azimuthForX(this.width-1), 0.00001);
+    @Test(expected = NullPointerException.class)
+    public void constructorFailsWithNullObserverPosition() {
+        new PanoramaParameters(null, O_EL, C_AZ, H_FOV, MAX_D, W, H);
+    }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void constructorFailsWithNonCanonicalAzimuth() {
+        new PanoramaParameters(O_POS(), O_EL, 42d, H_FOV, MAX_D, W, H);
+    }
 
-	}
-	
-	@Test
-	public void TestYForaltitude() {
-		PanoramaParameters james1 = new PanoramaParameters(origin, 
-				0, 0, this.horizontalvue, 1000, this.width, this.height);
-		assertEquals((this.height-1)/2.0, james1.yForAltitude(0), 0.000001);
-		assertEquals((this.height-1), james1.yForAltitude(-((this.height-1)/2.0)*james1.anglePerPixels()), 0.00001);
-		assertEquals(0, james1.yForAltitude(((this.height-1)/2.0)*james1.anglePerPixels()), 0.00001);
-		assertEquals(5, james1.yForAltitude(james1.altitudeForY(5)),0);
-		for(int i = 0; i < height; i++){
-		    assertEquals(i, james1.yForAltitude(james1.altitudeForY(i)), 1e-10);
-		}
-	}
-	
-	
-	@Test
-	public void TestaltitudeForY() {
-		PanoramaParameters james1 = new PanoramaParameters(origin, 
-				0, 0, this.horizontalvue, 1000, this.width, this.height);
-		System.out.println((this.height-1)/2.0 + " " + (james1.height()-1)/2.0);
-		assertEquals(0 , james1.altitudeForY((this.height-1)/2.0), 0.00001 );
-		assertEquals(-((this.height-1)/2.0)*james1.anglePerPixels() , james1.altitudeForY((this.height-1)), 0.00001 );
-		assertEquals(((this.height-1)/2.0)*james1.anglePerPixels() , james1.altitudeForY(0), 0.00001 );
+    @Test(expected = IllegalArgumentException.class)
+    public void constructorFailsWithZeroFieldOfView() {
+        new PanoramaParameters(O_POS(), O_EL, C_AZ, 0, MAX_D, W, H);
+    }
 
-	}
-	
-	@Test
-	public void TestisValidIndex() {
-		
-	PanoramaParameters james1 = new PanoramaParameters(origin, 
-			0, 0, this.horizontalvue, 1000, this.width, this.height);
-	assertTrue(!james1.isValidSampleIndex(this.width, this.height));
-	assertTrue(!james1.isValidSampleIndex(-1, this.height-1));
-	assertTrue(!james1.isValidSampleIndex(this.width-1, -1));
-	assertTrue(james1.isValidSampleIndex(this.width-1, this.height-1));
-	assertTrue(james1.isValidSampleIndex(0, 0));
+    @Test(expected = IllegalArgumentException.class)
+    public void constructorFailsWithTooLargeOfView() {
+        new PanoramaParameters(O_POS(), O_EL, C_AZ, nextUp(2d * PI), MAX_D, W, H);
+    }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void constructorFailsWithZeroWidth() {
+        new PanoramaParameters(O_POS(), O_EL, C_AZ, H_FOV, MAX_D, 0, H);
+    }
 
-	}
-	
-	@Test
-	public void TestlinearSampleIndex() {
-		PanoramaParameters james1 = new PanoramaParameters(origin, 
-				0, 0, this.horizontalvue, 1000, this.width, this.height);
-		
-		assertEquals(0, james1.linearSampleIndex(0, 0));
-		assertEquals(2, james1.linearSampleIndex(2, 0));
-		assertEquals(41, james1.linearSampleIndex(1, 1));
-		assertEquals(799, james1.linearSampleIndex(39, 19));
+    @Test(expected = IllegalArgumentException.class)
+    public void constructorFailsWithZeroHeight() {
+        new PanoramaParameters(O_POS(), O_EL, C_AZ, H_FOV, MAX_D, W, 0);
+    }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void constructorFailsWithZeroMaxDistance() {
+        new PanoramaParameters(O_POS(), O_EL, C_AZ, H_FOV, 0, W, H);
+    }
 
-	}
-	
-	
-	
-	
+    @Test
+    public void verticalFieldOfViewIsCorrect() {
+        PanoramaParameters p =
+                new PanoramaParameters(O_POS(), O_EL, C_AZ, toRadians(60), MAX_D, 601, 201);
+        assertEquals(p.verticalFieldOfView(), toRadians(20), 1e-10);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void azimuthForXFailsForNegativeX() {
+        PanoramaParameters p =
+                new PanoramaParameters(O_POS(), O_EL, C_AZ, H_FOV, MAX_D, W, H);
+        p.azimuthForX(-1);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void azimuthForXFailsForTooBigX() {
+        PanoramaParameters p =
+                new PanoramaParameters(O_POS(), O_EL, C_AZ, H_FOV, MAX_D, W, H);
+        p.azimuthForX(W + 1);
+    }
+
+    @Test
+    public void azimuthForXWorksForFullCircle() {
+        int centralAzDeg = 90;
+        PanoramaParameters p =
+                new PanoramaParameters(O_POS(), O_EL, toRadians(centralAzDeg), Math2.PI2, MAX_D, 361, 201);
+        for (int azDeg = 0; azDeg < 360; ++azDeg) {
+            double expectedAz = toRadians(floorMod(azDeg - centralAzDeg, 360));
+            double actualAz = p.azimuthForX(azDeg);
+            assertEquals(expectedAz, actualAz, 1e-10);
+        }
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void xForAzimuthFailsForTooSmallAzimuth() {
+        PanoramaParameters p =
+                new PanoramaParameters(O_POS(), O_EL, toRadians(10), toRadians(40), MAX_D, W, H);
+        p.xForAzimuth(toRadians(349.99));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void xForAzimuthFailsForTooBigAzimuth() {
+        PanoramaParameters p =
+                new PanoramaParameters(O_POS(), O_EL, toRadians(10), toRadians(40), MAX_D, W, H);
+        p.xForAzimuth(toRadians(50.01));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void altitudeForYFailsForNegativeY() {
+        PanoramaParameters p =
+                new PanoramaParameters(O_POS(), O_EL, C_AZ, H_FOV, MAX_D, W, H);
+        p.altitudeForY(-1);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void altitueForYFailsForTooBigY() {
+        PanoramaParameters p =
+                new PanoramaParameters(O_POS(), O_EL, C_AZ, H_FOV, MAX_D, W, H);
+        p.altitudeForY(H + 1);
+    }
+
+    @Test
+    public void altitudeForYWorks() {
+        int height = 201;
+        PanoramaParameters p =
+                new PanoramaParameters(O_POS(), O_EL, C_AZ, toRadians(60), MAX_D, 601, height);
+        double halfVerticalFOV = toRadians(20) / 2d;
+        double delta = toRadians(0.1);
+        for (int y = 0; y < height; ++y) {
+            assertEquals(halfVerticalFOV - y * delta, p.altitudeForY(y), 1e-9);
+        }
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void yForAltitudeFailsForTooSmallAltitude() {
+        PanoramaParameters p =
+                new PanoramaParameters(O_POS(), O_EL, C_AZ, toRadians(60), MAX_D, 601, 201);
+        p.yForAltitude(toRadians(-10.01));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void yForAltitudeFailsForTooBigAltitude() {
+        PanoramaParameters p =
+                new PanoramaParameters(O_POS(), O_EL, C_AZ, toRadians(60), MAX_D, 601, 201);
+        p.yForAltitude(toRadians(10.01));
+    }
+
+    @Test
+    public void azimuthForXAndXForAzimuthAreInverse() {
+        PanoramaParameters p =
+                new PanoramaParameters(O_POS(), O_EL, C_AZ, toRadians(60), MAX_D, 601, 201);
+        Random rng = newRandom();
+        for (int i = 0; i < RANDOM_ITERATIONS; ++i) {
+            int x = 1 + rng.nextInt(600);
+            assertEquals(x, p.xForAzimuth(p.azimuthForX(x)), 1e-10);
+        }
+    }
+
+    @Test
+    public void altitudeForYAndYForAltitudeAreInverse() {
+        PanoramaParameters p =
+                new PanoramaParameters(O_POS(), O_EL, C_AZ, toRadians(60), MAX_D, 601, 201);
+        Random rng = newRandom();
+        for (int i = 0; i < RANDOM_ITERATIONS; ++i) {
+            int x = 1 + rng.nextInt(200);
+            assertEquals(x, p.yForAltitude(p.altitudeForY(x)), 1e-10);
+        }
+    }
 }
