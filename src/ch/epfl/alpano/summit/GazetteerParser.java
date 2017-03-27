@@ -52,7 +52,7 @@ public class GazetteerParser {
             double longi = toRadians(Integer.parseInt(hms[0]), Integer.parseInt(hms[1]), Integer.parseInt(hms[2]));
 
             String latitude = line.substring(10,18).trim();
-            hms = latitude.split(":");
+            hms = latitude.split(	":");
             double lati = toRadians(Integer.parseInt(hms[0]), Integer.parseInt(hms[1]), Integer.parseInt(hms[2]));
 
             GeoPoint position = new GeoPoint(longi, lati);
