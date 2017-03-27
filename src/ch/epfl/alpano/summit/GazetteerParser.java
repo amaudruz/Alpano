@@ -66,7 +66,7 @@ public class GazetteerParser {
             return new Summit(name, position, elevation);
         }
         catch(Exception e) {
-            throw new IOException();
+            throw new IOException("wrongly formatted");
         }
         
     }

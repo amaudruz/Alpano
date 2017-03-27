@@ -10,6 +10,7 @@ import org.junit.Test;
 
 public class GazetteerParserTests {
 
+    /*
     @Test(expected = IOException.class)
     public void readLineEmpty() throws IOException{
         GazetteerParser.readSummitLine("");
@@ -24,7 +25,7 @@ public class GazetteerParserTests {
     public void readLineOnNonTrivial() throws IOException{
         System.out.println(GazetteerParser.readSummitLine("  7:56:53 46:35:33  2472  H1 C02 D0 LAUBERHORN"));
 
-    }
+    }*/
     
     
     @Test
@@ -33,13 +34,14 @@ public class GazetteerParserTests {
         s.forEach(System.out::println);
     }
     
+    /*
     @Test
     public void toRadianTest(){
         assertEquals(0.017453292519943, GazetteerParser.toRadians(1, 0, 0),1e-10);
         assertEquals(0.00029088820866572, GazetteerParser.toRadians(0, 1, 0),1e-10);
         assertEquals(4.8481368110954E-6 , GazetteerParser.toRadians(0, 0, 1),1e-10);
 
-    }
+    }*/
     
 
 }

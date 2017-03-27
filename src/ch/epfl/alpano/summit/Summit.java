@@ -21,7 +21,7 @@ public final class Summit {
      * @param position 
      * @param elevation (in metres)
      * @throws IllegalArgumentException if elevation is negative
-     * @throws NullPointerExcpetion if name or position is null 
+     * @throws NullPointerException if name or position is null 
      */
     public Summit(String name, GeoPoint position, int elevation) {
         checkArgument(elevation >= 0);
@@ -38,7 +38,8 @@ public final class Summit {
     }
     
     /**
-     * @return position of the summit
+     * @return position of the summit (GeoPoint)
+     * @see GeoPoint
      */
     public GeoPoint position() {
         return position;
