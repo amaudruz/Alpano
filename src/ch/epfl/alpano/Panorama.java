@@ -30,6 +30,7 @@ public final class Panorama {
     /**
      * 
      * @return the parameters of the panorama
+     * @see PanoramaParameters
      */
     public PanoramaParameters parameters(){
         return panoramaParameters;
@@ -104,7 +105,6 @@ public final class Panorama {
      * @param y second index
      * @param d the default value
      * @return the corresponding distance
-     * @throws IndexOutOfBoundsException if the index is out of the field
      */
     public float distanceAt(int x, int y, float d){
         if(parameters().isValidSampleIndex(x, y)){
@@ -116,9 +116,7 @@ public final class Panorama {
     }
     
     private void checkIndex(int x, int y){
-        if(!parameters().isValidSampleIndex(x, y)){
-            throw new IndexOutOfBoundsException();
-        }
+        checkArgument(parameters().isValidSampleIndex(x, y));
     }
     
     /**
