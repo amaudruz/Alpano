@@ -92,7 +92,7 @@ public interface Azimuth {
             
             angle = canonicalize(angle + PI/4);
         }
-        
+        //TODO pas d'autre façon?
         switch(octant){
         
             case 0:

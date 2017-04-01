@@ -150,7 +150,7 @@ public final class PanoramaParameters {
 	
 	/**
 	 * 
-	 * @return the horizontal fiel of view
+	 * @return the horizontal field of view
 	 */
 	public double horizontalFieldOfView() {
 		return this.horizontalFieldOfView;

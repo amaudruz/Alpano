@@ -32,7 +32,7 @@ public final class Panorama {
      * @return the parameters of the panorama
      * @see PanoramaParameters
      */
-    public PanoramaParameters parameters(){
+    public PanoramaParameters parameters() {
         return panoramaParameters;
     }
     
@@ -106,16 +106,16 @@ public final class Panorama {
      * @param d the default value
      * @return the corresponding distance
      */
-    public float distanceAt(int x, int y, float d){
-        if(parameters().isValidSampleIndex(x, y)){
+    public float distanceAt(int x, int y, float d) {
+        if(parameters().isValidSampleIndex(x, y)) {
             return distance[parameters().linearSampleIndex(x, y)];
         }
-        else{
+        else {
             return d;
         }
     }
     
-    private void checkIndex(int x, int y){
+    private void checkIndex(int x, int y) {
         checkArgument(parameters().isValidSampleIndex(x, y));
     }
     
@@ -251,8 +251,8 @@ public final class Panorama {
             }
         }
         
-        private void checkIndex(int x, int y){
-            if(!parameters.isValidSampleIndex(x, y)){
+        private void checkIndex(int x, int y) {
+            if(!parameters.isValidSampleIndex(x, y)) {
                 throw new IndexOutOfBoundsException("not in the field");
             }
         }

@@ -1,0 +1,13 @@
+Choses à faire:
+
+-Commenter le code
+-Réfléchir à l'optimisation de certaine partie(voir les TODO)
+-Compléter et corriger la javadoc
+-Essayer de placer des assert
+-Eviter les création de variables inutiles
+-Bien nommer les variables
+-Rendre le code claire et aérer
+-Enlever public de toutes les méthodes static des interfaces utilitaires
+...
+
+A toi d'ajouter si tu penses à d'autres choses
