@@ -1,5 +1,9 @@
 package ch.epfl.alpano;
 import static java.lang.Math.PI;
+
+import java.util.Arrays;
+import java.util.List;
+
 import static ch.epfl.alpano.Math2.PI2;
 import static ch.epfl.alpano.Preconditions.checkArgument;
 
@@ -15,11 +19,11 @@ import static ch.epfl.alpano.Preconditions.checkArgument;
 public interface Azimuth {
 
     /**
-     * 
+     * Azimuth check
      * @param azimuth
      * @return <code>true</code> if the azimuth is canonical (between 0 and 2pi)
      */
-    public static boolean isCanonical(double azimuth){
+    static boolean isCanonical(double azimuth){
         
         return azimuth >= 0 && azimuth < PI2;
         
@@ -29,9 +33,9 @@ public interface Azimuth {
      * Canonicalize an azimuth
      * 
      * @param azimuth
-     * @return correct azimuth
+     * @return an azimuth between 0 and 2 pi
      */
-    public static double canonicalize(double azimuth){
+    static double canonicalize(double azimuth){
         
         while(azimuth >= PI2){
             azimuth -= PI2;
@@ -40,16 +44,17 @@ public interface Azimuth {
             azimuth += PI2;
         }
         
+        assert(isCanonical(azimuth));
         return azimuth;
     }
     
     /**
      * Return an azimuth in the correct mathematical way
      * @param azimuth in geographical manner
-     * @throws IllegalArgumentException if the azimuth is not canonical
      * @return the mathematical azimuth
+     * @throws IllegalArgumentException if the azimuth is not canonical
      */
-    public static double toMath(double azimuth){
+    static double toMath(double azimuth){
         checkArgument(isCanonical(azimuth));
         
         return canonicalize(PI2 - azimuth);
@@ -58,64 +63,45 @@ public interface Azimuth {
     /**
      * Return the azimuth in the geographical manner
      * @param angle mathematical angle
-     * @return the correct azimuth
+     * @return the correct azimuth angle
      * @throws IllegalArgumentException if the angle is not canonical
      */
-    public static double fromMath(double angle){
+    static double fromMath(double angle){
         checkArgument(isCanonical(angle));
         
-        return canonicalize(2 * PI - angle);
+        return canonicalize(PI2 - angle);
     }
     
     /**
      * Return a string that represents the octant in which the azimuth is
      * 
-     * @param azimuth
+     * @param azimuth the azimuth
      * @param n north string
      * @param e east string
      * @param s south string
      * @param w west string
-     * @return a <code>String</code> position 
+     * @return a <code>String</code> position in octant
      * @throws IllegalArgumentException if azimuth is not canonical
      */
-    public static String toOctantString(double azimuth, String n, String e, String s, String w){
+    static String toOctantString(double azimuth, String n, String e, String s, String w) {
         checkArgument(isCanonical(azimuth));
+
         
-        double angle = canonicalize(- PI/8);
-        int octant = 0;
+        double angle = PI/8;
+        //list of possible octants
+        List<String> octants = Arrays.asList(n, n + e, e, s + e, s, s + w, w , n + w);
         
-        for(int i = 0; i < 8; ++i){
+        for(int i = 0; i < 7; ++i){
             
             if(azimuth >= angle && azimuth < angle + PI/4){
-                octant = i;
+                return octants.get(i + 1);
             }
             
             angle = canonicalize(angle + PI/4);
         }
-        //TODO pas d'autre façon?
-        switch(octant){
         
-            case 0:
-                return n;
-            case 1:
-                return n + e;  
-            case 2:
-                return e;
-            case 3:
-                return s + e;
-            case 4:
-                return s;
-            case 5:
-                return s + w;
-            case 6:
-                return w;
-            case 7:
-                return n + w;
-                
-            default:
-                return n;
-        }
+        return octants.get(0); //the only octants that is not checked above
+            
     }
-    
     
 }

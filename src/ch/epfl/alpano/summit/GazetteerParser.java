@@ -30,16 +30,18 @@ public class GazetteerParser {
      * @throws IOException if input is wrongly formatted or unreadable
      */
     public static List<Summit> readSummitsFrom(File file) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.US_ASCII));
-        List<Summit> summits = new ArrayList<>();
-        
-        String line = "";
-        while((line = reader.readLine()) != null) {
-            summits.add(readSummitLine(line));
+        try(BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.US_ASCII))) {
+            
+            List<Summit> summits = new ArrayList<>();
+            
+            String line = "";
+            while((line = reader.readLine()) != null) {
+                summits.add(readSummitLine(line));
+            }
+            
+            
+            return Collections.unmodifiableList(summits);
         }
-        
-        reader.close();
-        return Collections.unmodifiableList(summits);
     }
     
     private static Summit readSummitLine(String line) throws IOException {

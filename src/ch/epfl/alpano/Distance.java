@@ -14,22 +14,22 @@ public interface Distance {
     double EARTH_RADIUS = 6371000;
     
     /**
-     * 
+     * Convert a distante to radians
      * @param distanceInMeters
      * @return the corresponding radian
      */
-    public static double toRadians(double distanceInMeters){
+    static double toRadians(double distanceInMeters){
         
         return distanceInMeters / EARTH_RADIUS;
         
     }
 
     /**
-     * 
+     * Convert a radian distance to meters
      * @param distanceInRadians
      * @return the corresponding distance
      */
-    public static double toMeters(double distanceInRadians){
+    static double toMeters(double distanceInRadians){
         
         return EARTH_RADIUS * distanceInRadians;
         
