@@ -8,24 +8,24 @@ package ch.epfl.alpano;
 public interface Preconditions {
     
     /**
-     * 
+     * Check a condition
      * @param b a condition
      * @throws IllegalArgumentException if b is false
      */
-    static void checkArgument(boolean b){
-        if(!b){
+    static void checkArgument(boolean b) {
+        if(!b) {
             throw new IllegalArgumentException();
         }
     }
     
     /**
-     * 
+     * Check a condition, with an error message
      * @param b a condition
      * @param message a message
      * @throws IllegalArgumentException if b is false, with the message
      */
-    static void checkArgument(boolean b, String message){
-        if(!b){
+    static void checkArgument(boolean b, String message) {
+        if(!b) {
             throw new IllegalArgumentException(message);
         }
     }

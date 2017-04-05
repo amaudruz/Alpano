@@ -20,6 +20,7 @@ import ch.epfl.alpano.GeoPoint;
  *
  */
 public final class ElevationProfile {
+    
 	private final ContinuousElevationModel elevationModel;
 	private final GeoPoint[] positions;
 	private final double length;

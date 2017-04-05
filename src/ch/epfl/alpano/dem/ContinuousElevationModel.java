@@ -10,8 +10,8 @@ import static java.util.Objects.requireNonNull;
 import static ch.epfl.alpano.dem.DiscreteElevationModel.sampleIndex;
 
 /**
- * Class that represents a continuous elevation model which gives the elevation at any point in a area
- * Which s an expansion to the DEM 
+ * Class that represents a continuous elevation model which gives the elevation at any point in an area
+ * Which is an expansion to the DEM 
  * 
  * @author Louis Amaudruz (271808)
  * @author Mathieu Chevalley (274698)
@@ -24,7 +24,7 @@ final public class ContinuousElevationModel {
     private static final double d = toMeters(1/SAMPLES_PER_RADIAN);
 
    /**
-    * Will only use a DEM for then use bilinear interpolation for the continuous elevation model
+    * The dem to be rendered continuous
     * @param dem : the DEM used
     * @throws NullPointerException if the dem is <code>null</code>
     */
@@ -41,12 +41,14 @@ final public class ContinuousElevationModel {
      * 
      */
     public double elevationAt(GeoPoint p) {
+        //indexes of the point
         double xp = sampleIndex(p.longitude());
         double yp = sampleIndex(p.latitude());
         
         int x = (int) xp;
         int y = (int) yp;
         
+        //close points used for the interpolation
         double z00 = elevationAtIndex(x,y);
         double z01 = elevationAtIndex(x, y + 1);
         double z10 = elevationAtIndex(x + 1, y);
@@ -62,12 +64,14 @@ final public class ContinuousElevationModel {
      */
 
     public double slopeAt(GeoPoint p) {
+        //indexes of the point
         double xp = sampleIndex(p.longitude());
         double yp = sampleIndex(p.latitude());
         
         int x = (int) xp;
         int y = (int) yp;
         
+        //close points used for the interpolation
         double z00 = slopeAtIndex(x,y);
         double z01 = slopeAtIndex(x, y + 1);
         double z10 = slopeAtIndex(x + 1, y);
@@ -77,15 +81,17 @@ final public class ContinuousElevationModel {
     }
     
     private double elevationAtIndex(int x, int y) {
+        
         if(dem.extent().contains(x,y)) {
             return dem.elevationSample(x, y);
         }
-        else {
-            return 0;
-        }
+
+        return 0;
+
     }
     
     private double slopeAtIndex(int x,int y) {
-        return acos(d / (sqrt(sq(elevationAtIndex(x,y) - elevationAtIndex(x + 1, y)) + sq(elevationAtIndex(x,y) - elevationAtIndex(x, y + 1)) + sq(d))));
+        return acos(d / (sqrt(sq(elevationAtIndex(x,y) - elevationAtIndex(x + 1, y)) + 
+                sq(elevationAtIndex(x,y) - elevationAtIndex(x, y + 1)) + sq(d))));
     }
 }

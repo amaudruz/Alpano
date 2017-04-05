@@ -8,6 +8,7 @@ import java.util.Arrays;
 /**
  * Represent a panorama
  * @author Mathieu Chevalley (274698)
+ * @author Louis Amaudruz (271808)
  */
 public final class Panorama {
 
@@ -28,7 +29,7 @@ public final class Panorama {
     }
     
     /**
-     * 
+     * Parameters getter
      * @return the parameters of the panorama
      * @see PanoramaParameters
      */
@@ -37,7 +38,7 @@ public final class Panorama {
     }
     
     /**
-     * 
+     * Distance at an index
      * @param x first index
      * @param y second index
      * @return the corresponding distance
@@ -49,7 +50,7 @@ public final class Panorama {
     }
     
     /**
-     * 
+     * Longitude at an index
      * @param x first index
      * @param y second index
      * @return the corresponding longitude
@@ -61,7 +62,7 @@ public final class Panorama {
     }
     
     /**
-     * 
+     * Latitude at an index
      * @param x first index
      * @param y second index
      * @return the corresponding latitude
@@ -70,11 +71,10 @@ public final class Panorama {
     public float latitudeAt(int x, int y) {
         checkIndex(x,y);
         return latitude[parameters().linearSampleIndex(x, y)];
-
     }
     
     /**
-     * 
+     * Elevation at an index
      * @param x first index
      * @param y second index
      * @return the corresponding elevation
@@ -87,7 +87,7 @@ public final class Panorama {
     }
     
     /**
-     * 
+     * Slope at an index
      * @param x first index
      * @param y second index
      * @return the corresponding slope
@@ -96,7 +96,6 @@ public final class Panorama {
     public float slopeAt(int x, int y) {
         checkIndex(x,y);
         return slope[parameters().linearSampleIndex(x, y)];
-
     }
     
     /**
@@ -110,19 +109,20 @@ public final class Panorama {
         if(parameters().isValidSampleIndex(x, y)) {
             return distance[parameters().linearSampleIndex(x, y)];
         }
-        else {
-            return d;
-        }
+        return d;
     }
     
+    //check the indexes
     private void checkIndex(int x, int y) {
-        checkArgument(parameters().isValidSampleIndex(x, y));
+        if(!panoramaParameters.isValidSampleIndex(x, y)) {
+            throw new IndexOutOfBoundsException("not in the field");
+        }    
     }
     
     /**
      * Builder for the panorama class
      * @author Mathieu Chevalley (274698)
-     *
+     * @author Louis Amaudruz (271808)
      */
     public static final class Builder {
         
@@ -136,26 +136,28 @@ public final class Panorama {
         
         /**
          * Construct the builder
-         * @param parameters
-         * @throws NullPointerException if the parameters is null
+         * @param parameters The parameters of the panorama
+         * @throws NullPointerException if parameters is null
          */
         public Builder(PanoramaParameters parameters) {
+            
             this.parameters = requireNonNull(parameters);
+            
             int length = parameters.height() * parameters.width();
             distance = new float[length];
             Arrays.fill(distance, Float.POSITIVE_INFINITY);
             longitude = new float[length];
-            Arrays.fill(longitude, 0);
+            //Arrays.fill(longitude, 0);
             latitude = new float[length];
-            Arrays.fill(latitude, 0);
+            //Arrays.fill(latitude, 0);
             elevation = new float[length];
-            Arrays.fill(elevation, 0);
+            //Arrays.fill(elevation, 0);
             slope = new float[length];
-            Arrays.fill(slope, 0);
+            //Arrays.fill(slope, 0);
         }
         
         /**
-         * 
+         * Add a distance
          * @param x first index
          * @param y second index
          * @param distance that corresponds to the index
@@ -171,7 +173,7 @@ public final class Panorama {
         }
         
         /**
-         * 
+         * Add a longitude
          * @param x first index
          * @param y second index
          * @param longitude that corresponds to the index
@@ -187,7 +189,7 @@ public final class Panorama {
         }
         
         /**
-         * 
+         * Add a latitude
          * @param x first index
          * @param y second index
          * @param latitude that corresponds to the index
@@ -203,7 +205,7 @@ public final class Panorama {
         }
         
         /**
-         * 
+         * Add an elevation
          * @param x first index
          * @param y second index
          * @param elevation that corresponds to the index
@@ -219,7 +221,7 @@ public final class Panorama {
         }
         
         /**
-         * 
+         * Add a slope
          * @param x first index
          * @param y second index
          * @param slope that corresponds to the index
@@ -235,7 +237,7 @@ public final class Panorama {
         }
         
         /**
-         * 
+         * Build the panorama
          * @return the panorama
          * @throws IllegalStateException if already built 
          */

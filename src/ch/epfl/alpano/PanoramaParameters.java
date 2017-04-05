@@ -2,14 +2,13 @@ package ch.epfl.alpano;
 
 
 import static java.util.Objects.requireNonNull;
-import static java.lang.Math.*;
 import static ch.epfl.alpano.Math2.*;
 import static ch.epfl.alpano.Preconditions.*;
 
 /**
  * Represents the parameters for a panorama
  * @author Mathieu Chevalley (274698)
- *
+ * @author Louis Amaudruz (271808)
  */
 public final class PanoramaParameters {
 	
@@ -23,13 +22,13 @@ public final class PanoramaParameters {
 	
 	/**
 	 * Public constructor
-	 * @param observerPosition
-	 * @param observerElevation
-	 * @param centerAzimuth
-	 * @param horizontalFieldOfView
-	 * @param maxDistance
-	 * @param width
-	 * @param height
+	 * @param observerPosition position of the observer
+	 * @param observerElevation elevation of the observer
+	 * @param centerAzimuth azimuth of the center of the field
+	 * @param horizontalFieldOfView the total horizontal field of view
+	 * @param maxDistance the maximum distance that can be seen
+	 * @param width width of the field
+	 * @param height heigth of the fiel
 	 * @throws IllegalArgumentException if azimuth is not canonical, or if maxDistance, width or height are negative
 	 * or if horizontalFieldOfView is less than 0 or greater that 2*pi
 	 * @throws NullPointerException if observerPosition is null
@@ -51,7 +50,7 @@ public final class PanoramaParameters {
 	}
 	
 	/**
-	 * 
+	 * Gives the azimuth for a given x
 	 * @param x the index
 	 * @return the azimuth corresponding to the index
 	 * @throws IllegalArgumentException if x is not in the field
@@ -61,20 +60,21 @@ public final class PanoramaParameters {
 		checkArgument(x >= 0 && x <= width() -1);
 		
 		double azimuth = floorMod(centerAzimuth() + (anglePerPixels()*(x -((width()-1)/2.0))), PI2);
-		azimuth = Azimuth.canonicalize(azimuth);
-		assert(Math.abs(Math2.angularDistance(azimuth, centerAzimuth()) )<= horizontalFieldOfView/2 + 1e-10 && Azimuth.isCanonical(azimuth));
+		azimuth = Azimuth.canonicalize(azimuth);//TODO utile?
+		
+		assert(Math.abs(angularDistance(azimuth, centerAzimuth())) <= horizontalFieldOfView/2 + 1e-10 && Azimuth.isCanonical(azimuth));
 		
 		return azimuth; 
 	}
 	
 	/**
-	 * 
+	 * Gives an x for an azimuth
 	 * @param a the azimuth
 	 * @return the index corresponding to the azimuth
 	 * @throws IllegalArgumentException if the azimuth is not in the filed of view
 	 */
 	public double xForAzimuth(double a) { 	
-		checkArgument(Math.abs(Math2.angularDistance(a, centerAzimuth()) )<= horizontalFieldOfView/2 + 1e-10);
+		checkArgument(Math.abs(angularDistance(a, centerAzimuth())) <= horizontalFieldOfView/2 + 1e-10);
 		
 		double x = (angularDistance(centerAzimuth(),a ) / anglePerPixels()) +((width() -1) / 2.0);
 		assert(x >= 0 && x <= width() - 1);
@@ -84,7 +84,7 @@ public final class PanoramaParameters {
 	}
 	
 	/**
-	 * 
+	 * Gives the altitude for a y
 	 * @param y the vertical index
 	 * @return the corresponding altitude
 	 * @throws IllegalArgumentException if y is not in the field
@@ -100,7 +100,7 @@ public final class PanoramaParameters {
 	}
 	
 	/**
-	 * 
+	 * Gives a y for an altitude
 	 * @param a the altitude 
 	 * @return the corresponding index
 	 * @throws IllegalArgumentException if the altitude is not in the field
@@ -125,64 +125,64 @@ public final class PanoramaParameters {
 	}
 		
 	/**
-	 * 
+	 * Position of the observer
 	 * @return the observer position
 	 */
 	public GeoPoint observerPosition() {
-		return this.observerPosition;
+		return observerPosition;
 	}
 	
 	/**
-	 * 
+	 * Elevetion of the observer
 	 * @return the observer elevation in meters
 	 */
 	public int observerElevation() {
-		return this.observerElevation;
+		return observerElevation;
 	}
 	
 	/**
-	 * 
+	 * Azimuth of the center
 	 * @return the central azimuth
 	 */
 	public double centerAzimuth(){
-		return this.centerAzimuth;
+		return centerAzimuth;
 	}
 	
 	/**
-	 * 
+	 * Total horizontal field of view
 	 * @return the horizontal field of view
 	 */
 	public double horizontalFieldOfView() {
-		return this.horizontalFieldOfView;
+		return horizontalFieldOfView;
 	
 	}
 	
 	/**
-	 * 
+	 * Maximum distance that can be seen by the observer
 	 * @return the maximum distance from the observer
 	 */
 	public int maxDistance() {
-		return this.maxDistance;
+		return maxDistance;
 	}
 	
 	/**
-	 * 
+	 * Width of the field
 	 * @return the field width
 	 */
 	public int width() {
-		return this.width;
+		return width;
 	}
 	
 	/**
-	 * 
+	 * Height of the field
 	 * @return the field height
 	 */
 	public int height() {
-		return this.height;
+		return height;
 	}
 	
 	/**
-	 * 
+	 * Angle per pixels
 	 * @return rate of angle per pixels
 	 */
 	public double anglePerPixels() {
@@ -190,7 +190,7 @@ public final class PanoramaParameters {
 	}
 	
 	/**
-	 * 
+	 * The total vertical field of view
 	 * @return the vertical field of view
 	 */
 	public double verticalFieldOfView() {
