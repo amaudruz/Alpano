@@ -1,7 +1,9 @@
-package ch.epfl.alpano;
+package ch.epfl.alpano.gui;
 import static ch.epfl.alpano.Panorama.*;
 
 import java.util.function.DoubleUnaryOperator;
+
+import ch.epfl.alpano.Panorama;
 @FunctionalInterface
 public interface ChannelPainter {
 	
@@ -10,7 +12,7 @@ public interface ChannelPainter {
 	static ChannelPainter maxDistanceToNeighbors(Panorama p) {
 		 
 		 return (x, y) -> Math.max(Math.max(p.distanceAt(x+1, y, 0), p.distanceAt(x, y+1, 0)),
-				 Math.max(p.distanceAt(x-1, y, 0), p.distanceAt(x, y-1, 0))); 
+				 Math.max(p.distanceAt(x-1, y, 0), p.distanceAt(x, y-1, 0))) - p.distanceAt(x, y); 
 	}
 	
 	default ChannelPainter add(float d) {

@@ -8,6 +8,11 @@ import javax.imageio.ImageIO;
 import ch.epfl.alpano.dem.ContinuousElevationModel;
 import ch.epfl.alpano.dem.DiscreteElevationModel;
 import ch.epfl.alpano.dem.HgtDiscreteElevationModel;
+import ch.epfl.alpano.gui.ChannelPainter;
+import ch.epfl.alpano.gui.ImagePainter;
+import ch.epfl.alpano.gui.PanoramaRenderer;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
@@ -45,6 +50,7 @@ final class DrawPanorama {
         Panorama p = new PanoramaComputer(cDEM)
           .computePanorama(PARAMS);
 
+        /*
         BufferedImage i =
           new BufferedImage(IMAGE_WIDTH,
                             IMAGE_HEIGHT,
@@ -60,7 +66,37 @@ final class DrawPanorama {
           }
         }
 
-        ImageIO.write(i, "png", new File("niesen.png"));
+        ImageIO.write(i, "png", new File("niesen.png"));*/
+        
+        /*
+        ChannelPainter gray =
+                ChannelPainter.maxDistanceToNeighbors(p)
+                .sub(500)
+                .div(4500)
+                .clamp()
+                .invert();
+
+              ChannelPainter distance = p::distanceAt;
+              ChannelPainter opacity =
+                distance.map(d -> d == Float.POSITIVE_INFINITY ? 0 : 1);
+
+              ImagePainter l = ImagePainter.gray(gray, opacity);
+
+              Image i = PanoramaRenderer.renderPanorama(p, l);
+              ImageIO.write(SwingFXUtils.fromFXImage(i, null),
+                            "png",
+                            new File("niesen-profile.png"));*/
+        ChannelPainter dist = p::distanceAt;
+        ChannelPainter hue = dist.div(100000).cycle().mul(360);
+        ChannelPainter s = dist.div(200000).clamp().invert();
+        ChannelPainter slo = p::slopeAt;
+        ChannelPainter b = slo.mul(2).div((float) Math.PI).invert().mul(0.7f).add(0.3f);
+        ChannelPainter o = (x,y) -> dist.valueAt(x, y) == Float.POSITIVE_INFINITY ? 0 : 1; 
+           
+        ImagePainter l = ImagePainter.hsb(hue, s, b, o);
+        Image i = PanoramaRenderer.renderPanorama(p, l);
+        ImageIO.write(SwingFXUtils.fromFXImage(i, null), "png", new File("niesen-color.png"));
+        
       }
     }
     
