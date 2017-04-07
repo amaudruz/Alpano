@@ -7,7 +7,7 @@ import static ch.epfl.alpano.Preconditions.*;
 /**
  * Class that represents a summit (immutable)
  * @author Mathieu Chevalley (274698)
- *
+ * @author Louis Amaudruz (271808)
  */
 public final class Summit {
 
@@ -16,21 +16,20 @@ public final class Summit {
     private final int elevation;
     
     /**
-     * public builder
+     * Construct a summit
      * @param name of the summit
      * @param position 
-     * @param elevation (in metres)
-     * @throws IllegalArgumentException if elevation is negative
+     * @param elevation (in meters)
      * @throws NullPointerException if name or position is null 
      */
     public Summit(String name, GeoPoint position, int elevation) {
-        //checkArgument(elevation >= 0);
         this.name = requireNonNull(name);
         this.position = requireNonNull(position);
         this.elevation = elevation;
     }
     
     /**
+     * Name getter
      * @return name of the summit
      */
     public String name() {
@@ -38,7 +37,8 @@ public final class Summit {
     }
     
     /**
-     * @return position of the summit (GeoPoint)
+     * Position getter
+     * @return position of the summit 
      * @see GeoPoint
      */
     public GeoPoint position() {
@@ -46,6 +46,7 @@ public final class Summit {
     }
     
     /**
+     * Elevation getter 
      * @return the elevation of the summit
      */
     public int elevation() {

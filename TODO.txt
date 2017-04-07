@@ -1,13 +1,17 @@
-Choses à faire:
+Choses ï¿½ faire:
 
 -Commenter le code
--Réfléchir à l'optimisation de certaine partie(voir les TODO)
--Compléter et corriger la javadoc
+-Rï¿½flï¿½chir ï¿½ l'optimisation de certaine partie(voir les TODO)
+-Complï¿½ter et corriger la javadoc
 -Essayer de placer des assert
--Eviter les création de variables inutiles
+-Eviter les crï¿½ation de variables inutiles
 -Bien nommer les variables
--Rendre le code claire et aérer
--Enlever public de toutes les méthodes static des interfaces utilitaires
+-Rendre le code claire et aï¿½rer
+-Enlever public de toutes les mï¿½thodes static des interfaces utilitaires
 ...
 
-A toi d'ajouter si tu penses à d'autres choses
+A toi d'ajouter si tu penses ï¿½ d'autres choses
+
+Demander try/catch
+Javadoc sur class de package
+To break or not to break

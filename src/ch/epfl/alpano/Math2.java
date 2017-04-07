@@ -1,7 +1,8 @@
 package ch.epfl.alpano;
 
 import java.util.function.DoubleUnaryOperator;
-import static ch.epfl.alpano.Preconditions.checkArgument;;
+import static ch.epfl.alpano.Preconditions.checkArgument;
+import static java.lang.Math.*;
 
 /**
  * A complement to java.lang.Math
@@ -34,7 +35,7 @@ public interface Math2 {
      * @return the modulo
      */
     static double floorMod(double x, double y) {
-        return x - y * Math.floor(x/y);
+        return x - y * floor(x/y);
     }
 
     /**
@@ -43,7 +44,7 @@ public interface Math2 {
      * @return the corresponding haversin
      */
     static double haversin(double x) {
-        return sq(Math.sin(x/2));
+        return sq(sin(x/2));
     }
     
     /**
@@ -53,7 +54,7 @@ public interface Math2 {
      * @return the difference
      */
     static double angularDistance(double a1, double a2) {
-        return floorMod(a2 - a1 + Math.PI, PI2) - Math.PI;
+        return floorMod(a2 - a1 + PI, PI2) - PI;
     }
     
     /**
@@ -69,10 +70,10 @@ public interface Math2 {
     
     /**
      * Bilinear interpolation of 4 points
-     * @param z00
-     * @param z10
-     * @param z01
-     * @param z11
+     * @param z00 elevation at (0,0)
+     * @param z10 elevation at (1,0)
+     * @param z01 elevation at (0,1)
+     * @param z11 elevation at (1,1)
      * @param x the abscissa
      * @param y the ordinate
      * @return the result using a bilinear interpolation
@@ -116,14 +117,22 @@ public interface Math2 {
      * @throws IllegalArgumentException if epsilon is not positive
      */
     static double improveRoot(DoubleUnaryOperator f, double x1, double x2, double epsilon) {
-        checkArgument(f.applyAsDouble(x1) * f.applyAsDouble(x2) < 0);
+        checkArgument(f.applyAsDouble(x1) * f.applyAsDouble(x2) <= 0);
         checkArgument(epsilon > 0);
         
+        //check if one of the bounds is a zero
+        if(f.applyAsDouble(x1) == 0) {
+            return x1;
+        }
+        else if(f.applyAsDouble(x2) == 0) {
+            return x2;
+        }
+        
+        //middle of the interval
         double xm = (x1 + x2)/2.0;
         
         //interval small enough
-        if(Math.abs(x1 - x2) <= epsilon) {
-            
+        if(abs(x1 - x2) <= epsilon) {
             return x1;
         }
         

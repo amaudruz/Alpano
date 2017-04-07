@@ -29,7 +29,6 @@ final public class ContinuousElevationModel {
     * @throws NullPointerException if the dem is <code>null</code>
     */
     public ContinuousElevationModel(DiscreteElevationModel dem) {
-        
         this.dem = requireNonNull(dem);
     }
     
@@ -62,7 +61,6 @@ final public class ContinuousElevationModel {
      * @param p : the Geopoint giving the location
      * @return the elevation at the wanted location
      */
-
     public double slopeAt(GeoPoint p) {
         //indexes of the point
         double xp = sampleIndex(p.longitude());
@@ -81,13 +79,11 @@ final public class ContinuousElevationModel {
     }
     
     private double elevationAtIndex(int x, int y) {
-        
         if(dem.extent().contains(x,y)) {
             return dem.elevationSample(x, y);
         }
 
         return 0;
-
     }
     
     private double slopeAtIndex(int x,int y) {

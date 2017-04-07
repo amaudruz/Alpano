@@ -11,7 +11,6 @@ import ch.epfl.alpano.Interval2D;
  * @see AutoCloseable
  *
  */
-
 public interface DiscreteElevationModel extends AutoCloseable {
     
 	/**
@@ -22,7 +21,7 @@ public interface DiscreteElevationModel extends AutoCloseable {
 	/**
 	 * number of sample per radian
 	 */
-	double SAMPLES_PER_RADIAN = (SAMPLES_PER_DEGREE * 180/Math.PI) ;
+	double SAMPLES_PER_RADIAN = (SAMPLES_PER_DEGREE * 180/Math.PI);
 	
 	/**
 	 * Returns the index corresponding to an angle
@@ -41,10 +40,10 @@ public interface DiscreteElevationModel extends AutoCloseable {
 	Interval2D extent();
 	
 	/**
-	 * Method that will give the elevation of a location in the DEM
+	 * Method that will give the elevation at a location in the DEM
 	 * 
-	 * @param x : the first index of the location
-	 * @param y : the second index of the location
+	 * @param x the first index of the location
+	 * @param y the second index of the location
 	 * @return the elevation at the location
 	 * @throws IllegalArgumentException if the sample is not in the extent
 	 */
@@ -59,7 +58,6 @@ public interface DiscreteElevationModel extends AutoCloseable {
 	 */
 	default DiscreteElevationModel union(DiscreteElevationModel that) {
 		return new CompositeDiscreteElevationModel(this, that);
-	
 	}
 		
 

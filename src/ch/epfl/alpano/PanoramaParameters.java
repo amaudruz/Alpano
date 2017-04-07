@@ -12,23 +12,23 @@ import static ch.epfl.alpano.Preconditions.*;
  */
 public final class PanoramaParameters {
 	
-	private final  GeoPoint observerPosition;
-	private final int observerElevation ;
-	private final double centerAzimuth;
+    private final  GeoPoint observerPosition;
+    private final int observerElevation ;
+    private final double centerAzimuth;
 	private final double  horizontalFieldOfView;
 	private final int maxDistance;
 	private final int width;
 	private final int height;
 	
 	/**
-	 * Public constructor
+	 * Create the parameters for a panorama
 	 * @param observerPosition position of the observer
 	 * @param observerElevation elevation of the observer
 	 * @param centerAzimuth azimuth of the center of the field
 	 * @param horizontalFieldOfView the total horizontal field of view
 	 * @param maxDistance the maximum distance that can be seen
 	 * @param width width of the field
-	 * @param height heigth of the fiel
+	 * @param height height of the field
 	 * @throws IllegalArgumentException if azimuth is not canonical, or if maxDistance, width or height are negative
 	 * or if horizontalFieldOfView is less than 0 or greater that 2*pi
 	 * @throws NullPointerException if observerPosition is null
@@ -45,8 +45,6 @@ public final class PanoramaParameters {
 		this.maxDistance = maxDistance;
 		this.width = width;
 		this.height = height;	
-		
-		
 	}
 	
 	/**
@@ -59,9 +57,7 @@ public final class PanoramaParameters {
 	public double azimuthForX(double x) {
 		checkArgument(x >= 0 && x <= width() -1);
 		
-		double azimuth = floorMod(centerAzimuth() + (anglePerPixels()*(x -((width()-1)/2.0))), PI2);
-		azimuth = Azimuth.canonicalize(azimuth);//TODO utile?
-		
+		double azimuth = floorMod(centerAzimuth() + (anglePerPixels() * (x - ((width() - 1) / 2.0))), PI2);		
 		assert(Math.abs(angularDistance(azimuth, centerAzimuth())) <= horizontalFieldOfView/2 + 1e-10 && Azimuth.isCanonical(azimuth));
 		
 		return azimuth; 
@@ -76,11 +72,10 @@ public final class PanoramaParameters {
 	public double xForAzimuth(double a) { 	
 		checkArgument(Math.abs(angularDistance(a, centerAzimuth())) <= horizontalFieldOfView/2 + 1e-10);
 		
-		double x = (angularDistance(centerAzimuth(),a ) / anglePerPixels()) +((width() -1) / 2.0);
+		double x = (angularDistance(centerAzimuth(), a) / anglePerPixels()) + ((width() -1) / 2.0);
 		assert(x >= 0 && x <= width() - 1);
 		
 		return x;
-
 	}
 	
 	/**
@@ -93,7 +88,7 @@ public final class PanoramaParameters {
 	public double altitudeForY(double y) {
 		checkArgument(y >= 0 && y <= height() - 1);
 		
-		double altitude = (( (height()-1)/2.0) - y )* anglePerPixels();
+		double altitude = (((height() - 1) / 2.0) - y) * anglePerPixels();
 		assert(Math.abs(altitude) <= verticalFieldOfView()/2);
 		
 		return altitude;
@@ -109,19 +104,19 @@ public final class PanoramaParameters {
 	public double yForAltitude(double a) {
 		checkArgument(Math.abs(a) <= verticalFieldOfView()/2);
 		
-		double y = ((height()-1)/2.0) - (a /anglePerPixels());
+		double y = ((height() - 1) / 2.0) - (a / anglePerPixels());
 		assert(y >= 0 && y <= height() - 1);
 		
 		return y;
 	}
 	
 	boolean isValidSampleIndex(int x, int y) {
-		return ( x >= 0 && x < width() && y >= 0 && y < height() );
+		return  x >= 0 && x < width() && y >= 0 && y < height();
 	}
 	
 	int linearSampleIndex(int x, int y) {
 	    assert(isValidSampleIndex(x,y));
-		return (y * width()) + x ;
+		return y * width() + x ;
 	}
 		
 	/**
@@ -133,7 +128,7 @@ public final class PanoramaParameters {
 	}
 	
 	/**
-	 * Elevetion of the observer
+	 * Elevation of the observer
 	 * @return the observer elevation in meters
 	 */
 	public int observerElevation() {

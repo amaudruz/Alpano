@@ -18,8 +18,8 @@ import static ch.epfl.alpano.Preconditions.*;
 
 
 
-/**A class that represents a discrete elevation model taken from a certain file
- * 
+/**
+ * A class that represents a discrete elevation model taken from a certain file
  * @author Louis Amaudruz (271808)
  * @author Mathieu Chevalley (274698)
  * 
@@ -36,11 +36,10 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel {
     
 
     /**
-     * public builder
+     * Construct a dem from a hgt file
      * @param file the hgt file
      * @throws IllegalArgumentException if the file name is not properly
      * formated, or if an error occurs when reading the file
-     *
      */
     public HgtDiscreteElevationModel(File file) {
         String fileName = file.getName();
@@ -61,11 +60,13 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel {
 
         }
         catch(NumberFormatException e) {
+            //if NumberFormatException, the file name is wrongly formatted
             throw new IllegalArgumentException();
         }
         
         checkArgument(fileName.substring(7).equals(".hgt"), "should be a .hgt");
         
+        //create the extent
         extent = new Interval2D(new Interval1D(fromLongitude * 3600, (fromLongitude + 1) * 3600), new Interval1D(fromLatitude * 3600, (fromLatitude + 1) * 3600));
        
         try(FileInputStream fileStream = new FileInputStream(file)) {
@@ -77,6 +78,7 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel {
             buffer = fileStream.getChannel().map(MapMode.READ_ONLY, 0, length).asShortBuffer();
         }
         catch(IOException e) {
+            //if exception, input file wrongly formatted
             throw new IllegalArgumentException();
         }
     }
@@ -94,8 +96,7 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel {
     @Override
     public double elevationSample(int x, int y) {
         if(extent().contains(x, y)){
-            int index = Math.abs(x - fromLongitude*3600) + Math.abs(y - (fromLatitude + 1)*3600) * 3601;
-            return buffer.get(index);
+            return buffer.get(Math.abs(x - fromLongitude*3600) + Math.abs(y - (fromLatitude + 1)*3600) * 3601);
         }
         else{
             throw new IllegalArgumentException("not in the extent");

@@ -99,7 +99,7 @@ public final class Panorama {
     }
     
     /**
-     * 
+     * Distance at an index, with a default value
      * @param x first index
      * @param y second index
      * @param d the default value
@@ -144,16 +144,13 @@ public final class Panorama {
             this.parameters = requireNonNull(parameters);
             
             int length = parameters.height() * parameters.width();
+            
             distance = new float[length];
             Arrays.fill(distance, Float.POSITIVE_INFINITY);
             longitude = new float[length];
-            //Arrays.fill(longitude, 0);
             latitude = new float[length];
-            //Arrays.fill(latitude, 0);
             elevation = new float[length];
-            //Arrays.fill(elevation, 0);
             slope = new float[length];
-            //Arrays.fill(slope, 0);
         }
         
         /**

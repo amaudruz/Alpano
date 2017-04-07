@@ -6,6 +6,7 @@ import static ch.epfl.alpano.Distance.EARTH_RADIUS;
 import static ch.epfl.alpano.Math2.*;
 
 import static java.util.Objects.requireNonNull;
+import static java.lang.Math.*;
 
 import java.util.function.DoubleUnaryOperator;
 
@@ -20,7 +21,7 @@ public final class PanoramaComputer {
     private final ContinuousElevationModel dem;
     
     /**
-     * Public builder
+     * Create a panorama computer from a continuous dem
      * @param dem a continuous elevation model used to compute the panorama
      * @throws NullPointerException if the dem is null
      */
@@ -42,41 +43,38 @@ public final class PanoramaComputer {
             
             ElevationProfile profile = new ElevationProfile(dem, parameters.observerPosition(), parameters.azimuthForX(x), parameters.maxDistance());
             
-            double lastDistance = 0;
+            double lastAbcissa = 0;
             
             for(int y = parameters.height() - 1; y >= 0; y--) {
                
                //not useful if it goes to infinity
-               if(lastDistance != Double.POSITIVE_INFINITY) {
+               if(lastAbcissa != Double.POSITIVE_INFINITY) {
                    
                    //The function
-                   DoubleUnaryOperator function = rayToGroundDistance(profile, parameters.observerElevation(), Math.tan(parameters.altitudeForY(y))); 
+                   DoubleUnaryOperator function = rayToGroundDistance(profile, parameters.observerElevation(), tan(parameters.altitudeForY(y))); 
                    
                    //first approximation
-                   double distance = firstIntervalContainingRoot(function, lastDistance, parameters.maxDistance(), 64);
+                   double abcissa = firstIntervalContainingRoot(function, lastAbcissa, parameters.maxDistance(), 64);
 
                    //only if the first distance is finite
-                   if(distance != Double.POSITIVE_INFINITY) {
-                       
-                       //cosinus of the angle made by the function
-                       double cosAngle = Math.cos(parameters.altitudeForY(y));
+                   if(abcissa != Double.POSITIVE_INFINITY) {
                        
                        //improvement of the first approximation
-                       distance = improveRoot(function, distance, distance + 64, 4);
+                       abcissa = improveRoot(function, abcissa, abcissa + 64, 4);
                      
-                       //distance from observer to the point
-                       double distanceTo = distance/cosAngle;
+                       //distance from observer to the point, using the angle between the function and the axe
+                       double distance = abcissa/cos(parameters.altitudeForY(y));
                        
                        //set all found datum
-                       panoBuilder.setDistanceAt(x,y,(float) distanceTo )
-                       .setElevationAt(x, y, (float) profile.elevationAt(distance))
-                       .setLatitudeAt(x, y,(float) profile.positionAt(distance).latitude())
-                       .setLongitudeAt(x, y,(float) profile.positionAt(distance).longitude())
-                       .setSlopeAt(x, y, (float) profile.slopeAt(distance));
+                       panoBuilder.setDistanceAt(x,y,(float) distance )
+                       .setElevationAt(x, y, (float) profile.elevationAt(abcissa))
+                       .setLatitudeAt(x, y,(float) profile.positionAt(abcissa).latitude())
+                       .setLongitudeAt(x, y,(float) profile.positionAt(abcissa).longitude())
+                       .setSlopeAt(x, y, (float) profile.slopeAt(abcissa));
                        
                    }
                    
-                   lastDistance = distance;
+                   lastAbcissa = abcissa;
                }
             }
         }
@@ -86,7 +84,7 @@ public final class PanoramaComputer {
     
     /**
      * Give a function computing the distance between a ray and the ground
-     * @param profile 
+     * @param profile the profile
      * @param ray0 initial elevation
      * @param raySlope slope of the function
      * @return a function computing the distance between the ground and the ray
@@ -95,7 +93,7 @@ public final class PanoramaComputer {
     public static DoubleUnaryOperator rayToGroundDistance(ElevationProfile profile, double ray0, double raySlope) {
         requireNonNull(profile);
         return x -> 
-            ray0 +  x * raySlope - profile.elevationAt(x) + sq(x) * ((1.0 - 0.13)/(2 * EARTH_RADIUS ));
+            ray0 + x * raySlope - profile.elevationAt(x) + sq(x) * ((1.0 - 0.13) / (2 * EARTH_RADIUS ));
         
     }
 }

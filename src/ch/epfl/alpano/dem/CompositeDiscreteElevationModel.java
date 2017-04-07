@@ -25,7 +25,7 @@ final class CompositeDiscreteElevationModel implements DiscreteElevationModel {
 	 * @throws NullPointerException if dem1 or dem2 is <code>null</code>
 	 */
 	CompositeDiscreteElevationModel(DiscreteElevationModel dem1, DiscreteElevationModel dem2) {
-		
+
 	    this.dem1 = requireNonNull(dem1);
 	    this.dem2 = requireNonNull(dem2);
 		this.MNT = 	dem1.extent().union(dem2.extent());
