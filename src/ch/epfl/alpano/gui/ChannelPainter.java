@@ -1,7 +1,9 @@
-package ch.epfl.alpano;
+package ch.epfl.alpano.gui;
 import static ch.epfl.alpano.Panorama.*;
 
 import java.util.function.DoubleUnaryOperator;
+
+import ch.epfl.alpano.Panorama;
 /**
  * Functional representing a channel painter
  * 
