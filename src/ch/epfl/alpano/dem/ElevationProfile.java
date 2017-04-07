@@ -42,7 +42,7 @@ public final class ElevationProfile {
 		this.elevationModel = requireNonNull(elevationModel);
 		
 		//construct an array containing several positions split regularly  
-		positions = new GeoPoint[(int)((length/4096)) + 2];
+		positions = new GeoPoint[(int) ceil((length/4096)) + 1];
 		
 		for (int i = 0 ; i < positions.length; ++i) {
 			double latitude = asin((sin(origin.latitude()) * cos(Distance.toRadians(i* 4096))) 

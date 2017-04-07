@@ -44,38 +44,38 @@ public final class PanoramaComputer {
             ElevationProfile profile = new ElevationProfile(dem, parameters.observerPosition(), parameters.azimuthForX(x), parameters.maxDistance());
             
             double lastAbcissa = 0;
+            boolean notInfinity = true;
             
-            for(int y = parameters.height() - 1; y >= 0; y--) {
-               
-               //not useful if it goes to infinity
-               if(lastAbcissa != Double.POSITIVE_INFINITY) {
-                   
+            for(int y = parameters.height() - 1; y >= 0 && notInfinity; y--) {
+
                    //The function
                    DoubleUnaryOperator function = rayToGroundDistance(profile, parameters.observerElevation(), tan(parameters.altitudeForY(y))); 
                    
                    //first approximation
-                   double abcissa = firstIntervalContainingRoot(function, lastAbcissa, parameters.maxDistance(), 64);
+                   double abscissa = firstIntervalContainingRoot(function, lastAbcissa, parameters.maxDistance(), 64);
 
-                   //only if the first distance is finite
-                   if(abcissa != Double.POSITIVE_INFINITY) {
-                       
+                   //only if the abscissa is finite
+                   if(abscissa == Double.POSITIVE_INFINITY) {
+                       notInfinity = false;
+                   }
+                   else {   
                        //improvement of the first approximation
-                       abcissa = improveRoot(function, abcissa, abcissa + 64, 4);
+                       abscissa = improveRoot(function, abscissa, abscissa + 64, 4);
                      
                        //distance from observer to the point, using the angle between the function and the axe
-                       double distance = abcissa/cos(parameters.altitudeForY(y));
+                       double distance = abscissa/cos(parameters.altitudeForY(y));
                        
                        //set all found datum
                        panoBuilder.setDistanceAt(x,y,(float) distance )
-                       .setElevationAt(x, y, (float) profile.elevationAt(abcissa))
-                       .setLatitudeAt(x, y,(float) profile.positionAt(abcissa).latitude())
-                       .setLongitudeAt(x, y,(float) profile.positionAt(abcissa).longitude())
-                       .setSlopeAt(x, y, (float) profile.slopeAt(abcissa));
+                       .setElevationAt(x, y, (float) profile.elevationAt(abscissa))
+                       .setLatitudeAt(x, y,(float) profile.positionAt(abscissa).latitude())
+                       .setLongitudeAt(x, y,(float) profile.positionAt(abscissa).longitude())
+                       .setSlopeAt(x, y, (float) profile.slopeAt(abscissa));
                        
                    }
                    
-                   lastAbcissa = abcissa;
-               }
+                   lastAbcissa = abscissa;
+               
             }
         }
         

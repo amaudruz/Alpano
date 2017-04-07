@@ -7,11 +7,11 @@ Choses � faire:
 -Eviter les cr�ation de variables inutiles
 -Bien nommer les variables
 -Rendre le code claire et a�rer
--Enlever public de toutes les m�thodes static des interfaces utilitaires
 ...
 
 A toi d'ajouter si tu penses � d'autres choses
 
 Demander try/catch
 Javadoc sur class de package
-To break or not to break
+UTF8
+Elevation profile
