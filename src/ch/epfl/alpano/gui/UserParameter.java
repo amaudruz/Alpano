@@ -1,5 +1,11 @@
 package ch.epfl.alpano.gui;
 
+/**
+ * Enumeration of the different parameter that the user has to chose
+ * @author Mathieu Chevalley (274698)
+ * @author Louis Amaudruz (271808)
+ *
+ */
 public enum UserParameter {
     
     OBSERVER_LONGITUDE(60_000, 120_000),
@@ -20,6 +26,11 @@ public enum UserParameter {
         maxValue = max;
     }
     
+    /**
+     * Correct the value if it is not in the bounds
+     * @param value the value to be sinitized
+     * @return a correct value or the given value
+     */
     public int sanitize(int value) {
         
         if(value <= minValue) {

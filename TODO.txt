@@ -1,7 +1,6 @@
-Choses � faire:
+﻿Choses � faire:
 
 -Commenter le code
--R�fl�chir � l'optimisation de certaine partie(voir les TODO)
 -Compl�ter et corriger la javadoc
 -Essayer de placer des assert
 -Eviter les cr�ation de variables inutiles
@@ -10,8 +9,3 @@ Choses � faire:
 ...
 
 A toi d'ajouter si tu penses � d'autres choses
-
-Demander try/catch
-Javadoc sur class de package
-UTF8
-Elevation profile
