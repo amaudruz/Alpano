@@ -58,7 +58,7 @@ public final class PanoramaParameters {
 		checkArgument(x >= 0 && x <= width() -1);
 		
 		double azimuth = floorMod(centerAzimuth() + (anglePerPixels() * (x - ((width() - 1) / 2.0))), PI2);		
-		assert(Math.abs(angularDistance(azimuth, centerAzimuth())) <= horizontalFieldOfView/2 + 1e-10 && Azimuth.isCanonical(azimuth));
+		assert(Math.abs(angularDistance(azimuth, centerAzimuth())) <= horizontalFieldOfView()/2 + 1e-10 && Azimuth.isCanonical(azimuth));
 		
 		return azimuth; 
 	}
@@ -70,7 +70,7 @@ public final class PanoramaParameters {
 	 * @throws IllegalArgumentException if the azimuth is not in the filed of view
 	 */
 	public double xForAzimuth(double a) { 	
-		checkArgument(Math.abs(angularDistance(a, centerAzimuth())) <= horizontalFieldOfView/2 + 1e-10);
+		checkArgument(Math.abs(angularDistance(a, centerAzimuth())) <= horizontalFieldOfView()/2 + 1e-10);
 		
 		double x = (angularDistance(centerAzimuth(), a) / anglePerPixels()) + ((width() -1) / 2.0);
 		assert(x >= 0 && x <= width() - 1);
