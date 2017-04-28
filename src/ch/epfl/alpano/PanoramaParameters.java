@@ -19,6 +19,8 @@ public final class PanoramaParameters {
 	private final int maxDistance;
 	private final int width;
 	private final int height;
+    private final double verticalFieldOfView;
+    private final double anglePerPixels;
 	
 	/**
 	 * Create the parameters for a panorama
@@ -44,7 +46,9 @@ public final class PanoramaParameters {
 		this.horizontalFieldOfView  = horizontalFieldOfView;
 		this.maxDistance = maxDistance;
 		this.width = width;
-		this.height = height;	
+		this.height = height;
+		anglePerPixels = horizontalFieldOfView / (width - 1);
+		verticalFieldOfView = anglePerPixels * (height - 1);
 	}
 	
 	/**
@@ -57,7 +61,7 @@ public final class PanoramaParameters {
 	public double azimuthForX(double x) {
 		checkArgument(x >= 0 && x <= width() -1);
 		
-		double azimuth = floorMod(centerAzimuth() + (anglePerPixels() * (x - ((width() - 1) / 2.0))), PI2);		
+		double azimuth = Azimuth.canonicalize(centerAzimuth() + (anglePerPixels() * (x - ((width() - 1) / 2.0))));		
 		assert(Math.abs(angularDistance(azimuth, centerAzimuth())) <= horizontalFieldOfView()/2 + 1e-10 && Azimuth.isCanonical(azimuth));
 		
 		return azimuth; 
@@ -180,8 +184,8 @@ public final class PanoramaParameters {
 	 * Angle per pixels
 	 * @return rate of angle per pixels
 	 */
-	public double anglePerPixels() {
-		return horizontalFieldOfView() / (width() - 1);
+	double anglePerPixels() {
+		return anglePerPixels;
 	}
 	
 	/**
@@ -189,7 +193,7 @@ public final class PanoramaParameters {
 	 * @return the vertical field of view
 	 */
 	public double verticalFieldOfView() {
-		return anglePerPixels() * (height() - 1);
+		return verticalFieldOfView;
 	}
 	
 }

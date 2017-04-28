@@ -130,7 +130,6 @@ public final class Interval1D {
     
     @Override
     public boolean equals(Object thatO){
-        requireNonNull(thatO);
 
         return thatO instanceof Interval1D && 
                 (((Interval1D)thatO).includedFrom() == includedFrom() && 

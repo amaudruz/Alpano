@@ -86,7 +86,8 @@ public class GazetteerParser {
     private static double toRadians(double degrees, double minutes, double seconds) {
         assert(degrees >= 0 && minutes >= 0 && seconds >= 0);
         double degree = degrees + minutes / 60 + seconds / 3600;
-        return degree * Math.PI/180;
+        
+        return Math.toRadians(degree);
     }
     
 }

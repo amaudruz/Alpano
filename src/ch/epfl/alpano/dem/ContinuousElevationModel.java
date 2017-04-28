@@ -44,8 +44,8 @@ final public class ContinuousElevationModel {
         double xp = sampleIndex(p.longitude());
         double yp = sampleIndex(p.latitude());
         
-        int x = (int) xp;
-        int y = (int) yp;
+        int x = (int) floor(xp);
+        int y = (int) floor(yp);
         
         //close points used for the interpolation
         double z00 = elevationAtIndex(x,y);
@@ -66,8 +66,8 @@ final public class ContinuousElevationModel {
         double xp = sampleIndex(p.longitude());
         double yp = sampleIndex(p.latitude());
         
-        int x = (int) xp;
-        int y = (int) yp;
+        int x = (int) floor(xp);
+        int y = (int) floor(yp);
         
         //close points used for the interpolation
         double z00 = slopeAtIndex(x,y);

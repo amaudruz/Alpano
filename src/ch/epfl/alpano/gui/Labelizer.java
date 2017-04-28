@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import ch.epfl.alpano.GeoPoint;
 import ch.epfl.alpano.Math2;
 import ch.epfl.alpano.PanoramaComputer;
 import ch.epfl.alpano.PanoramaParameters;
@@ -24,6 +25,7 @@ import java.util.BitSet;
 
 public final class Labelizer {
 
+    
     private final ContinuousElevationModel cem;
     private final List<Summit> summits;
     
@@ -32,16 +34,25 @@ public final class Labelizer {
         this.summits = Collections.unmodifiableList(requireNonNull(summits));
     }
     
+    private static final int ABOVE_BORDER = 170;
+    private static final int LINE_TO_SUMMIT_PIXELS = 2;
+    private static final int SIDE_BORDER = 20;
+    private static final int LINE_LENGTH = 20;
+    private static final int TEXT_ROTATION = 60;
+    
     public List<Node> labels(PanoramaParameters parameters) {
         
         List<Node> labels = new ArrayList<>();
         List<Summit> visibleSummits = visibleSummits(parameters);
         
         Collections.sort(visibleSummits, (x, y) -> {
-            if(x.elevation() < y.elevation()) {
+            int xElevation = x.elevation();
+            int yElevation = y.elevation();
+            
+            if(xElevation < yElevation) {
                 return 1;
             }
-            else if (x.elevation() == y.elevation()) {
+            else if (xElevation == yElevation) {
                 return 0;
             }
             else{
@@ -49,29 +60,35 @@ public final class Labelizer {
             }
         });
         
-        BitSet available = new BitSet(parameters.width() - 40);
+        BitSet available = new BitSet(parameters.width() - 2 * SIDE_BORDER);
         
         int height = 0;
         boolean first = true;
         
         for(Summit s : visibleSummits) {
-            double azimuth = parameters.observerPosition().azimuthTo(s.position());
-            double altitude = tan((s.elevation() - parameters.observerElevation())/parameters.observerPosition().distanceTo(s.position()));
             
-            if(parameters.xForAzimuth(azimuth) >= 20 &&  parameters.xForAzimuth(azimuth) <= parameters.width() - 20
-                    && parameters.yForAltitude(altitude) <= parameters.height() - 170
-                    && available(available, (int) parameters.xForAzimuth(azimuth))) {
+            GeoPoint observerPosition = parameters.observerPosition();
+            GeoPoint summitPosition = s.position();
+            
+            double azimuth = observerPosition.azimuthTo(summitPosition);
+            double altitude = tan((s.elevation() - parameters.observerElevation())/observerPosition.distanceTo(summitPosition));
+
+            int xForAzimuth = (int) parameters.xForAzimuth(azimuth);
+            int yForAltitude = (int) parameters.yForAltitude(altitude);
+            
+            if(xForAzimuth > SIDE_BORDER &&  xForAzimuth < parameters.width() - SIDE_BORDER
+                    && yForAltitude < parameters.height() - ABOVE_BORDER
+                    && available(available, xForAzimuth)) {
                 
                 if(first) {
-                    height = (int) parameters.yForAltitude(altitude) + 22;
+                    height = yForAltitude + LINE_LENGTH + LINE_TO_SUMMIT_PIXELS;
                     first = false;
                 }
                 
-                Line line = new Line((int) parameters.xForAzimuth(azimuth), (int) parameters.yForAltitude(altitude), (int) parameters.xForAzimuth(azimuth), height - 2);
-                labels.add(line);
+                labels.add(new Line(xForAzimuth, yForAltitude, xForAzimuth, height - LINE_TO_SUMMIT_PIXELS));
                 
-                Text text = new Text((int) parameters.xForAzimuth(azimuth), height, s.name());
-                text.getTransforms().add(new Rotate(60,0,0));
+                Text text = new Text(xForAzimuth, height, s.name());
+                text.getTransforms().add(new Rotate(TEXT_ROTATION, 0, 0));
                 labels.add(text);
             }
         }
@@ -81,8 +98,11 @@ public final class Labelizer {
     }
     
     private boolean available(BitSet set, int index) {
+        
         boolean available = true;
-        for(int i = index; i < index + 20; i++) {
+        
+        for(int i = index; i < index + SIDE_BORDER; i++) {
+            
             if(!set.get(i)) {
                 available = false;
             }
@@ -91,15 +111,32 @@ public final class Labelizer {
         return available;
     }
     
+    
+    private static final int ERROR_CONSTANT = 200;
+    private static final int INTERVAL = 64;
+    
     private List<Summit> visibleSummits(PanoramaParameters parameters) {
-        List<Summit> visibleSummits = new LinkedList<>();
+        
+        List<Summit> visibleSummits = new ArrayList<>();
         
         for(Summit s : summits) {
-            ElevationProfile profile = new ElevationProfile(cem, parameters.observerPosition(), parameters.observerPosition().azimuthTo(s.position()), parameters.observerPosition().distanceTo(s.position()));
-            if(parameters.observerPosition().distanceTo(s.position()) <= parameters.maxDistance()
-                    && abs(angularDistance(parameters.observerPosition().azimuthTo(s.position()) , parameters.centerAzimuth())) <= parameters.horizontalFieldOfView()/2 + 1e-10
-                    && abs(tan((s.elevation() - parameters.observerElevation())/parameters.observerPosition().distanceTo(s.position()))) <= parameters.verticalFieldOfView()/2
-                    && Math2.firstIntervalContainingRoot(PanoramaComputer.rayToGroundDistance(profile, parameters.observerElevation(), (s.elevation() - parameters.observerElevation())/parameters.observerPosition().distanceTo(s.position())), 0, parameters.observerPosition().distanceTo(s.position()) - 200, 64) == Double.POSITIVE_INFINITY) {
+            
+            GeoPoint observerPosition = parameters.observerPosition();
+            GeoPoint summitPosition = s.position();
+            
+            double distanceTo = observerPosition.distanceTo(summitPosition);
+            double azimuthTo = observerPosition.azimuthTo(summitPosition);
+            
+            ElevationProfile profile = new ElevationProfile(cem, observerPosition, azimuthTo, distanceTo);
+            
+            int observerElevation = parameters.observerElevation();
+            int summitElevation = s.elevation();
+            
+            if(distanceTo <= parameters.maxDistance()
+                    && abs(angularDistance(azimuthTo , parameters.centerAzimuth())) <= parameters.horizontalFieldOfView()/2d + 1e-10
+                    && abs(tan((summitElevation - observerElevation)/distanceTo)) <= parameters.verticalFieldOfView()/2d
+                    && Math2.firstIntervalContainingRoot(PanoramaComputer.rayToGroundDistance(profile, observerElevation, (summitElevation - observerElevation) / distanceTo), 0, distanceTo - ERROR_CONSTANT, INTERVAL) 
+                        == Double.POSITIVE_INFINITY) {
                 
                 visibleSummits.add(s);
             }
