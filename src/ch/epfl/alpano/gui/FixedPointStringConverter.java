@@ -5,7 +5,13 @@ import java.math.RoundingMode;
 import static ch.epfl.alpano.Preconditions.checkArgument;
 
 import javafx.util.StringConverter;
-
+/**
+ * Represents a converter from a String to an Integer and the other way around... ?
+ * @author Mathieu Chevalley (274698)
+ * @author Louis Amaudruz (271808)
+ *
+ *@see StringConverter<Integer>
+ */
 public final class FixedPointStringConverter extends StringConverter<Integer> {
 
     private final int decimal;
