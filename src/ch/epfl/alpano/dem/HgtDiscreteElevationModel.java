@@ -14,6 +14,7 @@ import ch.epfl.alpano.Interval1D;
 import ch.epfl.alpano.Interval2D;
 import static ch.epfl.alpano.Azimuth.*;
 import static ch.epfl.alpano.Preconditions.*;
+import static ch.epfl.alpano.dem.DiscreteElevationModel.*;
 
 
 
@@ -31,8 +32,6 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel {
 
     private ShortBuffer buffer;
     private final Interval2D extent;
-    private int fromLatitude;
-    private int fromLongitude;
     
 
     /**
@@ -48,6 +47,9 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel {
         checkArgument(fileName.charAt(0) == 'N' || fileName.charAt(0) == 'S', "Should begin by N or S");
         checkArgument(fileName.charAt(3) == 'E' || fileName.charAt(3) == 'W', "Should be E or W");
 
+        int fromLatitude;
+        int fromLongitude;
+        
         try {
             fromLatitude = Integer.parseInt(fileName.substring(1, 3));
             if(fileName.charAt(0) != 'N') {
@@ -67,7 +69,7 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel {
         checkArgument(fileName.substring(7).equals(".hgt"), "should be a .hgt");
         
         //create the extent
-        extent = new Interval2D(new Interval1D(fromLongitude * 3600, (fromLongitude + 1) * 3600), new Interval1D(fromLatitude * 3600, (fromLatitude + 1) * 3600));
+        extent = new Interval2D(new Interval1D(fromLongitude * SAMPLES_PER_DEGREE, (fromLongitude + 1) * SAMPLES_PER_DEGREE), new Interval1D(fromLatitude * SAMPLES_PER_DEGREE, (fromLatitude + 1) * SAMPLES_PER_DEGREE));
        
         try(FileInputStream fileStream = new FileInputStream(file)) {
             
@@ -96,7 +98,7 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel {
     @Override
     public double elevationSample(int x, int y) {
         if(extent().contains(x, y)){
-            return buffer.get(Math.abs(x - fromLongitude*3600) + Math.abs(y - (fromLatitude + 1)*3600) * 3601);
+            return buffer.get(Math.abs(extent().iX().includedFrom()) + Math.abs(y - (extent().iY().includedTo())*SAMPLES_PER_DEGREE) * (SAMPLES_PER_DEGREE + 1));
         }
         else{
             throw new IllegalArgumentException("not in the extent");

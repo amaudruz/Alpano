@@ -105,7 +105,6 @@ public final class Interval2D {
     
     @Override
     public boolean equals(Object thatO){
-        requireNonNull(thatO);
         return thatO instanceof Interval2D && 
                  iX().equals(((Interval2D)thatO).iX()) && 
                  iY().equals(((Interval2D)thatO).iY());

@@ -18,6 +18,10 @@ import java.util.function.DoubleUnaryOperator;
  */
 public final class PanoramaComputer {
     
+    private static final double REFRACTION_CONSTANT = 0.13;
+    private static final double D = (1.0 - REFRACTION_CONSTANT) / (2 * EARTH_RADIUS );
+    private static final int SMALL_INTERVAL = 4;
+    private static final int INTERVAL = 64;
     private final ContinuousElevationModel dem;
     
     /**
@@ -48,11 +52,16 @@ public final class PanoramaComputer {
             
             for(int y = parameters.height() - 1; y >= 0 && notInfinity; y--) {
 
+                   double altitudeForY = parameters.altitudeForY(y);
                    //The function
+<<<<<<< HEAD
                    DoubleUnaryOperator function = rayToGroundDi	stance(profile, parameters.observerElevation(), tan(parameters.altitudeForY(y))); 
+=======
+                   DoubleUnaryOperator function = rayToGroundDistance(profile, parameters.observerElevation(), tan(altitudeForY)); 
+>>>>>>> 0650e36025c1f89b199c411995524dc0d546dbec
                    
                    //first approximation
-                   double abscissa = firstIntervalContainingRoot(function, lastAbcissa, parameters.maxDistance(), 64);
+                   double abscissa = firstIntervalContainingRoot(function, lastAbcissa, parameters.maxDistance(), INTERVAL);
 
                    //only if the abscissa is finite
                    if(abscissa == Double.POSITIVE_INFINITY) {
@@ -60,17 +69,18 @@ public final class PanoramaComputer {
                    }
                    else {   
                        //improvement of the first approximation
-                       abscissa = improveRoot(function, abscissa, abscissa + 64, 4);
+                       abscissa = improveRoot(function, abscissa, abscissa + INTERVAL, SMALL_INTERVAL);
                      
                        //distance from observer to the point, using the angle between the function and the axe
-                       double distance = abscissa/cos(parameters.altitudeForY(y));
+                       double distance = abscissa/cos(altitudeForY);
                        
                        //set all found datum
+                       GeoPoint position = profile.positionAt(abscissa);
                        panoBuilder.setDistanceAt(x,y,(float) distance )
-                       .setElevationAt(x, y, (float) profile.elevationAt(abscissa))
-                       .setLatitudeAt(x, y,(float) profile.positionAt(abscissa).latitude())
-                       .setLongitudeAt(x, y,(float) profile.positionAt(abscissa).longitude())
-                       .setSlopeAt(x, y, (float) profile.slopeAt(abscissa));
+                       .setElevationAt(x, y, (float) dem.elevationAt(position))
+                       .setLatitudeAt(x, y,(float) position.latitude())
+                       .setLongitudeAt(x, y,(float) position.longitude())
+                       .setSlopeAt(x, y, (float) dem.slopeAt(position));
                        
                    }
                    
@@ -91,9 +101,8 @@ public final class PanoramaComputer {
      * @throws NullPointerException if profile is null
      */
     public static DoubleUnaryOperator rayToGroundDistance(ElevationProfile profile, double ray0, double raySlope) {
-        requireNonNull(profile);
         return x -> 
-            ray0 + x * raySlope - profile.elevationAt(x) + sq(x) * ((1.0 - 0.13) / (2 * EARTH_RADIUS ));
+            ray0 + x * raySlope - profile.elevationAt(x) + sq(x) * D;
         
     }
 }

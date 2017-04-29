@@ -82,7 +82,7 @@ public final class GeoPoint {
     @Override
     public String toString(){
         Locale l = null;
-        return String.format(l,"[%.3f; %.3f]", longitude * 180/PI, latitude * 180/PI);
+        return String.format(l,"(%.4f, %.4f)", toDegrees(longitude()), toDegrees(latitude()));
     }
     
 }

@@ -23,7 +23,7 @@ public interface Azimuth {
      * @param azimuth
      * @return <code>true</code> if the azimuth is canonical (between 0 and 2pi)
      */
-    static boolean isCanonical(double azimuth){
+    public static boolean isCanonical(double azimuth){
         
         return azimuth >= 0 && azimuth < PI2;
         
@@ -35,17 +35,8 @@ public interface Azimuth {
      * @param azimuth
      * @return an azimuth between 0 and 2 pi
      */
-    static double canonicalize(double azimuth){
-        
-        while(azimuth >= PI2){
-            azimuth -= PI2;
-        }
-        while(azimuth < 0){
-            azimuth += PI2;
-        }
-        
-        assert(isCanonical(azimuth));
-        return azimuth;
+    public static double canonicalize(double azimuth){
+        return Math2.floorMod(azimuth, PI2);
     }
     
     /**
@@ -54,7 +45,7 @@ public interface Azimuth {
      * @return the mathematical azimuth
      * @throws IllegalArgumentException if the azimuth is not canonical
      */
-    static double toMath(double azimuth){
+    public static double toMath(double azimuth){
         checkArgument(isCanonical(azimuth));
         
         return canonicalize(PI2 - azimuth);
@@ -66,7 +57,7 @@ public interface Azimuth {
      * @return the correct azimuth angle
      * @throws IllegalArgumentException if the angle is not canonical
      */
-    static double fromMath(double angle){
+    public static double fromMath(double angle){
         checkArgument(isCanonical(angle));
         
         return canonicalize(PI2 - angle);
@@ -83,7 +74,7 @@ public interface Azimuth {
      * @return a <code>String</code> position in octant
      * @throws IllegalArgumentException if azimuth is not canonical
      */
-    static String toOctantString(double azimuth, String n, String e, String s, String w) {
+    public static String toOctantString(double azimuth, String n, String e, String s, String w) {
         checkArgument(isCanonical(azimuth));
 
         

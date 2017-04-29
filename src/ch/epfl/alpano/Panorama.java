@@ -127,11 +127,11 @@ public final class Panorama {
     public static final class Builder {
         
         private final PanoramaParameters parameters;
-        private final float[] distance;
-        private final float[] longitude;
-        private final float[] latitude;
-        private final float[] elevation;
-        private final float[] slope;
+        private float[] distance;
+        private float[] longitude;
+        private float[] latitude;
+        private float[] elevation;
+        private float[] slope;
         private boolean build = false;
         
         /**
@@ -141,7 +141,7 @@ public final class Panorama {
          */
         public Builder(PanoramaParameters parameters) {
             
-            this.parameters = requireNonNull(parameters);
+            this.parameters = parameters;
             
             int length = parameters.height() * parameters.width();
             
@@ -240,8 +240,14 @@ public final class Panorama {
          */
         public Panorama build() {
             requireNonBuild();
+            
             build = true;
-            return new Panorama(parameters, distance, longitude, latitude, elevation, slope);
+            Panorama p = new Panorama(parameters, distance, longitude, latitude, elevation, slope);
+            distance = null;
+            longitude = null;
+            elevation = null;
+            slope = null;
+            return p;
         }
         
         private void requireNonBuild() {

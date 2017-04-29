@@ -17,14 +17,14 @@ public interface Math2 {
     /**
      * The double of pi
      */
-    double PI2 = 2 * Math.PI;
+    public final static double PI2 = 2 * Math.PI;
     
     /**
      * Compute the square of a number
      * @param x the number
      * @return the squared number
      */
-    static double sq(double x) {
+    public static double sq(double x) {
         return x * x;
     }
     
@@ -34,7 +34,7 @@ public interface Math2 {
      * @param y the divisor
      * @return the modulo
      */
-    static double floorMod(double x, double y) {
+    public static double floorMod(double x, double y) {
         return x - y * floor(x/y);
     }
 
@@ -43,7 +43,7 @@ public interface Math2 {
      * @param x the number
      * @return the corresponding haversin
      */
-    static double haversin(double x) {
+    public static double haversin(double x) {
         return sq(sin(x/2));
     }
     
@@ -53,7 +53,7 @@ public interface Math2 {
      * @param a2 second angle
      * @return the difference
      */
-    static double angularDistance(double a1, double a2) {
+    public static double angularDistance(double a1, double a2) {
         return floorMod(a2 - a1 + PI, PI2) - PI;
     }
     
@@ -64,7 +64,7 @@ public interface Math2 {
      * @param x the abscissa
      * @return the ordinate of x, using linear interpolation
      */
-    static double lerp(double y0, double y1, double x) {
+    public static double lerp(double y0, double y1, double x) {
         return (y1 - y0) * x + y0;
     }
     
@@ -78,7 +78,7 @@ public interface Math2 {
      * @param y the ordinate
      * @return the result using a bilinear interpolation
      */
-    static double bilerp(double z00, double z10, double z01, double z11,
+    public static double bilerp(double z00, double z10, double z01, double z11,
             double x, double y) {
         
         return lerp(lerp(z00, z10, x), lerp(z01, z11, x), y);
@@ -93,7 +93,9 @@ public interface Math2 {
      * @param dX the size of the interval
      * @return the lower bound of the interval, infinity if no interval has been found
      */
-    static double firstIntervalContainingRoot(DoubleUnaryOperator f, double minX, double maxX, double dX) {
+    public static double firstIntervalContainingRoot(DoubleUnaryOperator f, double minX, double maxX, double dX) {
+        
+        checkArgument(minX <= maxX && dX > 0);
         
         for (double i = minX; i <= maxX - dX; i = i+dX) {
             
@@ -116,7 +118,7 @@ public interface Math2 {
      * @throws IllegalArgumentException if the given interval do not contain a root
      * @throws IllegalArgumentException if epsilon is not positive
      */
-    static double improveRoot(DoubleUnaryOperator f, double x1, double x2, double epsilon) {
+    public static double improveRoot(DoubleUnaryOperator f, double x1, double x2, double epsilon) {
         checkArgument(f.applyAsDouble(x1) * f.applyAsDouble(x2) <= 0);
         checkArgument(epsilon > 0);
         

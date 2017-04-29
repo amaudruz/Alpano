@@ -4,18 +4,32 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 
+
 import ch.epfl.alpano.GeoPoint;
 import ch.epfl.alpano.PanoramaParameters;
 
 import static ch.epfl.alpano.gui.UserParameter.*;
 import static java.lang.Math.*;
+import static java.util.Objects.requireNonNull;
 
+
+/**
+ * The parameters given by the user for the panorama
+ * @author Mathieu Chevalley (274698)
+ * @author Louis Amaudruz (271808)
+ *
+ */
 public final class PanoramaUserParameters {
     
     private final Map<UserParameter, Integer> userParameters;
     
+    /**
+     * Construct a panorama given the user parameters
+     * @param parameters a map of the user parameters with their value
+     * @see UserParameter
+     */
     public PanoramaUserParameters(Map<UserParameter, Integer> parameters) {
-        
+        requireNonNull(parameters);
         for(UserParameter m : parameters.keySet()) {
             parameters.put(m, m.sanitize(parameters.get(m)));
         }
@@ -29,6 +43,18 @@ public final class PanoramaUserParameters {
         userParameters = Collections.unmodifiableMap(new EnumMap<>(parameters));
     }
     
+    /**
+     * Construct a panorama given the user parameters
+     * @param longitude longitude of the observer
+     * @param latitude latitude of the observer
+     * @param elevation elevation of the observer
+     * @param azimuth central azimuth of the view
+     * @param horizontalField horizontal field of view
+     * @param maxDistance maximum distance that can be seen
+     * @param width width of the image
+     * @param height height of the image
+     * @param superSamplingExponent exponent giving the amount of super sampling
+     */
     public PanoramaUserParameters(int longitude, int latitude, int elevation, int azimuth, int horizontalField, 
             int maxDistance, int width, int height, int superSamplingExponent) {
         
