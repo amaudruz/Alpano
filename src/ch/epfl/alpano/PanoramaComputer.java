@@ -49,7 +49,7 @@ public final class PanoramaComputer {
             for(int y = parameters.height() - 1; y >= 0 && notInfinity; y--) {
 
                    //The function
-                   DoubleUnaryOperator function = rayToGroundDistance(profile, parameters.observerElevation(), tan(parameters.altitudeForY(y))); 
+                   DoubleUnaryOperator function = rayToGroundDi	stance(profile, parameters.observerElevation(), tan(parameters.altitudeForY(y))); 
                    
                    //first approximation
                    double abscissa = firstIntervalContainingRoot(function, lastAbcissa, parameters.maxDistance(), 64);
