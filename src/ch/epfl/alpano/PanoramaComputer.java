@@ -55,10 +55,14 @@ public final class PanoramaComputer {
                    double altitudeForY = parameters.altitudeForY(y);
                    //The function
 <<<<<<< HEAD
+<<<<<<< HEAD
                    DoubleUnaryOperator function = rayToGroundDi	stance(profile, parameters.observerElevation(), tan(parameters.altitudeForY(y))); 
 =======
                    DoubleUnaryOperator function = rayToGroundDistance(profile, parameters.observerElevation(), tan(altitudeForY)); 
 >>>>>>> 0650e36025c1f89b199c411995524dc0d546dbec
+=======
+                   DoubleUnaryOperator function = rayToGroundDistance(profile, parameters.observerElevation(), tan(altitudeForY)); 
+>>>>>>> refs/remotes/origin/master
                    
                    //first approximation
                    double abscissa = firstIntervalContainingRoot(function, lastAbcissa, parameters.maxDistance(), INTERVAL);
