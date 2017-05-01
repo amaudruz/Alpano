@@ -1,8 +1,8 @@
 package ch.epfl.alpano.gui;
 
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.function.DoubleUnaryOperator;
 
 import ch.epfl.alpano.GeoPoint;
 import ch.epfl.alpano.Math2;
@@ -29,6 +29,7 @@ public final class Labelizer {
     private final ContinuousElevationModel cem;
     private final List<Summit> summits;
     
+    
     public Labelizer(ContinuousElevationModel cem, List<Summit> summits) {
         this.cem = requireNonNull(cem);
         this.summits = Collections.unmodifiableList(requireNonNull(summits));
@@ -45,18 +46,32 @@ public final class Labelizer {
         List<Node> labels = new ArrayList<>();
         List<Summit> visibleSummits = visibleSummits(parameters);
         
+        GeoPoint observerPosition = parameters.observerPosition();
+        
         Collections.sort(visibleSummits, (x, y) -> {
-            int xElevation = x.elevation();
-            int yElevation = y.elevation();
             
-            if(xElevation < yElevation) {
+            double altitudeX = tan((x.elevation() - parameters.observerElevation())/observerPosition.distanceTo(x.position()));
+            double altitudeY = tan((y.elevation() - parameters.observerElevation())/observerPosition.distanceTo(y.position()));
+
+            int yForAltitudeX = (int) round(parameters.yForAltitude(altitudeX));
+            int yForAltitudeY = (int) round(parameters.yForAltitude(altitudeY));
+            
+            if(yForAltitudeX < yForAltitudeY) {
                 return 1;
             }
-            else if (xElevation == yElevation) {
-                return 0;
+            else if (yForAltitudeX > yForAltitudeY) {
+                return -1;
             }
             else{
-                return -1;
+                if(x.elevation() < y.elevation()) {
+                    return 1;
+                }
+                else if(x.elevation() > y.elevation()) {
+                    return -1;
+                }
+                else {
+                    return 0;
+                }
             }
         });
         
@@ -67,7 +82,7 @@ public final class Labelizer {
         
         for(Summit s : visibleSummits) {
             
-            GeoPoint observerPosition = parameters.observerPosition();
+            
             GeoPoint summitPosition = s.position();
             
             double azimuth = observerPosition.azimuthTo(summitPosition);
@@ -77,7 +92,7 @@ public final class Labelizer {
             int yForAltitude = (int) parameters.yForAltitude(altitude);
             
             if(xForAzimuth > SIDE_BORDER &&  xForAzimuth < parameters.width() - SIDE_BORDER
-                    && yForAltitude < parameters.height() - ABOVE_BORDER
+                    && yForAltitude > ABOVE_BORDER
                     && available(available, xForAzimuth)) {
                 
                 if(first) {
@@ -85,7 +100,7 @@ public final class Labelizer {
                     first = false;
                 }
                 
-                labels.add(new Line(xForAzimuth, yForAltitude, xForAzimuth, height - LINE_TO_SUMMIT_PIXELS));
+                labels.add(new Line(xForAzimuth, height, xForAzimuth, yForAltitude - LINE_TO_SUMMIT_PIXELS));
                 
                 Text text = new Text(xForAzimuth, height, s.name());
                 text.getTransforms().add(new Rotate(TEXT_ROTATION, 0, 0));
@@ -114,8 +129,10 @@ public final class Labelizer {
     
     private static final int ERROR_CONSTANT = 200;
     private static final int INTERVAL = 64;
+    private static final double EPSILON = 4;
     
-    private List<Summit> visibleSummits(PanoramaParameters parameters) {
+    //doit etre private
+    public List<Summit> visibleSummits(PanoramaParameters parameters) {
         
         List<Summit> visibleSummits = new ArrayList<>();
         
@@ -131,13 +148,16 @@ public final class Labelizer {
             
             int observerElevation = parameters.observerElevation();
             int summitElevation = s.elevation();
+            //System.out.println(observerElevation + " " + summitElevation + " " + (summitElevation - observerElevation) / distanceTo);
+            DoubleUnaryOperator f = PanoramaComputer.rayToGroundDistance(profile, observerElevation, (summitElevation - observerElevation) / distanceTo);
             
+            //System.out.println(Math2.firstIntervalContainingRoot(f, 0, distanceTo, INTERVAL) +" " + (distanceTo - ERROR_CONSTANT));
             if(distanceTo <= parameters.maxDistance()
                     && abs(angularDistance(azimuthTo , parameters.centerAzimuth())) <= parameters.horizontalFieldOfView()/2d + 1e-10
                     && abs(tan((summitElevation - observerElevation)/distanceTo)) <= parameters.verticalFieldOfView()/2d
-                    && Math2.firstIntervalContainingRoot(PanoramaComputer.rayToGroundDistance(profile, observerElevation, (summitElevation - observerElevation) / distanceTo), 0, distanceTo - ERROR_CONSTANT, INTERVAL) 
-                        == Double.POSITIVE_INFINITY) {
-                
+                    && Math2.improveRoot(f, Math2.firstIntervalContainingRoot(f, 0, distanceTo, INTERVAL), distanceTo, EPSILON) >= distanceTo - ERROR_CONSTANT
+                    ) {
+
                 visibleSummits.add(s);
             }
         }

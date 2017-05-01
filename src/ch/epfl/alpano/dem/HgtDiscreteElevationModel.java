@@ -98,7 +98,7 @@ public final class HgtDiscreteElevationModel implements DiscreteElevationModel {
     @Override
     public double elevationSample(int x, int y) {
         if(extent().contains(x, y)){
-            return buffer.get(Math.abs(extent().iX().includedFrom()) + Math.abs(y - (extent().iY().includedTo())*SAMPLES_PER_DEGREE) * (SAMPLES_PER_DEGREE + 1));
+            return buffer.get(Math.abs(x - extent().iX().includedFrom()) + Math.abs(y - (extent().iY().includedTo())) * (SAMPLES_PER_DEGREE + 1));
         }
         else{
             throw new IllegalArgumentException("not in the extent");
