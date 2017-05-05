@@ -23,12 +23,23 @@ import static java.lang.Math.*;
 import java.util.ArrayList;
 import java.util.BitSet;
 
+/**
+ * Represents a Tagging of the panorama (all the summits to be drawn in the panorama)
+ * @author Mathieu Chevalley (274698)
+ * @author Louis Amaudruz (271808)
+ *
+ */
 public final class Labelizer {
 
     
     private final ContinuousElevationModel cem;
     private final List<Summit> summits;
     
+   /**
+    * Construc the labelizer given a continous elevation model and a list of all the summits
+    * @param cem the continious elevaition model
+    * @param summits the list of all the summits
+    */
     public Labelizer(ContinuousElevationModel cem, List<Summit> summits) {
         this.cem = requireNonNull(cem);
         this.summits = Collections.unmodifiableList(requireNonNull(summits));
@@ -40,6 +51,12 @@ public final class Labelizer {
     private static final int LINE_LENGTH = 20;
     private static final int TEXT_ROTATION = 60;
     
+    /**
+     * Construct a list of nodes representingall the summits that can be drawn given some constraints
+     * in a panorama.
+     * @param parameters the parameters of the panorama
+     * @return the list of nodes
+     */
     public List<Node> labels(PanoramaParameters parameters) {
         
         List<Node> labels = new ArrayList<>();
@@ -97,6 +114,13 @@ public final class Labelizer {
         return labels;
     }
     
+    /**
+     * Indicates if the certain area of a set of bits is avilable
+     * @param set the set of bits
+     * @param index the begininng of the area
+     * 
+     * @return true if the area is available
+     */
     private boolean available(BitSet set, int index) {
         
         boolean available = true;
@@ -115,6 +139,12 @@ public final class Labelizer {
     private static final int ERROR_CONSTANT = 200;
     private static final int INTERVAL = 64;
     
+    /**
+     * Construct a list of all the visible summits in a panorama
+     * 
+     * @param parameters the parameters of the panorama
+     * @return the list of all visible summits
+     */
     private List<Summit> visibleSummits(PanoramaParameters parameters) {
         
         List<Summit> visibleSummits = new ArrayList<>();
