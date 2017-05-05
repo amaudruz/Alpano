@@ -15,6 +15,7 @@ import javafx.scene.Node;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Translate;
 
 import static ch.epfl.alpano.Math2.angularDistance;
 import static java.util.Objects.requireNonNull;
@@ -40,33 +41,30 @@ public final class Labelizer {
     private static final int SIDE_BORDER = 20;
     private static final int LINE_LENGTH = 20;
     private static final int TEXT_ROTATION = 60;
+
     
     public List<Node> labels(PanoramaParameters parameters) {
         
         List<Node> labels = new ArrayList<>();
-        List<Summit> visibleSummits = visibleSummits(parameters);
-        
-        GeoPoint observerPosition = parameters.observerPosition();
+        List<VisibleSummit> visibleSummits = visibleSummits(parameters);
+
         
         Collections.sort(visibleSummits, (x, y) -> {
             
-            double altitudeX = tan((x.elevation() - parameters.observerElevation())/observerPosition.distanceTo(x.position()));
-            double altitudeY = tan((y.elevation() - parameters.observerElevation())/observerPosition.distanceTo(y.position()));
-
-            int yForAltitudeX = (int) round(parameters.yForAltitude(altitudeX));
-            int yForAltitudeY = (int) round(parameters.yForAltitude(altitudeY));
+            int Yx = x.getY();
+            int Yy = y.getY();
             
-            if(yForAltitudeX < yForAltitudeY) {
+            if(Yx > Yy) {
                 return 1;
             }
-            else if (yForAltitudeX > yForAltitudeY) {
+            else if (Yx < Yy) {
                 return -1;
             }
             else{
-                if(x.elevation() < y.elevation()) {
+                if(x.getSummit().elevation() < y.getSummit().elevation()) {
                     return 1;
                 }
-                else if(x.elevation() > y.elevation()) {
+                else if(x.getSummit().elevation() > y.getSummit().elevation()) {
                     return -1;
                 }
                 else {
@@ -75,35 +73,32 @@ public final class Labelizer {
             }
         });
         
-        BitSet available = new BitSet(parameters.width() - 2 * SIDE_BORDER);
+        BitSet available = new BitSet(parameters.width());
+        
         
         int height = 0;
         boolean first = true;
         
-        for(Summit s : visibleSummits) {
+        for(VisibleSummit s : visibleSummits) {
             
+            int X = s.getX();
+            int Y = s.getY();
             
-            GeoPoint summitPosition = s.position();
-            
-            double azimuth = observerPosition.azimuthTo(summitPosition);
-            double altitude = tan((s.elevation() - parameters.observerElevation())/observerPosition.distanceTo(summitPosition));
-
-            int xForAzimuth = (int) parameters.xForAzimuth(azimuth);
-            int yForAltitude = (int) parameters.yForAltitude(altitude);
-            
-            if(xForAzimuth > SIDE_BORDER &&  xForAzimuth < parameters.width() - SIDE_BORDER
-                    && yForAltitude > ABOVE_BORDER
-                    && available(available, xForAzimuth)) {
+            if(X >= SIDE_BORDER 
+                    && X <= parameters.width() - SIDE_BORDER
+                    && Y >= ABOVE_BORDER
+                    && available(available, X)) {
                 
                 if(first) {
-                    height = yForAltitude + LINE_LENGTH + LINE_TO_SUMMIT_PIXELS;
+                    height = Y - LINE_LENGTH;
+                    System.out.println(Y);
                     first = false;
                 }
                 
-                labels.add(new Line(xForAzimuth, height, xForAzimuth, yForAltitude - LINE_TO_SUMMIT_PIXELS));
+                labels.add(new Line(X, height, X, Y));
                 
-                Text text = new Text(xForAzimuth, height, s.name());
-                text.getTransforms().add(new Rotate(TEXT_ROTATION, 0, 0));
+                Text text = new Text(0, 0, s.getSummit().name());
+                text.getTransforms().addAll(new Translate(X, height), new Rotate(TEXT_ROTATION, 0, 0));
                 labels.add(text);
             }
         }
@@ -112,14 +107,21 @@ public final class Labelizer {
         return labels;
     }
     
+    private static final int SPACE = 20;
+    
     private boolean available(BitSet set, int index) {
         
         boolean available = true;
         
-        for(int i = index; i < index + SIDE_BORDER; i++) {
+        for(int i = index; i < index + SPACE; i++) {
             
-            if(!set.get(i)) {
+            if(set.get(i)) {
                 available = false;
+            }
+        }
+        if(available) {
+            for(int i = index; i < index + SPACE; i++) {
+                set.set(index, true);;
             }
         }
         
@@ -129,12 +131,11 @@ public final class Labelizer {
     
     private static final int ERROR_CONSTANT = 200;
     private static final int INTERVAL = 64;
-    private static final double EPSILON = 4;
     
-    //doit etre private
-    public List<Summit> visibleSummits(PanoramaParameters parameters) {
+
+    private List<VisibleSummit> visibleSummits(PanoramaParameters parameters) {
         
-        List<Summit> visibleSummits = new ArrayList<>();
+        List<VisibleSummit> visibleSummits = new ArrayList<>();
         
         for(Summit s : summits) {
             
@@ -147,21 +148,49 @@ public final class Labelizer {
             ElevationProfile profile = new ElevationProfile(cem, observerPosition, azimuthTo, distanceTo);
             
             int observerElevation = parameters.observerElevation();
-            int summitElevation = s.elevation();
-            //System.out.println(observerElevation + " " + summitElevation + " " + (summitElevation - observerElevation) / distanceTo);
-            DoubleUnaryOperator f = PanoramaComputer.rayToGroundDistance(profile, observerElevation, (summitElevation - observerElevation) / distanceTo);
             
-            //System.out.println(Math2.firstIntervalContainingRoot(f, 0, distanceTo, INTERVAL) +" " + (distanceTo - ERROR_CONSTANT));
+            double h = PanoramaComputer.rayToGroundDistance(profile, observerElevation, 0).applyAsDouble(distanceTo);
+            double slope = -h / distanceTo;
+            
+            DoubleUnaryOperator f = PanoramaComputer.rayToGroundDistance(profile, observerElevation, slope);
+            
+            double altitude = atan(slope);
+            
             if(distanceTo <= parameters.maxDistance()
-                    && abs(angularDistance(azimuthTo , parameters.centerAzimuth())) <= parameters.horizontalFieldOfView()/2d + 1e-10
-                    && abs(tan((summitElevation - observerElevation)/distanceTo)) <= parameters.verticalFieldOfView()/2d
-                    && Math2.improveRoot(f, Math2.firstIntervalContainingRoot(f, 0, distanceTo, INTERVAL), distanceTo, EPSILON) >= distanceTo - ERROR_CONSTANT
+                    && abs(angularDistance(parameters.centerAzimuth(), azimuthTo)) <= parameters.horizontalFieldOfView()/2d + 1e-10
+                    && abs(altitude) <= parameters.verticalFieldOfView()/2d
+                    && Math2.firstIntervalContainingRoot(f, 0, distanceTo, INTERVAL) >= distanceTo - ERROR_CONSTANT
                     ) {
-
-                visibleSummits.add(s);
+                int x = (int) round(parameters.xForAzimuth(azimuthTo));
+                int y = (int) round(parameters.yForAltitude(altitude));
+                visibleSummits.add(new VisibleSummit(s, x, y));
             }
         }
         
         return visibleSummits;
+    }
+    
+    public static class VisibleSummit {
+        private final Summit summit;
+        private final int x;
+        private final int y;
+        
+        public VisibleSummit(Summit s, int x, int y) {
+            summit = s;
+            this.x = x;
+            this.y = y;
+        }
+        
+        public int getX() {
+            return x;
+        }
+        
+        public int getY() {
+            return y;
+        }
+        
+        public Summit getSummit() {
+            return summit;
+        }
     }
 }

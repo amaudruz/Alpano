@@ -78,11 +78,11 @@ public final class PanoramaUserParameters {
     }
     
     public PanoramaParameters panoramaParameters() {
-        return new PanoramaParameters(new GeoPoint(toRadians(observerLongitude())/10000, toRadians(observerLatitude())/10000), observerElevation(), toRadians(azimuth()), toRadians(HorizontalFieldOfView()), maxDistance() * 1000, (int) Math.pow(2, superSamplingExponent()) * width(), (int) Math.pow(2, superSamplingExponent()) * height());
+        return new PanoramaParameters(new GeoPoint(toRadians(observerLongitude()/10000d), toRadians(observerLatitude()/10000d)), observerElevation(), toRadians(azimuth()), toRadians(HorizontalFieldOfView()), maxDistance() * 1000, (int) Math.pow(2, superSamplingExponent()) * width(), (int) Math.pow(2, superSamplingExponent()) * height());
     }
     
     public PanoramaParameters panoramaDisplayParameters() {
-        return new PanoramaParameters(new GeoPoint(toRadians(observerLongitude())/10000, toRadians(observerLatitude())/10000), observerElevation(), toRadians(azimuth()), toRadians(HorizontalFieldOfView()), maxDistance() * 1000, width(), height());
+        return new PanoramaParameters(new GeoPoint(toRadians(observerLongitude()/10000d), toRadians(observerLatitude()/10000d)), observerElevation(), toRadians(azimuth()), toRadians(HorizontalFieldOfView()), maxDistance() * 1000, width(), height());
     }
     
     @Override
