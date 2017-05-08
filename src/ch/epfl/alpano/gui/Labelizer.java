@@ -73,7 +73,7 @@ public final class Labelizer {
             }
         });
         
-        BitSet available = new BitSet(parameters.width());
+        BitSet available = new BitSet(parameters.width() - 2 * SIDE_BORDER + 2);
         
         
         int height = 0;
@@ -85,13 +85,12 @@ public final class Labelizer {
             int Y = s.getY();
             
             if(X >= SIDE_BORDER 
-                    && X <= parameters.width() - SIDE_BORDER
+                    && X <= (parameters.width() - SIDE_BORDER)
                     && Y >= ABOVE_BORDER
-                    && available(available, X)) {
+                    && available(available, X - SIDE_BORDER)) {
                 
                 if(first) {
                     height = Y - LINE_LENGTH;
-                    System.out.println(Y);
                     first = false;
                 }
                 
@@ -121,7 +120,7 @@ public final class Labelizer {
         }
         if(available) {
             for(int i = index; i < index + SPACE; i++) {
-                set.set(index, true);;
+                set.set(index, true);
             }
         }
         
