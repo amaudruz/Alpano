@@ -19,16 +19,8 @@ public class PanoramaParametersBean {
     public PanoramaParametersBean(PanoramaUserParameters parameters) {
         this.parameters = new SimpleObjectProperty<>(parameters);
         objectPropertiesMap = new EnumMap<>(UserParameter.class);
-        objectPropertiesMap.put(OBSERVER_LONGITUDE, new SimpleObjectProperty<>(parameters.get(OBSERVER_LONGITUDE)));
-        objectPropertiesMap.put(OBSERVER_LATITUDE, new SimpleObjectProperty<>(parameters.get(OBSERVER_LATITUDE)));
-        objectPropertiesMap.put(OBSERVER_ELEVATION, new SimpleObjectProperty<>(parameters.get(OBSERVER_ELEVATION)));
-        objectPropertiesMap.put(CENTER_AZIMUTH, new SimpleObjectProperty<>(parameters.get(CENTER_AZIMUTH)));
-        objectPropertiesMap.put(HORIZONTAL_FIELD_OF_VIEW, new SimpleObjectProperty<>(parameters.get(HORIZONTAL_FIELD_OF_VIEW)));
-        objectPropertiesMap.put(MAX_DISTANCE, new SimpleObjectProperty<>(parameters.get(MAX_DISTANCE)));
-        objectPropertiesMap.put(WIDTH, new SimpleObjectProperty<>(parameters.get(WIDTH)));
-        objectPropertiesMap.put(HEIGHT, new SimpleObjectProperty<>(parameters.get(HEIGHT)));
-        objectPropertiesMap.put(SUPER_SAMPLING_EXPONENT, new SimpleObjectProperty<>(parameters.get(SUPER_SAMPLING_EXPONENT)));
-        for(UserParameter m : objectPropertiesMap.keySet()) {
+        for(UserParameter m : UserParameter.values()) {
+            objectPropertiesMap.put(m, new SimpleObjectProperty<>(parameters.get(m)));
             objectPropertiesMap.get(m).addListener((b, o, n) ->
             runLater(this::synchronizeParameters));
         }
@@ -38,91 +30,91 @@ public class PanoramaParametersBean {
         return parameters;
     }
     public PanoramaUserParameters getParameters() {
-        return parameters.get();
+        return parametersProperty().get();
     }
     
     public ObjectProperty<Integer> observerLongitudeProperty() {
         return objectPropertiesMap.get(OBSERVER_LONGITUDE);
     }
     public int getObserverLongitude() {
-        return objectPropertiesMap.get(OBSERVER_LONGITUDE).get();
+        return observerLongitudeProperty().get();
     }
     public void setObserverLongitude(int newLongitude) {
-        objectPropertiesMap.get(OBSERVER_LONGITUDE).set(newLongitude);
+        observerLongitudeProperty().set(newLongitude);
     }
     
     public ObjectProperty<Integer> observerLatitudeProperty() {
-        return objectPropertiesMap.get(UserParameter.OBSERVER_LATITUDE);
+        return objectPropertiesMap.get(OBSERVER_LATITUDE);
     }
     public int getObserverLatitude() {
-        return objectPropertiesMap.get(UserParameter.OBSERVER_LATITUDE).get();
+        return observerLatitudeProperty().get();
     }
     public void setObserverLatitude(int newLatitude) {
-        objectPropertiesMap.get(UserParameter.OBSERVER_LATITUDE).set(newLatitude);
+        observerLatitudeProperty().set(newLatitude);
     }
     
     public ObjectProperty<Integer> observerElevationProperty() {
-        return objectPropertiesMap.get(UserParameter.OBSERVER_ELEVATION);
+        return objectPropertiesMap.get(OBSERVER_ELEVATION);
     }
     public int getObserverElevation() {
-        return objectPropertiesMap.get(UserParameter.OBSERVER_ELEVATION).get();
+        return observerElevationProperty().get();
     }
     public void setObserverElevation(int newElevation) {
-        objectPropertiesMap.get(UserParameter.OBSERVER_ELEVATION).set(newElevation);
+        observerElevationProperty().set(newElevation);
     }
     public ObjectProperty<Integer> centerAzimuthProperty() {
-        return objectPropertiesMap.get(UserParameter.CENTER_AZIMUTH);
+        return objectPropertiesMap.get(CENTER_AZIMUTH);
     }
     public int getCenterAzimuth() {
-        return objectPropertiesMap.get(UserParameter.CENTER_AZIMUTH).get();
+        return centerAzimuthProperty().get();
     }
     public void setCenterAzimuth(int newCenterAzimuth) {
-        objectPropertiesMap.get(UserParameter.CENTER_AZIMUTH).set(newCenterAzimuth);
+        centerAzimuthProperty().set(newCenterAzimuth);
     }
     public ObjectProperty<Integer> horizontalFieldOfViewProperty() {
-        return objectPropertiesMap.get(UserParameter.HORIZONTAL_FIELD_OF_VIEW);
+        return objectPropertiesMap.get(HORIZONTAL_FIELD_OF_VIEW);
     }
     public int getHorizontalFieldOfView() {
-        return objectPropertiesMap.get(UserParameter.HORIZONTAL_FIELD_OF_VIEW).get();
+        return horizontalFieldOfViewProperty().get();
     }
     public void setHorizontalFieldOfView(int newHorizontalFieldOfView) {
-        objectPropertiesMap.get(UserParameter.HORIZONTAL_FIELD_OF_VIEW).set(newHorizontalFieldOfView);
+        horizontalFieldOfViewProperty().set(newHorizontalFieldOfView);
     }
     public ObjectProperty<Integer> maxDistanceProperty() {
-        return objectPropertiesMap.get(UserParameter.MAX_DISTANCE);
+        return objectPropertiesMap.get(MAX_DISTANCE);
     }
     public int getMaxDistance() {
-        return objectPropertiesMap.get(UserParameter.MAX_DISTANCE).get();
+        return maxDistanceProperty().get();
     }
     public void setMaxDistance(int newMaxDistance) {
-        objectPropertiesMap.get(UserParameter.MAX_DISTANCE).set(newMaxDistance);
+        maxDistanceProperty().set(newMaxDistance);
     }
     public ObjectProperty<Integer> widthProperty() {
-        return objectPropertiesMap.get(UserParameter.WIDTH);
+        return objectPropertiesMap.get(WIDTH);
     }
     public int getWidth() {
-        return objectPropertiesMap.get(UserParameter.WIDTH).get();
+        return widthProperty().get();
     }
     public void setWidth(int newWidth) {
-        objectPropertiesMap.get(UserParameter.WIDTH).set(newWidth);
+        widthProperty().set(newWidth);
     }
     public ObjectProperty<Integer> heightProperty() {
-        return objectPropertiesMap.get(UserParameter.HEIGHT);
+        return objectPropertiesMap.get(HEIGHT);
     }
     public int getHeight() {
-        return objectPropertiesMap.get(UserParameter.HEIGHT).get();
+        return heightProperty().get();
     }
     public void setHeight(int newHeight) {
-        objectPropertiesMap.get(UserParameter.HEIGHT).set(newHeight);
+        heightProperty().set(newHeight);
     }
     public ObjectProperty<Integer> superSamplingExponentProperty() {
-        return objectPropertiesMap.get(UserParameter.SUPER_SAMPLING_EXPONENT);
+        return objectPropertiesMap.get(SUPER_SAMPLING_EXPONENT);
     }
     public int getSuperSamplingExponent() {
-        return objectPropertiesMap.get(UserParameter.SUPER_SAMPLING_EXPONENT).get();
+        return superSamplingExponentProperty().get();
     }
     public void setSuperSamplingExponent(int newSuperSamplingExponent) {
-        objectPropertiesMap.get(UserParameter.SUPER_SAMPLING_EXPONENT).set(newSuperSamplingExponent);
+        superSamplingExponentProperty().set(newSuperSamplingExponent);
     }
     
     private void synchronizeParameters() {
@@ -130,6 +122,7 @@ public class PanoramaParametersBean {
         for(UserParameter m : objectPropertiesMap.keySet()) {
             map.put(m, objectPropertiesMap.get(m).get());
         }
+        System.out.println(map);
         PanoramaUserParameters parameters = new PanoramaUserParameters(map);
         this.parameters.set(parameters);
         for(UserParameter m : objectPropertiesMap.keySet()) {
