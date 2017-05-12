@@ -31,6 +31,7 @@ import javafx.scene.Node;
             Labelizer labelizer = new Labelizer(cem, summit);
             //List<Labelizer.VisibleSummit> l = labelizer.visibleSummits(PredefinedPanoramas.NIESEN.panoramaDisplayParameters());
             List<Node> l = labelizer.labels(PredefinedPanoramas.NIESEN.panoramaDisplayParameters());
+            l.forEach(System.out::println);
            // l.forEach(x -> System.out.println(x.getSummit() + " " + x.getX() + " " + x.getY()));
             //System.out.println(l.isEmpty());
             System.out.println(l.size()/2);
