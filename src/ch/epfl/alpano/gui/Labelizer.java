@@ -1,8 +1,8 @@
 package ch.epfl.alpano.gui;
 
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.function.DoubleUnaryOperator;
 
 import ch.epfl.alpano.GeoPoint;
 import ch.epfl.alpano.Math2;
@@ -15,6 +15,7 @@ import javafx.scene.Node;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Translate;
 
 import static ch.epfl.alpano.Math2.angularDistance;
 import static java.util.Objects.requireNonNull;
@@ -35,11 +36,15 @@ public final class Labelizer {
     private final ContinuousElevationModel cem;
     private final List<Summit> summits;
     
+<<<<<<< HEAD
    /**
     * Construc the labelizer given a continous elevation model and a list of all the summits
     * @param cem the continious elevaition model
     * @param summits the list of all the summits
     */
+=======
+    
+>>>>>>> 4f9e7fefe1245b7dec98fac0f2c11892429d9841
     public Labelizer(ContinuousElevationModel cem, List<Summit> summits) {
         this.cem = requireNonNull(cem);
         this.summits = Collections.unmodifiableList(requireNonNull(summits));
@@ -50,6 +55,7 @@ public final class Labelizer {
     private static final int SIDE_BORDER = 20;
     private static final int LINE_LENGTH = 20;
     private static final int TEXT_ROTATION = 60;
+
     
     /**
      * Construct a list of nodes representingall the summits that can be drawn given some constraints
@@ -60,52 +66,59 @@ public final class Labelizer {
     public List<Node> labels(PanoramaParameters parameters) {
         
         List<Node> labels = new ArrayList<>();
-        List<Summit> visibleSummits = visibleSummits(parameters);
+        List<VisibleSummit> visibleSummits = visibleSummits(parameters);
+
         
         Collections.sort(visibleSummits, (x, y) -> {
-            int xElevation = x.elevation();
-            int yElevation = y.elevation();
             
-            if(xElevation < yElevation) {
+            int Yx = x.getY();
+            int Yy = y.getY();
+            
+            if(Yx > Yy) {
                 return 1;
             }
-            else if (xElevation == yElevation) {
-                return 0;
+            else if (Yx < Yy) {
+                return -1;
             }
             else{
-                return -1;
+                if(x.getSummit().elevation() < y.getSummit().elevation()) {
+                    return 1;
+                }
+                else if(x.getSummit().elevation() > y.getSummit().elevation()) {
+                    return -1;
+                }
+                else {
+                    return 0;
+                }
             }
         });
         
-        BitSet available = new BitSet(parameters.width() - 2 * SIDE_BORDER);
+        BitSet available = new BitSet(parameters.width());
+        
         
         int height = 0;
         boolean first = true;
         
-        for(Summit s : visibleSummits) {
+        for(VisibleSummit s : visibleSummits) {
             
-            GeoPoint observerPosition = parameters.observerPosition();
-            GeoPoint summitPosition = s.position();
+            int X = s.getX();
+            int Y = s.getY();
             
-            double azimuth = observerPosition.azimuthTo(summitPosition);
-            double altitude = tan((s.elevation() - parameters.observerElevation())/observerPosition.distanceTo(summitPosition));
-
-            int xForAzimuth = (int) parameters.xForAzimuth(azimuth);
-            int yForAltitude = (int) parameters.yForAltitude(altitude);
-            
-            if(xForAzimuth > SIDE_BORDER &&  xForAzimuth < parameters.width() - SIDE_BORDER
-                    && yForAltitude < parameters.height() - ABOVE_BORDER
-                    && available(available, xForAzimuth)) {
+            if(X >= SIDE_BORDER 
+                    && X <= parameters.width() - SIDE_BORDER
+                    && Y >= ABOVE_BORDER
+                    && available(available, X)) {
                 
                 if(first) {
-                    height = yForAltitude + LINE_LENGTH + LINE_TO_SUMMIT_PIXELS;
+                    height = Y - LINE_LENGTH;
+                    System.out.println(Y);
                     first = false;
                 }
                 
-                labels.add(new Line(xForAzimuth, yForAltitude, xForAzimuth, height - LINE_TO_SUMMIT_PIXELS));
+                labels.add(new Line(X, height, X, Y));
                 
-                Text text = new Text(xForAzimuth, height, s.name());
-                text.getTransforms().add(new Rotate(TEXT_ROTATION, 0, 0));
+                Text text = new Text(0, 0, s.getSummit().name());
+                text.getTransforms().addAll(new Translate(X, height), new Rotate(TEXT_ROTATION, 0, 0));
                 labels.add(text);
             }
         }
@@ -114,6 +127,7 @@ public final class Labelizer {
         return labels;
     }
     
+<<<<<<< HEAD
     /**
      * Indicates if the certain area of a set of bits is avilable
      * @param set the set of bits
@@ -121,14 +135,23 @@ public final class Labelizer {
      * 
      * @return true if the area is available
      */
+=======
+    private static final int SPACE = 20;
+    
+>>>>>>> 4f9e7fefe1245b7dec98fac0f2c11892429d9841
     private boolean available(BitSet set, int index) {
         
         boolean available = true;
         
-        for(int i = index; i < index + SIDE_BORDER; i++) {
+        for(int i = index; i < index + SPACE; i++) {
             
-            if(!set.get(i)) {
+            if(set.get(i)) {
                 available = false;
+            }
+        }
+        if(available) {
+            for(int i = index; i < index + SPACE; i++) {
+                set.set(index, true);;
             }
         }
         
@@ -139,6 +162,7 @@ public final class Labelizer {
     private static final int ERROR_CONSTANT = 200;
     private static final int INTERVAL = 64;
     
+<<<<<<< HEAD
     /**
      * Construct a list of all the visible summits in a panorama
      * 
@@ -146,8 +170,12 @@ public final class Labelizer {
      * @return the list of all visible summits
      */
     private List<Summit> visibleSummits(PanoramaParameters parameters) {
+=======
+
+    private List<VisibleSummit> visibleSummits(PanoramaParameters parameters) {
+>>>>>>> 4f9e7fefe1245b7dec98fac0f2c11892429d9841
         
-        List<Summit> visibleSummits = new ArrayList<>();
+        List<VisibleSummit> visibleSummits = new ArrayList<>();
         
         for(Summit s : summits) {
             
@@ -160,18 +188,49 @@ public final class Labelizer {
             ElevationProfile profile = new ElevationProfile(cem, observerPosition, azimuthTo, distanceTo);
             
             int observerElevation = parameters.observerElevation();
-            int summitElevation = s.elevation();
+            
+            double h = PanoramaComputer.rayToGroundDistance(profile, observerElevation, 0).applyAsDouble(distanceTo);
+            double slope = -h / distanceTo;
+            
+            DoubleUnaryOperator f = PanoramaComputer.rayToGroundDistance(profile, observerElevation, slope);
+            
+            double altitude = atan(slope);
             
             if(distanceTo <= parameters.maxDistance()
-                    && abs(angularDistance(azimuthTo , parameters.centerAzimuth())) <= parameters.horizontalFieldOfView()/2d + 1e-10
-                    && abs(tan((summitElevation - observerElevation)/distanceTo)) <= parameters.verticalFieldOfView()/2d
-                    && Math2.firstIntervalContainingRoot(PanoramaComputer.rayToGroundDistance(profile, observerElevation, (summitElevation - observerElevation) / distanceTo), 0, distanceTo - ERROR_CONSTANT, INTERVAL) 
-                        == Double.POSITIVE_INFINITY) {
-                
-                visibleSummits.add(s);
+                    && abs(angularDistance(parameters.centerAzimuth(), azimuthTo)) <= parameters.horizontalFieldOfView()/2d + 1e-10
+                    && abs(altitude) <= parameters.verticalFieldOfView()/2d
+                    && Math2.firstIntervalContainingRoot(f, 0, distanceTo, INTERVAL) >= distanceTo - ERROR_CONSTANT
+                    ) {
+                int x = (int) round(parameters.xForAzimuth(azimuthTo));
+                int y = (int) round(parameters.yForAltitude(altitude));
+                visibleSummits.add(new VisibleSummit(s, x, y));
             }
         }
         
         return visibleSummits;
+    }
+    
+    public static class VisibleSummit {
+        private final Summit summit;
+        private final int x;
+        private final int y;
+        
+        public VisibleSummit(Summit s, int x, int y) {
+            summit = s;
+            this.x = x;
+            this.y = y;
+        }
+        
+        public int getX() {
+            return x;
+        }
+        
+        public int getY() {
+            return y;
+        }
+        
+        public Summit getSummit() {
+            return summit;
+        }
     }
 }
