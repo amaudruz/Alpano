@@ -40,7 +40,7 @@ public final class Labelizer {
     private static final int LINE_TO_SUMMIT_PIXELS = 2;
     private static final int SIDE_BORDER = 20;
     private static final int LINE_LENGTH = 20;
-    private static final int TEXT_ROTATION = 60;
+    private static final int TEXT_ROTATION = -60;
 
     
     public List<Node> labels(PanoramaParameters parameters) {

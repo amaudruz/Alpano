@@ -6,21 +6,17 @@ import ch.epfl.alpano.Panorama;
 import ch.epfl.alpano.PanoramaComputer;
 import ch.epfl.alpano.PanoramaParameters;
 import ch.epfl.alpano.dem.ContinuousElevationModel;
-import ch.epfl.alpano.dem.HgtDiscreteElevationModel;
 import ch.epfl.alpano.summit.Summit;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import static java.util.Objects.requireNonNull;
 import static javafx.application.Platform.runLater;
-import static ch.epfl.alpano.gui.UserParameter.*;
 
-import java.io.File;
 
 public final class PanoramaComputerBean {
     
@@ -31,19 +27,15 @@ public final class PanoramaComputerBean {
     
     private Labelizer labelizer;
     private ContinuousElevationModel dem;
-    private final ImagePainter painter;
-    private final List<Summit> summits;
     
-    public PanoramaComputerBean(PanoramaUserParameters parameters, List<Summit> summits, ImagePainter painter, ContinuousElevationModel dem) {
-        this.painter = requireNonNull(painter);
-        this.summits = requireNonNull(summits);
+    public PanoramaComputerBean(PanoramaUserParameters parameters, List<Summit> summits, ContinuousElevationModel dem) {
         this.dem = requireNonNull(dem);
         labelizer = new Labelizer(dem, summits);
         
         this.parameters = new SimpleObjectProperty<>(parameters);
         labels = new SimpleObjectProperty<>(computeLabels(parameters.panoramaParameters(), labelizer));
         panorama = new SimpleObjectProperty<>(computePanorama(dem, parameters.panoramaParameters()));
-        image = new SimpleObjectProperty<>(computeImage(painter, getPanorama()));
+        image = new SimpleObjectProperty<>(computeImage(getPanorama()));
         
         this.parameters.addListener((b, o, n) ->
             runLater(this::compute));
@@ -56,7 +48,7 @@ public final class PanoramaComputerBean {
         panorama.set(computePanorama(dem, parameters));
         
         labels.set(computeLabels(parameters, labelizer));
-        image.set(computeImage(painter, getPanorama()));
+        image.set(computeImage(getPanorama()));
     }
     
     private Panorama computePanorama(ContinuousElevationModel dem,
@@ -71,8 +63,15 @@ public final class PanoramaComputerBean {
         return   FXCollections.unmodifiableObservableList(FXCollections.observableArrayList(labelizer.labels(panoramaParameters)));
     }
 
-    private Image computeImage(ImagePainter painter,
-            Panorama panorama) {
+    private Image computeImage(Panorama panorama) {
+        ChannelPainter dist = panorama::distanceAt;
+        ChannelPainter hue = dist.div(100000).cycle().mul(360);
+        ChannelPainter s = dist.div(200000).clamp().invert();
+        ChannelPainter slo = panorama::slopeAt;
+        ChannelPainter b = slo.mul(2).div((float) Math.PI).invert().mul(0.7f).add(0.3f);
+        ChannelPainter o = (x,y) -> dist.valueAt(x, y) == Float.POSITIVE_INFINITY ? 0 : 1; 
+           
+        ImagePainter painter = ImagePainter.hsb(hue, s, b, o);
         return PanoramaRenderer.renderPanorama(panorama, painter);
     }
 

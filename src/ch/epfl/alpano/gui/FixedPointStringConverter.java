@@ -17,7 +17,7 @@ public final class FixedPointStringConverter extends StringConverter<Integer> {
     private final int decimal;
     
     public FixedPointStringConverter(int decimal) {
-        checkArgument(decimal > 0);
+        //checkArgument(decimal > 0);
         this.decimal = decimal;
     }
     
