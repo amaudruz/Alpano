@@ -22,13 +22,19 @@ public final class FixedPointStringConverter extends StringConverter<Integer> {
     }
     
     @Override
-    public Integer fromString(String arg0) {   
+    public Integer fromString(String arg0) { 
+        if(arg0 == null) {
+            return 0;
+        }
         BigDecimal d = new BigDecimal(arg0);    
         return d.movePointRight(decimal).setScale(0, RoundingMode.HALF_UP).intValueExact();
     }
 
     @Override
     public String toString(Integer arg0) {
+        if(arg0 == null) {
+            return "";
+        }
         BigDecimal d = new BigDecimal(arg0);
         return d.movePointLeft(decimal).stripTrailingZeros().toPlainString();
     }
