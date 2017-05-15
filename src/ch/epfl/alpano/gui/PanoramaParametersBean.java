@@ -122,7 +122,6 @@ public class PanoramaParametersBean {
         for(UserParameter m : objectPropertiesMap.keySet()) {
             map.put(m, objectPropertiesMap.get(m).get());
         }
-        System.out.println(map);
         PanoramaUserParameters parameters = new PanoramaUserParameters(map);
         this.parameters.set(parameters);
         for(UserParameter m : objectPropertiesMap.keySet()) {
