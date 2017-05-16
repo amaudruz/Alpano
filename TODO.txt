@@ -2,10 +2,11 @@
 
 -Commenter le code
 -Compl�ter et corriger la javadoc
--Essayer de placer des assert
 -Eviter les cr�ation de variables inutiles
 -Bien nommer les variables
 -Rendre le code claire et a�rer
 ...
 
-A toi d'ajouter si tu penses � d'autres choses
+-problème labelizer
+-pointeur avec coordonnés
+-scroll mauvaise taille

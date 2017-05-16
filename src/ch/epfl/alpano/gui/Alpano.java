@@ -4,8 +4,6 @@ package ch.epfl.alpano.gui;
 import javafx.util.StringConverter;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
@@ -21,7 +19,7 @@ import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
-import javafx.scene.Node;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -33,6 +31,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -54,8 +53,8 @@ public class Alpano extends Application {
     public Alpano() throws Exception {
         List<Summit> summits = GazetteerParser.readSummitsFrom(new File("alps.txt"));  
         ContinuousElevationModel dem = createDem();
-        parametersBean = new PanoramaParametersBean(PredefinedPanoramas.JURA_ALPS);
-        computerBean = new PanoramaComputerBean(PredefinedPanoramas.JURA_ALPS, summits, dem);
+        parametersBean = new PanoramaParametersBean(PredefinedPanoramas.NIESEN);
+        computerBean = new PanoramaComputerBean(PredefinedPanoramas.NIESEN, summits, dem);
     }
     
     @Override
@@ -139,9 +138,9 @@ public class Alpano extends Application {
         ObservableList<Integer> list = FXCollections.observableArrayList(Arrays.asList(0,1,2));
         ChoiceBox<Integer> superSampling = new ChoiceBox<>(list);
         StringConverter<Integer> converter = new LabeledListStringConverter("non", "2x", "4x");
-        TextFormatter<Integer> supFormatter = new TextFormatter<>(converter);
-        supFormatter.valueProperty().bindBidirectional(parametersBean.superSamplingExponentProperty());
+        //TextFormatter<Integer> supFormatter = new TextFormatter<>(converter);
         superSampling.setConverter(converter);
+        superSampling.valueProperty().bindBidirectional(parametersBean.superSamplingExponentProperty());
         
         TextArea text = new TextArea();
         text.setEditable(false);
@@ -187,7 +186,7 @@ public class Alpano extends Application {
     private StackPane panoPane() {
         StackPane panoGroup = new StackPane(panoView(), labelsPane());
         ScrollPane panoScrollPane = new ScrollPane(panoGroup);
-        return new StackPane(updateNotice(), panoScrollPane);
+        return new StackPane(panoScrollPane, updateNotice());
     }
 
     private StackPane updateNotice() {
@@ -196,11 +195,13 @@ public class Alpano extends Application {
         text.setFont(font);
         text.setTextAlignment(TextAlignment.CENTER);
         StackPane updateNotice = new StackPane(text);
-        updateNotice.setBackground(new Background(new BackgroundFill(new Color(1, 1, 1, 0.9), null, null)));
-        updateNotice.visibleProperty().bind(computerBean.panoramaProperty().isNotEqualTo(parametersBean.parametersProperty()));
+        updateNotice.setBackground(new Background(new BackgroundFill(new Color(1, 1, 1, 0.9), CornerRadii.EMPTY, Insets.EMPTY)));
+        updateNotice.visibleProperty().bind(computerBean.parametersProperty().isNotEqualTo(parametersBean.parametersProperty()));
         
         updateNotice.setOnMouseClicked(x -> {
-            computerBean.setParameters(parametersBean.getParameters());
+            if(updateNotice.isVisible()) {
+                computerBean.setParameters(parametersBean.getParameters());
+            }
         });
         return updateNotice;
     }
