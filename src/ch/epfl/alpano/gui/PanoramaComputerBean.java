@@ -29,7 +29,7 @@ public final class PanoramaComputerBean {
     private ContinuousElevationModel dem;
     private final ObservableList<Node> unmodifiableList;
     
-    public PanoramaComputerBean(PanoramaUserParameters parameters, List<Summit> summits, ContinuousElevationModel dem) {
+    public PanoramaComputerBean(List<Summit> summits, ContinuousElevationModel dem) {
         this.dem = requireNonNull(dem);
         labelizer = new Labelizer(dem, summits);
         

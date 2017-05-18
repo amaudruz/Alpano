@@ -8,5 +8,4 @@
 ...
 
 -problème labelizer
--pointeur avec coordonnés
 -scroll mauvaise taille
