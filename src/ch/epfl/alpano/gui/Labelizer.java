@@ -36,15 +36,12 @@ public final class Labelizer {
     private final ContinuousElevationModel cem;
     private final List<Summit> summits;
     
-<<<<<<< HEAD
+
    /**
     * Construc the labelizer given a continous elevation model and a list of all the summits
     * @param cem the continious elevaition model
     * @param summits the list of all the summits
     */
-=======
-    
->>>>>>> 4f9e7fefe1245b7dec98fac0f2c11892429d9841
     public Labelizer(ContinuousElevationModel cem, List<Summit> summits) {
         this.cem = requireNonNull(cem);
         this.summits = Collections.unmodifiableList(requireNonNull(summits));
@@ -128,7 +125,6 @@ public final class Labelizer {
         return labels;
     }
     
-<<<<<<< HEAD
     /**
      * Indicates if the certain area of a set of bits is avilable
      * @param set the set of bits
@@ -136,10 +132,8 @@ public final class Labelizer {
      * 
      * @return true if the area is available
      */
-=======
     private static final int SPACE = 20;
     
->>>>>>> 4f9e7fefe1245b7dec98fac0f2c11892429d9841
     private boolean available(BitSet set, int index) {
         
         
@@ -160,18 +154,15 @@ public final class Labelizer {
     private static final int ERROR_CONSTANT = 200;
     private static final int INTERVAL = 64;
     
-<<<<<<< HEAD
+
     /**
      * Construct a list of all the visible summits in a panorama
      * 
      * @param parameters the parameters of the panorama
      * @return the list of all visible summits
      */
-    private List<Summit> visibleSummits(PanoramaParameters parameters) {
-=======
-
     private List<VisibleSummit> visibleSummits(PanoramaParameters parameters) {
->>>>>>> 4f9e7fefe1245b7dec98fac0f2c11892429d9841
+
         
         List<VisibleSummit> visibleSummits = new ArrayList<>();
         

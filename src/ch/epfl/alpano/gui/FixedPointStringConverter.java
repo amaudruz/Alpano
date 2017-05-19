@@ -16,8 +16,11 @@ public final class FixedPointStringConverter extends StringConverter<Integer> {
 
     private final int decimal;
     
+    /**
+     * Create a converter given the number of decimal to represent
+     * @param decimal
+     */
     public FixedPointStringConverter(int decimal) {
-        //checkArgument(decimal > 0);
         this.decimal = decimal;
     }
     
