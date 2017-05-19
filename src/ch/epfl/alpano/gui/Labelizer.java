@@ -93,7 +93,8 @@ public final class Labelizer {
             }
         });
         
-        BitSet available = new BitSet(parameters.width() - 2 * SIDE_BORDER + 2);
+        int width = parameters.width();
+        BitSet available = new BitSet(width - 2 * SIDE_BORDER + 2);
         
         
         int height = 0;
@@ -105,7 +106,7 @@ public final class Labelizer {
             int Y = s.getY();
             
             if(X >= SIDE_BORDER 
-                    && X <= (parameters.width() - SIDE_BORDER)
+                    && X <= (width - SIDE_BORDER)
                     && Y >= ABOVE_BORDER
                     && available(available, X - SIDE_BORDER)) {
                 
@@ -116,7 +117,8 @@ public final class Labelizer {
                 
                 labels.add(new Line(X, height, X, Y));
                 
-                Text text = new Text(0, 0, s.getSummit().name());
+                Summit summit = s.getSummit();
+                Text text = new Text(0, 0, summit.name() + " (" + summit.elevation() + ")");
                 text.getTransforms().addAll(new Translate(X, height), new Rotate(TEXT_ROTATION, 0, 0));
                 labels.add(text);
             }
@@ -209,7 +211,7 @@ public final class Labelizer {
         return visibleSummits;
     }
     
-    public static class VisibleSummit {
+    public static final class VisibleSummit {
         private final Summit summit;
         private final int x;
         private final int y;

@@ -5,12 +5,17 @@ import javafx.util.StringConverter;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
+import ch.epfl.alpano.Azimuth;
+import ch.epfl.alpano.Panorama;
+import ch.epfl.alpano.PanoramaParameters;
 import ch.epfl.alpano.dem.ContinuousElevationModel;
 import ch.epfl.alpano.dem.DiscreteElevationModel;
 import ch.epfl.alpano.dem.HgtDiscreteElevationModel;
@@ -21,7 +26,7 @@ import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
-import javafx.scene.Node;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -33,6 +38,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -43,19 +49,21 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 import static javafx.geometry.Pos.*; 
+import static java.lang.Math.*;
 
 
 
 public class Alpano extends Application {
 
-    private PanoramaParametersBean parametersBean;
-    private PanoramaComputerBean computerBean;
+    private final PanoramaParametersBean parametersBean;
+    private final PanoramaComputerBean computerBean;
+    private TextArea text;
 
     public Alpano() throws Exception {
         List<Summit> summits = GazetteerParser.readSummitsFrom(new File("alps.txt"));  
         ContinuousElevationModel dem = createDem();
         parametersBean = new PanoramaParametersBean(PredefinedPanoramas.JURA_ALPS);
-        computerBean = new PanoramaComputerBean(PredefinedPanoramas.JURA_ALPS, summits, dem);
+        computerBean = new PanoramaComputerBean(summits, dem);
     }
     
     @Override
@@ -139,13 +147,14 @@ public class Alpano extends Application {
         ObservableList<Integer> list = FXCollections.observableArrayList(Arrays.asList(0,1,2));
         ChoiceBox<Integer> superSampling = new ChoiceBox<>(list);
         StringConverter<Integer> converter = new LabeledListStringConverter("non", "2x", "4x");
-        TextFormatter<Integer> supFormatter = new TextFormatter<>(converter);
-        supFormatter.valueProperty().bindBidirectional(parametersBean.superSamplingExponentProperty());
+        //TextFormatter<Integer> supFormatter = new TextFormatter<>(converter);
         superSampling.setConverter(converter);
+        superSampling.valueProperty().bindBidirectional(parametersBean.superSamplingExponentProperty());
         
-        TextArea text = new TextArea();
+        text = new TextArea();
         text.setEditable(false);
         text.setPrefRowCount(2);
+        
         
         grid.addColumn(1, latitudeText, azimuthText, widthText);
         grid.addColumn(3, longitudeText, angleText, heightText);
@@ -185,9 +194,11 @@ public class Alpano extends Application {
     }
 
     private StackPane panoPane() {
-        StackPane panoGroup = new StackPane(panoView(), labelsPane());
+        StackPane panoGroup = new StackPane(labelsPane(), panoView());
         ScrollPane panoScrollPane = new ScrollPane(panoGroup);
-        return new StackPane(updateNotice(), panoScrollPane);
+        StackPane panoPane = new StackPane(panoScrollPane, updateNotice());
+        
+        return panoPane;
     }
 
     private StackPane updateNotice() {
@@ -196,11 +207,14 @@ public class Alpano extends Application {
         text.setFont(font);
         text.setTextAlignment(TextAlignment.CENTER);
         StackPane updateNotice = new StackPane(text);
-        updateNotice.setBackground(new Background(new BackgroundFill(new Color(1, 1, 1, 0.9), null, null)));
-        updateNotice.visibleProperty().bind(computerBean.panoramaProperty().isNotEqualTo(parametersBean.parametersProperty()));
+        updateNotice.setBackground(new Background(new BackgroundFill(new Color(1, 1, 1, 0.9), CornerRadii.EMPTY, Insets.EMPTY)));
+        updateNotice.visibleProperty().bind(computerBean.parametersProperty().isNotEqualTo(parametersBean.parametersProperty()));
         
         updateNotice.setOnMouseClicked(x -> {
-            computerBean.setParameters(parametersBean.getParameters());
+            if(updateNotice.isVisible()) {
+                computerBean.setParameters(parametersBean.getParameters());
+            }
+            
         });
         return updateNotice;
     }
@@ -216,10 +230,77 @@ public class Alpano extends Application {
 
     private ImageView panoView() {
         ImageView imageView = new ImageView();
+        
         imageView.imageProperty().bind(computerBean.imageProperty());
         imageView.fitWidthProperty().bind(parametersBean.widthProperty());
+        
         imageView.setPreserveRatio(true);
         imageView.setSmooth(true);
+        
+        imageView.setOnMouseClicked(e -> {
+            
+            double resize = pow(2, computerBean.getParameters().get(UserParameter.SUPER_SAMPLING_EXPONENT));
+            
+            int x = (int) round(e.getX() * resize);
+            int y = (int) round(e.getY() * resize);
+            
+            Panorama panorama = computerBean.getPanorama();
+            
+            double latitude = panorama.latitudeAt(x, y);
+            double longitude = panorama.longitudeAt(x, y);
+            
+            Locale l = null;
+            
+            String qy = String.format(l, "mlat=%f&mlon=%f", toDegrees(latitude), toDegrees(longitude));  
+            String fg = String.format(l, "map=15/%f/%f", toDegrees(latitude), toDegrees(longitude));  
+            
+            try {
+                URI osmURI = new URI("http", "www.openstreetmap.org", "/", qy, fg);
+                java.awt.Desktop.getDesktop().browse(osmURI);
+            } catch (URISyntaxException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+            catch (IOException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+        });
+        
+        imageView.setOnMouseMoved(e -> {
+            double longitude, latitude, elevation, distance, altitude, azimuth;
+            
+            double resize = pow(2, computerBean.getParameters().get(UserParameter.SUPER_SAMPLING_EXPONENT));
+            
+            double x = e.getX() * resize;
+            double y = e.getY() * resize;
+            
+            PanoramaParameters panoramaParameters = computerBean.getParameters().panoramaParameters();
+            
+            altitude = panoramaParameters.altitudeForY(y);
+            azimuth = panoramaParameters.azimuthForX(x);
+            
+            int indexX = (int) round(x);
+            int indexY = (int) round(y);
+            
+            Panorama panorama = computerBean.getPanorama();
+            
+            distance = panorama.distanceAt(indexX, indexY);
+            latitude = panorama.latitudeAt(indexX, indexY);
+            longitude = panorama.longitudeAt(indexX, indexY);
+            elevation = panorama.elevationAt(indexX, indexY);
+            
+            Locale l = null;
+            
+            String s = String.format(l, "Position : %.4f°N %.4f°E" +
+                    "\nDistance : %.1fkm" +
+                    "\nAltitude : %.0fm" +
+                    "\nAzimuth : %.1f° (" + Azimuth.toOctantString(azimuth, "N", "E", "S", "W") + ")   Elevation : %.1f°", 
+                    toDegrees(latitude), toDegrees(longitude), distance/1000, elevation, toDegrees(azimuth), toDegrees(altitude));
+            
+            text.setText(s);
+        });
+        
         return imageView;
     }
 
