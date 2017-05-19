@@ -72,8 +72,8 @@ public final class PanoramaComputerBean {
 
     private Image computeImage(Panorama panorama) {
         ChannelPainter dist = panorama::distanceAt;
-        ChannelPainter hue = dist.div(100000).cycle().mul(360);
-        ChannelPainter s = dist.div(200000).clamp().invert();
+        ChannelPainter hue = dist.div(100_000).cycle().mul(360);
+        ChannelPainter s = dist.div(200_000).clamp().invert();
         ChannelPainter slo = panorama::slopeAt;
         ChannelPainter b = slo.mul(2).div((float) Math.PI).invert().mul(0.7f).add(0.3f);
         ChannelPainter o = (x,y) -> dist.valueAt(x, y) == Float.POSITIVE_INFINITY ? 0 : 1; 

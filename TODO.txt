@@ -7,5 +7,5 @@
 -Rendre le code claire et a�rer
 ...
 
--problème labelizer
+
 -scroll mauvaise taille

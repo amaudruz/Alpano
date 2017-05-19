@@ -69,10 +69,7 @@ public class Alpano extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         
-        
-        StackPane panoPane = panoPane();
-        GridPane paramsGrid = paramsGrid();
-        BorderPane root = new BorderPane(panoPane, null, null, paramsGrid, null);
+        BorderPane root = new BorderPane(panoPane(), null, null, paramsGrid(), null);
         Scene scene = new Scene(root);
 
         primaryStage.setTitle("Alpano");
@@ -145,6 +142,7 @@ public class Alpano extends Application {
         heightText.setTextFormatter(heiFormatter);
         
         ObservableList<Integer> list = FXCollections.observableArrayList(Arrays.asList(0,1,2));
+        
         ChoiceBox<Integer> superSampling = new ChoiceBox<>(list);
         StringConverter<Integer> converter = new LabeledListStringConverter("non", "2x", "4x");
         //TextFormatter<Integer> supFormatter = new TextFormatter<>(converter);
@@ -174,7 +172,7 @@ public class Alpano extends Application {
         Label longitudeLabel = new Label("Longitude (°) :");
         Label altitudeLabel = new Label("Altitude (m) :");
         Label azimuthLabel = new Label("Azimuth (°) :");
-        Label angleLabel = new Label("Angle de vue(°) :");
+        Label angleLabel = new Label("Angle de vue (°) :");
         Label visibilityLabel = new Label("Visibilité (km) :");
         Label widthLabel = new Label("Largeur (px) :");
         Label heightLabel = new Label("Hauteur (px) :");
@@ -202,9 +200,8 @@ public class Alpano extends Application {
     }
 
     private StackPane updateNotice() {
-        Font font = new Font(40);
         Text text = new Text("Les paramètres du panorama ont changé. Cliquez ici pour mettre le dessin à jour.");
-        text.setFont(font);
+        text.setFont(new Font(40));
         text.setTextAlignment(TextAlignment.CENTER);
         StackPane updateNotice = new StackPane(text);
         updateNotice.setBackground(new Background(new BackgroundFill(new Color(1, 1, 1, 0.9), CornerRadii.EMPTY, Insets.EMPTY)));
@@ -223,6 +220,7 @@ public class Alpano extends Application {
         Pane labelsPane = new Pane();
         labelsPane.prefWidthProperty().bind(parametersBean.widthProperty());
         labelsPane.prefHeightProperty().bind(parametersBean.heightProperty());
+        
         Bindings.bindContent(labelsPane.getChildren(), computerBean.getLabels());
         
         return labelsPane;
@@ -239,7 +237,7 @@ public class Alpano extends Application {
         
         imageView.setOnMouseClicked(e -> {
             
-            double resize = pow(2, computerBean.getParameters().get(UserParameter.SUPER_SAMPLING_EXPONENT));
+            double resize = pow(2, computerBean.getParameters().superSamplingExponent());
             
             int x = (int) round(e.getX() * resize);
             int y = (int) round(e.getY() * resize);
@@ -270,7 +268,7 @@ public class Alpano extends Application {
         imageView.setOnMouseMoved(e -> {
             double longitude, latitude, elevation, distance, altitude, azimuth;
             
-            double resize = pow(2, computerBean.getParameters().get(UserParameter.SUPER_SAMPLING_EXPONENT));
+            double resize = pow(2, computerBean.getParameters().superSamplingExponent());
             
             double x = e.getX() * resize;
             double y = e.getY() * resize;
@@ -291,12 +289,13 @@ public class Alpano extends Application {
             elevation = panorama.elevationAt(indexX, indexY);
             
             Locale l = null;
-            
+
             String s = String.format(l, "Position : %.4f°N %.4f°E" +
                     "\nDistance : %.1fkm" +
                     "\nAltitude : %.0fm" +
                     "\nAzimuth : %.1f° (" + Azimuth.toOctantString(azimuth, "N", "E", "S", "W") + ")   Elevation : %.1f°", 
-                    toDegrees(latitude), toDegrees(longitude), distance/1000, elevation, toDegrees(azimuth), toDegrees(altitude));
+                    toDegrees(latitude), toDegrees(longitude), distance/1000, elevation, 
+                    toDegrees(azimuth), toDegrees(altitude));
             
             text.setText(s);
         });

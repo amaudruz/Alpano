@@ -112,21 +112,18 @@ public final class Labelizer {
     
     private boolean available(BitSet set, int index) {
         
-        boolean available = true;
         
         for(int i = index; i < index + SPACE; i++) {
             
             if(set.get(i)) {
-                available = false;
+                return false;
             }
         }
-        if(available) {
-            for(int i = index; i < index + SPACE; i++) {
-                set.set(index, true);
-            }
+        for(int i = index; i < index + SPACE; i++) {
+            set.set(i, true);
         }
         
-        return available;
+        return true;
     }
     
     
