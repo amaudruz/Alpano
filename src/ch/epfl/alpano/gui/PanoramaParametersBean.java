@@ -11,11 +11,21 @@ import java.util.Map;
 import static ch.epfl.alpano.gui.UserParameter.*;
 import static javafx.application.Platform.runLater;
 
+/**
+ * A bean that contains the parameters given by the user
+ * @author Mathieu Chevalley (274698)
+ * @author Louis Amaudruz (271808)
+ *
+ */
 public class PanoramaParametersBean {
     
     private final ObjectProperty<PanoramaUserParameters> parameters;
     private final Map<UserParameter, ObjectProperty<Integer>> objectPropertiesMap;
-
+    
+    /**
+     * Construct the bean for the panorama parameters given those parameters
+     * @param parameters the parameters 
+     */
     public PanoramaParametersBean(PanoramaUserParameters parameters) {
         this.parameters = new SimpleObjectProperty<>(parameters);
         objectPropertiesMap = new EnumMap<>(UserParameter.class);

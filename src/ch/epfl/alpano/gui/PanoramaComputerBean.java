@@ -17,6 +17,12 @@ import javafx.scene.image.Image;
 import static java.util.Objects.requireNonNull;
 import static javafx.application.Platform.runLater;
 
+/**
+ * A bean that contains the proprieties of the panorama (image, labels...)
+ * @author Mathieu Chevalley (274698)
+ * @author Louis Amaudruz (271808)
+ *
+ */
 
 public final class PanoramaComputerBean {
     
@@ -28,7 +34,13 @@ public final class PanoramaComputerBean {
     private Labelizer labelizer;
     private ContinuousElevationModel dem;
     private final ObservableList<Node> unmodifiableList;
-    
+     
+     /**
+     * Construct a panorama computer bean given all the summits and a continious elevation model
+     * @param summits all the summits 
+     * @param dem the continious elevation model
+     */
+
     public PanoramaComputerBean(List<Summit> summits, ContinuousElevationModel dem) {
         this.dem = requireNonNull(dem);
         labelizer = new Labelizer(dem, summits);
@@ -82,22 +94,7 @@ public final class PanoramaComputerBean {
         return PanoramaRenderer.renderPanorama(panorama, painter);
     }
 
-    /*private ContinuousElevationModel computeDem() {
-        int longitude = getParameters().get(UserParameter.OBSERVER_LONGITUDE) / 10000;
-        int latitude = getParameters().get(UserParameter.OBSERVER_LATITUDE) / 10000;
-        String lon = "";
-        
-        if(longitude < 10) {
-            lon = "00" + latitude;
-        }
-        else if(longitude < 100) {
-            lon = "0" + latitude;
-        }
-        String fileName = "N" + latitude + "E" + lon + ".hgt";
-        File file = new File(fileName);
-        return new ContinuousElevationModel(new HgtDiscreteElevationModel(file));
-    }*/
-
+    
     public ObjectProperty<PanoramaUserParameters> parametersProperty() {
         return parameters;
     }
@@ -121,11 +118,7 @@ public final class PanoramaComputerBean {
     public Image getImage() {
         return imageProperty().get();
     }
-    
-
-    public ReadOnlyObjectProperty<ObservableList<Node>> labelsProperty() {
-        return labels;
-    }
+   
     public ObservableList<Node> getLabels() {
         return unmodifiableList;
     }
