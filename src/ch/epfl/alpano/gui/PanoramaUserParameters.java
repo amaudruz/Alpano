@@ -77,10 +77,18 @@ public final class PanoramaUserParameters {
         return userParameters;
     }
     
+    
+    /**
+     * Construct the panorama parameters that will be calculated (using Oversampling)
+     *  @return the Panorama parameters using Oversampling
+     */
     public PanoramaParameters panoramaParameters() {
         return new PanoramaParameters(new GeoPoint(toRadians(observerLongitude()/10000d), toRadians(observerLatitude()/10000d)), observerElevation(), toRadians(azimuth()), toRadians(HorizontalFieldOfView()), maxDistance() * 1000, (int) Math.pow(2, superSamplingExponent()) * width(), (int) Math.pow(2, superSamplingExponent()) * height());
     }
-    
+    /**
+     * Construct the panorama parameters that will be drawn (without using Oversampling)
+     *  @return the Panorama parameters without using Oversampling
+     */
     public PanoramaParameters panoramaDisplayParameters() {
         return new PanoramaParameters(new GeoPoint(toRadians(observerLongitude()/10000d), toRadians(observerLatitude()/10000d)), observerElevation(), toRadians(azimuth()), toRadians(HorizontalFieldOfView()), maxDistance() * 1000, width(), height());
     }
