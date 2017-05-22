@@ -1,6 +1,3 @@
-
-
-
 package ch.epfl.alpano.gui;
 
 import ch.epfl.alpano.Panorama;

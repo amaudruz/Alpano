@@ -1,7 +1,7 @@
 package ch.epfl.alpano.gui;
-import static ch.epfl.alpano.Panorama.*;
 
 import java.util.function.DoubleUnaryOperator;
+import static java.lang.Math.*;
 
 import ch.epfl.alpano.Panorama;
 /**
@@ -14,21 +14,28 @@ import ch.epfl.alpano.Panorama;
 @FunctionalInterface
 public interface ChannelPainter {
 	
-	float valueAt(int x, int y);
+    /**
+     * Give the value of the channel painter at a given point
+     * @param x first index
+     * @param y second index
+     * @return the corresponding value
+     */
+	public abstract float valueAt(int x, int y);
 	
-	/**Compute the Channel painter wich will return a value with respect to some inforamtion about the panorama
-	 * 
+	/**
+	 * Compute the Channel painter which will return a value with respect to some inforamtion about the panorama
 	 * @param p the panorama
 	 * @return The channel painter wanted
 	 */
-	static ChannelPainter maxDistanceToNeighbors(Panorama p) {
+	public static ChannelPainter maxDistanceToNeighbors(Panorama p) {
 		 
-		 return (x, y) -> Math.max(Math.max(p.distanceAt(x+1, y, 0), p.distanceAt(x, y+1, 0)),
-				 Math.max(p.distanceAt(x-1, y, 0), p.distanceAt(x, y-1, 0))); 
+		 return (x, y) -> max(
+		         max(p.distanceAt(x+1, y, 0), p.distanceAt(x, y+1, 0)),
+				 max(p.distanceAt(x-1, y, 0), p.distanceAt(x, y-1, 0))); 
 	}
 	
-	/**Add an amount the value returned by the channel painter
-	 * 
+	/**
+	 * Add an amount to the value returned by the channel painter
 	 * @param d the amount
 	 * @return the channel painter with the addition
 	 */
@@ -36,8 +43,8 @@ public interface ChannelPainter {
 		return (x,y) -> valueAt(x, y) + d;
 	}
 	
-	/**Multiply by an amount the value returned by the channel painter
-	 * 
+	/**
+	 * Multiply by an amount the value returned by the channel painter
 	 * @param d the amount
 	 * @return the channel painter with the multiplication
 	 */
@@ -45,17 +52,17 @@ public interface ChannelPainter {
 		return (x,y) -> valueAt(x, y) * d;
 	}
 	
-	/**Substract by an amount the value returned by the channel painter
-	 * 
+	/**
+	 * Subtract by an amount the value returned by the channel painter
 	 * @param d the amount
-	 * @return the channel painter with the substraction
+	 * @return the channel painter with the subtraction
 	 */
 	default ChannelPainter sub(float d) {
-		return (x,y) ->valueAt(x, y) - d;
+		return (x,y) -> valueAt(x, y) - d;
 	}
 	
-	/**Divide by an amount the value returned by the channel painter
-	 * 
+	/**
+	 * Divide by an amount the value returned by the channel painter
 	 * @param d the amount
 	 * @return the channel painter with the division
 	 */
@@ -63,37 +70,44 @@ public interface ChannelPainter {
 		return (x,y) -> valueAt(x, y) / d;
 	}
 	
-	/**Apply the double urnary operator the the value of the channel painter
-	 * 
-	 * @param p the double urnary operator
+	/**
+	 * Apply the double unary operator the the value of the channel painter
+	 * @param p the double unary operator
 	 * @return the channel painter to which the function was applied
 	 */
 	default ChannelPainter map(DoubleUnaryOperator p)  {
-		return (x,y) -> (float)p.applyAsDouble((valueAt(x,y)));
+		return (x,y) -> (float) p.applyAsDouble(valueAt(x,y));
 	}
 	
-	/**Apply a certain function (clamp) to the channel painter
-	 * 
+	/**
+	 * Apply a certain function (clamp) to the channel painter (value between 0 and 1)
 	 * @return the channel painter to which the function (clamp) was applied
 	 */
 	default ChannelPainter clamp() {
-		return (x,y) -> Math.max(0, Math.min(valueAt(x,y), 1) );
+		return (x,y) -> max(0, min(valueAt(x,y), 1));
 	}
 	
-	/**Apply a certain function (cycle) to the channel painter
-	 * 
+	/**
+	 * Apply a certain function (cycle) to the channel painter (value mod 1)
 	 * @return the channel painter to which the function (cycle) was applied
 	 */
 	default ChannelPainter cycle() {
-		return (x,y) -> valueAt(x,y) - (int)valueAt(x,y);
+		return (x,y) -> {
+		    float value = valueAt(x,y);
+		    //TODO
+		    //value = value % 1;
+		    
+            return value - (float) floor(value);
+		};
+		
 	}
 	
-	/**Apply a certain function (invert) to the channel painter
-	 * 
+	/**
+	 * Apply a certain function (invert) to the channel painter (1 - value)
 	 * @return the channel painter to which the function (invert) was applied
 	 */
 	default ChannelPainter invert() {
-		return (x,y) -> 1-valueAt(x,y);
+		return (x,y) -> 1 - valueAt(x,y);
 	}
 	
 }

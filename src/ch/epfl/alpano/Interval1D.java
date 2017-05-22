@@ -68,29 +68,9 @@ public final class Interval1D {
      * @throws NullPointerException if that is null
      */
     public int sizeOfIntersectionWith(Interval1D that) {
-        requireNonNull(that);
-
-        if(contains(that.includedFrom())) {
-            
-            if(contains(that.includedTo())) {
-                return that.size();
-            }
-
-            return includedTo() - that.includedFrom() + 1;
-
-        }
-        else if(that.contains(includedFrom())) {
-            
-            if(that.contains(includedTo())) {
-                return size();
-            }
-
-            return that.includedTo() - includedFrom() + 1;
-
-        }
-
-        return 0;
-
+        int intersectionFrom = max(includedFrom(), that.includedFrom());
+        int intersectionTo = min(includedTo(), that.includedTo());
+        return max(0, intersectionTo - intersectionFrom + 1);
     }
     
     /**

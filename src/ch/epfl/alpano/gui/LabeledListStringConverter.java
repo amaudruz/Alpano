@@ -15,31 +15,39 @@ public final class LabeledListStringConverter extends StringConverter<Integer> {
     private final String[] strings;
     
     /**
-     * Construct teh converter with a list of string
+     * Construct the converter with a list of string
      * 
      * @param strings the list of string
      */
     public LabeledListStringConverter(String...strings) {
+        //TODO
         checkArgument(strings.length > 0);
         this.strings = strings;
     }
     
     @Override
-    public Integer fromString(String arg0) {
+    public Integer fromString(String s) {
+        if(s == null) {
+            return 0;
+        }
         
         for(int i = 0; i < strings.length; i++) {
-            if(strings[i].equals(arg0)) {
+            if(strings[i].equals(s)) {
                 return i;
             }
         }
-        
+        //TODO
         return 0;
     }
 
     @Override
-    public String toString(Integer arg0) {
-        checkArgument(arg0 >= 0 && arg0 < strings.length);
-        return strings[arg0];
+    public String toString(Integer i) {
+        if(i == null) {
+            return "";
+        }
+        //TODO
+        checkArgument(i >= 0 && i < strings.length);
+        return strings[i];
     }
 
 }

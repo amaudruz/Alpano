@@ -27,15 +27,19 @@ public class PanoramaParametersBean {
      * @param parameters the parameters 
      */
     public PanoramaParametersBean(PanoramaUserParameters parameters) {
+        
         this.parameters = new SimpleObjectProperty<>(parameters);
+        
         objectPropertiesMap = new EnumMap<>(UserParameter.class);
         for(UserParameter m : UserParameter.values()) {
             objectPropertiesMap.put(m, new SimpleObjectProperty<>(parameters.get(m)));
+            
             objectPropertiesMap.get(m).addListener((b, o, n) ->
             runLater(this::synchronizeParameters));
         }
     }
     
+    //TODO
     public ReadOnlyObjectProperty<PanoramaUserParameters> parametersProperty() {
         return parameters;
     }
@@ -72,6 +76,7 @@ public class PanoramaParametersBean {
     public void setObserverElevation(int newElevation) {
         observerElevationProperty().set(newElevation);
     }
+    
     public ObjectProperty<Integer> centerAzimuthProperty() {
         return objectPropertiesMap.get(CENTER_AZIMUTH);
     }
@@ -81,6 +86,7 @@ public class PanoramaParametersBean {
     public void setCenterAzimuth(int newCenterAzimuth) {
         centerAzimuthProperty().set(newCenterAzimuth);
     }
+    
     public ObjectProperty<Integer> horizontalFieldOfViewProperty() {
         return objectPropertiesMap.get(HORIZONTAL_FIELD_OF_VIEW);
     }
@@ -90,6 +96,7 @@ public class PanoramaParametersBean {
     public void setHorizontalFieldOfView(int newHorizontalFieldOfView) {
         horizontalFieldOfViewProperty().set(newHorizontalFieldOfView);
     }
+    
     public ObjectProperty<Integer> maxDistanceProperty() {
         return objectPropertiesMap.get(MAX_DISTANCE);
     }
@@ -99,6 +106,7 @@ public class PanoramaParametersBean {
     public void setMaxDistance(int newMaxDistance) {
         maxDistanceProperty().set(newMaxDistance);
     }
+    
     public ObjectProperty<Integer> widthProperty() {
         return objectPropertiesMap.get(WIDTH);
     }
@@ -108,6 +116,7 @@ public class PanoramaParametersBean {
     public void setWidth(int newWidth) {
         widthProperty().set(newWidth);
     }
+    
     public ObjectProperty<Integer> heightProperty() {
         return objectPropertiesMap.get(HEIGHT);
     }
@@ -117,6 +126,7 @@ public class PanoramaParametersBean {
     public void setHeight(int newHeight) {
         heightProperty().set(newHeight);
     }
+    
     public ObjectProperty<Integer> superSamplingExponentProperty() {
         return objectPropertiesMap.get(SUPER_SAMPLING_EXPONENT);
     }
@@ -127,13 +137,17 @@ public class PanoramaParametersBean {
         superSamplingExponentProperty().set(newSuperSamplingExponent);
     }
     
+    //update all the parameters when the parameters changed
     private void synchronizeParameters() {
         Map<UserParameter, Integer> map = new EnumMap<>(UserParameter.class);
         for(UserParameter m : objectPropertiesMap.keySet()) {
             map.put(m, objectPropertiesMap.get(m).get());
         }
+        
         PanoramaUserParameters parameters = new PanoramaUserParameters(map);
+        
         this.parameters.set(parameters);
+        
         for(UserParameter m : objectPropertiesMap.keySet()) {
             objectPropertiesMap.get(m).set(parameters.get(m));
         }

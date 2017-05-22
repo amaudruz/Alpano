@@ -17,7 +17,7 @@ public interface ImagePainter {
      * @return the color at this index
      * @see javafx.scene.paint#Color
      */
-    Color colorAt(int x, int y);
+    public abstract Color colorAt(int x, int y);
     
     /**
      * Give an image painter given the hue, the saturation, the brightness and the opacity channels at a point 
@@ -28,8 +28,8 @@ public interface ImagePainter {
      * @return the image painter
      * @see ChannelPainter
      */
-    static ImagePainter hsb(ChannelPainter hue, ChannelPainter saturation, ChannelPainter brightness, ChannelPainter opacity) {
-        return (x,y) -> Color.hsb( hue.valueAt(x,y), saturation.valueAt(x,y), brightness.valueAt(x,y), opacity.valueAt(x,y));
+    public static ImagePainter hsb(ChannelPainter hue, ChannelPainter saturation, ChannelPainter brightness, ChannelPainter opacity) {
+        return (x,y) -> Color.hsb(hue.valueAt(x,y), saturation.valueAt(x,y), brightness.valueAt(x,y), opacity.valueAt(x,y));
     }
     
     /**
@@ -39,7 +39,7 @@ public interface ImagePainter {
      * @return the gray Image painter
      * @see ChannelPainter
      */
-    static ImagePainter gray(ChannelPainter gray, ChannelPainter opacity) {
+    public static ImagePainter gray(ChannelPainter gray, ChannelPainter opacity) {
         return (x,y) -> Color.gray(gray.valueAt(x,y), opacity.valueAt(x,y));
     }
 }

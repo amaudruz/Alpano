@@ -10,7 +10,7 @@ public enum UserParameter {
     
     OBSERVER_LONGITUDE(60_000, 120_000),
     OBSERVER_LATITUDE(450_000, 480_000),
-    OBSERVER_ELEVATION(300, 10000),
+    OBSERVER_ELEVATION(300, 10_000),
     CENTER_AZIMUTH(0, 359),
     HORIZONTAL_FIELD_OF_VIEW(1, 360),
     MAX_DISTANCE(10, 600),
@@ -28,7 +28,7 @@ public enum UserParameter {
     
     /**
      * Correct the value if it is not in the bounds
-     * @param value the value to be sinitized
+     * @param value the value to be sanitized
      * @return a correct value or the given value
      */
     public int sanitize(int value) {

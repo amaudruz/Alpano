@@ -1,6 +1,13 @@
 package ch.epfl.alpano.gui;
 
+/**
+ * Some predefined panoramas
+ * @author Mathieu Chevalley (274698)
+ * @author Louis Amaudruz (271808)
+ *
+ */
 public interface PredefinedPanoramas {
+    //TODO mettre des magic numbers
     PanoramaUserParameters NIESEN = new PanoramaUserParameters(76_500, 467_300, 600, 180, 110, 300, 2500, 800, 0);
     PanoramaUserParameters JURA_ALPS = new PanoramaUserParameters(68_087, 470_085, 1380, 162, 27, 300, 2500, 800, 0);
     PanoramaUserParameters MOUNT_RACINE = new PanoramaUserParameters(68_200, 470_200, 1500, 135, 45, 300, 2500, 800, 0);

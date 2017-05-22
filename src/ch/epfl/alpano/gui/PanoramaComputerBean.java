@@ -15,7 +15,6 @@ import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
 import static java.util.Objects.requireNonNull;
-import static javafx.application.Platform.runLater;
 
 /**
  * A bean that contains the proprieties of the panorama (image, labels...)
@@ -28,64 +27,65 @@ public final class PanoramaComputerBean {
     
     private final ObjectProperty<PanoramaUserParameters> parameters;
     private final ObjectProperty<Image> image;
-    private final ObjectProperty<ObservableList<Node>> labels;
     private final ObjectProperty<Panorama> panorama;
     
-    private Labelizer labelizer;
-    private ContinuousElevationModel dem;
-    private final ObservableList<Node> unmodifiableList;
+    private final ObservableList<Node> labels;
+    private final ObservableList<Node> unmodifiableLabels;
+    private final Labelizer labelizer;
+    private final ContinuousElevationModel dem;
      
      /**
-     * Construct a panorama computer bean given all the summits and a continious elevation model
+     * Construct a panorama computer bean given all the summits and a continuous elevation model
      * @param summits all the summits 
-     * @param dem the continious elevation model
+     * @param dem the continuous elevation model
      */
-
     public PanoramaComputerBean(List<Summit> summits, ContinuousElevationModel dem) {
-        this.dem = requireNonNull(dem);
+        this.dem = requireNonNull(dem);//TODO
         labelizer = new Labelizer(dem, summits);
         
-        /*this.parameters = new SimpleObjectProperty<>(parameters);
-        labels = new SimpleObjectProperty<>(FXCollections.observableArrayList(labelizer.labels(parameters.panoramaParameters())));
-        panorama = new SimpleObjectProperty<>(computePanorama(dem, parameters.panoramaParameters()));
-        image = new SimpleObjectProperty<>(computeImage(getPanorama()));
-        unmodifiableList = FXCollections.unmodifiableObservableList(labelsProperty().get());*/
-        this.parameters = new SimpleObjectProperty<>();
-        labels = new SimpleObjectProperty<>(FXCollections.observableArrayList());
+
+        parameters = new SimpleObjectProperty<>();
         panorama = new SimpleObjectProperty<>();
         image = new SimpleObjectProperty<>();
-        unmodifiableList = FXCollections.unmodifiableObservableList(labelsProperty().get());
+        labels = FXCollections.observableArrayList();
+        unmodifiableLabels = FXCollections.unmodifiableObservableList(labels);
         
-        this.parameters.addListener((b, o, n) ->
-            compute(n));
+        parameters.addListener((b, oldParameters, newParameters) -> compute(newParameters));//TODO
         
     }
     
+    //Compute all the values with the new parameters
     private void compute(PanoramaUserParameters n) {
         
         PanoramaParameters parameters = n.panoramaParameters();
+        
         panorama.set(computePanorama(dem, parameters));
         
         computeLabels(n.panoramaDisplayParameters());
+        
         image.set(computeImage(getPanorama()));
     }
     
+    //compute the new panorama
     private Panorama computePanorama(ContinuousElevationModel dem,
             PanoramaParameters panoramaParameters) {
         
-        PanoramaComputer computer = new PanoramaComputer(dem);
-        
+        PanoramaComputer computer = new PanoramaComputer(dem);    
         return computer.computePanorama(panoramaParameters);
     }
 
+    //update the labels
     private void computeLabels(PanoramaParameters panoramaParameters) {
-        labels.get().setAll(labelizer.labels(panoramaParameters));
+        labels.setAll(labelizer.labels(panoramaParameters));
     }
 
+    //compute the new image
     private Image computeImage(Panorama panorama) {
+        //TODO
         ChannelPainter dist = panorama::distanceAt;
         ChannelPainter hue = dist.div(100_000).cycle().mul(360);
         ChannelPainter s = dist.div(200_000).clamp().invert();
+        
         ChannelPainter slo = panorama::slopeAt;
         ChannelPainter b = slo.mul(2).div((float) Math.PI).invert().mul(0.7f).add(0.3f);
         ChannelPainter o = (x,y) -> dist.valueAt(x, y) == Float.POSITIVE_INFINITY ? 0 : 1; 
@@ -120,10 +120,8 @@ public final class PanoramaComputerBean {
     }
    
     public ObservableList<Node> getLabels() {
-        return unmodifiableList;
+        return unmodifiableLabels;
     }
     
-    
-
 
 }

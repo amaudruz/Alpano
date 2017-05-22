@@ -21,20 +21,24 @@ import static java.util.Objects.requireNonNull;
  */
 public final class PanoramaUserParameters {
     
+
+
     private final Map<UserParameter, Integer> userParameters;
     
+    private static final int VERTICAL_LIMIT = 170;
+
     /**
      * Construct a panorama given the user parameters
      * @param parameters a map of the user parameters with their value
      * @see UserParameter
      */
     public PanoramaUserParameters(Map<UserParameter, Integer> parameters) {
-        requireNonNull(parameters);
+
         for(UserParameter m : parameters.keySet()) {
             parameters.put(m, m.sanitize(parameters.get(m)));
         }
         
-        int maxHeight = (170 * (parameters.get(WIDTH) - 1) / parameters.get(HORIZONTAL_FIELD_OF_VIEW)) + 1;
+        int maxHeight = (VERTICAL_LIMIT * (parameters.get(WIDTH) - 1) / parameters.get(HORIZONTAL_FIELD_OF_VIEW)) + 1;
         
         if(parameters.get(HEIGHT) > maxHeight) {
             parameters.put(HEIGHT, maxHeight);
@@ -61,9 +65,12 @@ public final class PanoramaUserParameters {
         this(createMap(longitude, latitude, elevation, azimuth, horizontalField, maxDistance, width, height, superSamplingExponent));
     }
     
-    private static Map<UserParameter,Integer> createMap(int longitude, int latitude, int elevation, int azimuth, int horizontalField, 
+    //create a map given all the parameters
+    private static Map<UserParameter, Integer> createMap(int longitude, int latitude, int elevation, int azimuth, int horizontalField, 
             int maxDistance, int width, int height, int superSamplingExponent) {
+        
         Map<UserParameter, Integer> userParameters = new EnumMap<>(UserParameter.class);
+        
         userParameters.put(OBSERVER_LONGITUDE, longitude);
         userParameters.put(OBSERVER_LATITUDE, latitude);
         userParameters.put(OBSERVER_ELEVATION, elevation);
@@ -77,20 +84,22 @@ public final class PanoramaUserParameters {
         return userParameters;
     }
     
+    private static final double TO_DOUBLE_FORMAT = 10000d;
+    private static final int TO_METERS_FORMAT = 1000;
     
     /**
      * Construct the panorama parameters that will be calculated (using Oversampling)
      *  @return the Panorama parameters using Oversampling
      */
     public PanoramaParameters panoramaParameters() {
-        return new PanoramaParameters(new GeoPoint(toRadians(observerLongitude()/10000d), toRadians(observerLatitude()/10000d)), observerElevation(), toRadians(azimuth()), toRadians(HorizontalFieldOfView()), maxDistance() * 1000, (int) Math.pow(2, superSamplingExponent()) * width(), (int) Math.pow(2, superSamplingExponent()) * height());
+        return new PanoramaParameters(new GeoPoint(toRadians(observerLongitude()/TO_DOUBLE_FORMAT), toRadians(observerLatitude()/TO_DOUBLE_FORMAT)), observerElevation(), toRadians(azimuth()), toRadians(HorizontalFieldOfView()), maxDistance() * TO_METERS_FORMAT, (int) Math.pow(2, superSamplingExponent()) * width(), (int) Math.pow(2, superSamplingExponent()) * height());
     }
     /**
      * Construct the panorama parameters that will be drawn (without using Oversampling)
      *  @return the Panorama parameters without using Oversampling
      */
     public PanoramaParameters panoramaDisplayParameters() {
-        return new PanoramaParameters(new GeoPoint(toRadians(observerLongitude()/10000d), toRadians(observerLatitude()/10000d)), observerElevation(), toRadians(azimuth()), toRadians(HorizontalFieldOfView()), maxDistance() * 1000, width(), height());
+        return new PanoramaParameters(new GeoPoint(toRadians(observerLongitude()/TO_DOUBLE_FORMAT), toRadians(observerLatitude()/TO_DOUBLE_FORMAT)), observerElevation(), toRadians(azimuth()), toRadians(HorizontalFieldOfView()), maxDistance() * TO_METERS_FORMAT, width(), height());
     }
     
     @Override
@@ -103,6 +112,7 @@ public final class PanoramaUserParameters {
         return userParameters.hashCode();
     }
     
+    //TODO
     public int get(UserParameter parameter) {
         return userParameters.get(parameter);
     }
