@@ -115,12 +115,10 @@ public final class Labelizer {
                     minHeight = y - LINE_LENGTH;
                     first = false;
                 }
-                
+                //TODO positionnement
                 labels.add(new Line(x, minHeight, x, y));
                 
-                //TODO
-                Summit summit = s.getSummit();
-                Text text = new Text(summit.name() + " (" + summit.elevation() + ")");
+                Text text = new Text(s.toString());
                 text.getTransforms().addAll(new Translate(x, minHeight), new Rotate(TEXT_ROTATION));
                 labels.add(text);
             }
@@ -196,6 +194,7 @@ public final class Labelizer {
     
     //Ease the access to data that have already been calculated
     private static final class VisibleSummit {
+        
         private final Summit summit;
         private final int x;
         private final int y;
@@ -216,6 +215,11 @@ public final class Labelizer {
         
         private Summit getSummit() {
             return summit;
+        }
+        
+        @Override
+        public String toString() {
+            return summit.name() + " (" + summit.elevation() + ")";
         }
     }
 }

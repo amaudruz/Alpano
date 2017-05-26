@@ -32,7 +32,7 @@ public final class PanoramaComputerBean {
     private final ObservableList<Node> labels;
     private final ObservableList<Node> unmodifiableLabels;
     private final Labelizer labelizer;
-    private final ContinuousElevationModel dem;
+    private final PanoramaComputer computer;
      
      /**
      * Construct a panorama computer bean given all the summits and a continuous elevation model
@@ -40,7 +40,7 @@ public final class PanoramaComputerBean {
      * @param dem the continuous elevation model
      */
     public PanoramaComputerBean(List<Summit> summits, ContinuousElevationModel dem) {
-        this.dem = requireNonNull(dem);//TODO
+        computer = new PanoramaComputer(dem);
         labelizer = new Labelizer(dem, summits);
         
 
@@ -50,7 +50,7 @@ public final class PanoramaComputerBean {
         labels = FXCollections.observableArrayList();
         unmodifiableLabels = FXCollections.unmodifiableObservableList(labels);
         
-        parameters.addListener((b, oldParameters, newParameters) -> compute(newParameters));//TODO
+        parameters.addListener((b, oldParameters, newParameters) -> compute(newParameters));
         
     }
     
@@ -59,29 +59,16 @@ public final class PanoramaComputerBean {
         
         PanoramaParameters parameters = n.panoramaParameters();
         
-        panorama.set(computePanorama(dem, parameters));
+        panorama.set(computer.computePanorama(parameters));
         
-        computeLabels(n.panoramaDisplayParameters());
+        labels.setAll(labelizer.labels(n.panoramaDisplayParameters()));
         
         image.set(computeImage(getPanorama()));
     }
     
-    //compute the new panorama
-    private Panorama computePanorama(ContinuousElevationModel dem,
-            PanoramaParameters panoramaParameters) {
-        
-        PanoramaComputer computer = new PanoramaComputer(dem);    
-        return computer.computePanorama(panoramaParameters);
-    }
-
-    //update the labels
-    private void computeLabels(PanoramaParameters panoramaParameters) {
-        labels.setAll(labelizer.labels(panoramaParameters));
-    }
 
     //compute the new image
     private Image computeImage(Panorama panorama) {
-        //TODO
         ChannelPainter dist = panorama::distanceAt;
         ChannelPainter hue = dist.div(100_000).cycle().mul(360);
         ChannelPainter s = dist.div(200_000).clamp().invert();

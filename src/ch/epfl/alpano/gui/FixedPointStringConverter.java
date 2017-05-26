@@ -26,7 +26,7 @@ public final class FixedPointStringConverter extends StringConverter<Integer> {
     @Override
     public Integer fromString(String s) { 
         if(s == null) {
-            return 0;
+            return -1;
         }
         BigDecimal d = new BigDecimal(s);    
         return d.movePointRight(decimal).setScale(0, RoundingMode.HALF_UP).intValueExact();

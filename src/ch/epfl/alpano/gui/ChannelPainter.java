@@ -3,6 +3,7 @@ package ch.epfl.alpano.gui;
 import java.util.function.DoubleUnaryOperator;
 import static java.lang.Math.*;
 
+import ch.epfl.alpano.Math2;
 import ch.epfl.alpano.Panorama;
 /**
  * Functional representing a channel painter
@@ -92,13 +93,7 @@ public interface ChannelPainter {
 	 * @return the channel painter to which the function (cycle) was applied
 	 */
 	default ChannelPainter cycle() {
-		return (x,y) -> {
-		    float value = valueAt(x,y);
-		    //TODO
-		    //value = value % 1;
-		    
-            return value - (float) floor(value);
-		};
+		return (x,y) -> (float) Math2.floorMod(valueAt(x,y), 1);
 		
 	}
 	

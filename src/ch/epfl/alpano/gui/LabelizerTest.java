@@ -24,7 +24,6 @@ import javafx.scene.Node;
 
         @Override
         public void start(Stage primaryStage) throws Exception {
-            // TODO: Code principal.
             ContinuousElevationModel cem = new ContinuousElevationModel(new HgtDiscreteElevationModel(new File("N46E007.hgt")));
             List<Summit> summit = GazetteerParser.readSummitsFrom(new File("alps.txt"));
             System.out.println(summit.isEmpty());

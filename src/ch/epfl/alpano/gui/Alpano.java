@@ -32,6 +32,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
@@ -50,12 +51,13 @@ import static java.lang.Math.*;
 
 
 
-public class Alpano extends Application {
+public final class Alpano extends Application {
 
     private final PanoramaParametersBean parametersBean;
     private final PanoramaComputerBean computerBean;
     private TextArea informationTextArea;
 
+    
     public Alpano() throws Exception {
         List<Summit> summits = GazetteerParser.readSummitsFrom(new File("alps.txt"));  
         ContinuousElevationModel dem = createDem();
@@ -206,6 +208,7 @@ public class Alpano extends Application {
     }
 
     private StackPane updateNotice() {
+        
         Text text = new Text("Les paramètres du panorama ont changé. \nCliquez ici pour mettre le dessin à jour.");
         text.setFont(new Font(40));
         text.setTextAlignment(TextAlignment.CENTER);
@@ -217,11 +220,12 @@ public class Alpano extends Application {
         
         //if clicked, the parameters, and thus the output image, are updated
         updateNotice.setOnMouseClicked(x -> {
-            if(updateNotice.isVisible()) { //est-ce util?
-                computerBean.setParameters(parametersBean.getParameters());
-            }
+           // if(updateNotice.isVisible()) { //est-ce util?
+                computerBean.setParameters(parametersBean.parametersProperty().get());
+           // }
             
         });
+        //updateNotice.setMinSize(0, 0);
         
         return updateNotice;
     }
@@ -254,73 +258,77 @@ public class Alpano extends Application {
         /*
          * Open an online map with the parameters of the mouse
          */
-        imageView.setOnMouseClicked(e -> {
-            
-            double resize = pow(2, computerBean.getParameters().superSamplingExponent());
-            
-            int x = (int) round(e.getX() * resize);
-            int y = (int) round(e.getY() * resize);
-            
-            Panorama panorama = computerBean.getPanorama();
-            
-            double latitude = panorama.latitudeAt(x, y);
-            double longitude = panorama.longitudeAt(x, y);
-            
-            Locale l = null;
-            
-            String qy = String.format(l, "mlat=%f&mlon=%f", toDegrees(latitude), toDegrees(longitude));  
-            String fg = String.format(l, "map=15/%f/%f", toDegrees(latitude), toDegrees(longitude));  
-            
-            try {
-                URI osmURI = new URI("http", "www.openstreetmap.org", "/", qy, fg);
-                java.awt.Desktop.getDesktop().browse(osmURI);
-            } catch (Exception e1) {
-                throw new Error(e1);
-            }
-            
-        });
+        imageView.setOnMouseClicked(e -> onMouseClicked(e));
         
         /*
          * Update information about the point under the mouse
          */
-        imageView.setOnMouseMoved(e -> {
-            double longitude, latitude, elevation, distance, altitude, azimuth;
-            
-            PanoramaUserParameters computerParameters = computerBean.getParameters();
-            
-            double resize = pow(2, computerParameters.superSamplingExponent());
-            
-            double x = e.getX() * resize;
-            double y = e.getY() * resize;
-            
-            PanoramaParameters panoramaParameters = computerParameters.panoramaParameters();
-            
-            altitude = panoramaParameters.altitudeForY(y);
-            azimuth = panoramaParameters.azimuthForX(x);
-            
-            int indexX = (int) round(x);
-            int indexY = (int) round(y);
-            
-            Panorama panorama = computerBean.getPanorama();
-            
-            distance = panorama.distanceAt(indexX, indexY);
-            latitude = panorama.latitudeAt(indexX, indexY);
-            longitude = panorama.longitudeAt(indexX, indexY);
-            elevation = panorama.elevationAt(indexX, indexY);
-            
-            Locale l = null;
-
-            String s = String.format(l, "Position : %.4f°N %.4f°E" +
-                    "\nDistance : %.1f km" +
-                    "\nAltitude : %.0f m" +
-                    "\nAzimuth : %.1f° (" + Azimuth.toOctantString(azimuth, "N", "E", "S", "W") + ")   Elevation : %.1f°", 
-                    toDegrees(latitude), toDegrees(longitude), distance/1000, elevation, 
-                    toDegrees(azimuth), toDegrees(altitude));
-            
-            informationTextArea.setText(s);
-        });
+        imageView.setOnMouseMoved(e -> onMouseMoved(e));
         
         return imageView;
+    }
+
+    private void onMouseMoved(MouseEvent e) {
+        
+        double longitude, latitude, elevation, distance, altitude, azimuth;
+        
+        PanoramaUserParameters computerParameters = computerBean.getParameters();
+        
+        double resize = pow(2, computerParameters.superSamplingExponent());
+        
+        double x = e.getX() * resize;
+        double y = e.getY() * resize;
+        
+        PanoramaParameters panoramaParameters = computerParameters.panoramaParameters();
+        
+        altitude = panoramaParameters.altitudeForY(y);
+        azimuth = panoramaParameters.azimuthForX(x);
+        
+        int indexX = (int) round(x);
+        int indexY = (int) round(y);
+        
+        Panorama panorama = computerBean.getPanorama();
+        
+        distance = panorama.distanceAt(indexX, indexY);
+        latitude = panorama.latitudeAt(indexX, indexY);
+        longitude = panorama.longitudeAt(indexX, indexY);
+        elevation = panorama.elevationAt(indexX, indexY);
+        
+        Locale l = null;
+
+        String s = String.format(l, "Position : %.4f°N %.4f°E" +
+                "\nDistance : %.1f km" +
+                "\nAltitude : %.0f m" +
+                "\nAzimuth : %.1f° (" + Azimuth.toOctantString(azimuth, "N", "E", "S", "W") + ")   Elevation : %.1f°", 
+                toDegrees(latitude), toDegrees(longitude), distance/1000, elevation, 
+                toDegrees(azimuth), toDegrees(altitude));
+        
+        informationTextArea.setText(s);
+    }
+
+    private void onMouseClicked(MouseEvent e) throws Error {
+        
+        double resize = pow(2, computerBean.getParameters().superSamplingExponent());
+        
+        int x = (int) round(e.getX() * resize);
+        int y = (int) round(e.getY() * resize);
+        
+        Panorama panorama = computerBean.getPanorama();
+        
+        double latitude = panorama.latitudeAt(x, y);
+        double longitude = panorama.longitudeAt(x, y);
+        
+        Locale l = null;
+        
+        String qy = String.format(l, "mlat=%f&mlon=%f", toDegrees(latitude), toDegrees(longitude));  
+        String fg = String.format(l, "map=15/%f/%f", toDegrees(latitude), toDegrees(longitude));  
+        
+        try {
+            URI osmURI = new URI("http", "www.openstreetmap.org", "/", qy, fg);
+            java.awt.Desktop.getDesktop().browse(osmURI);
+        } catch (Exception e1) {
+            throw new Error(e1);
+        }
     }
 
     public static void main(String[] args) {

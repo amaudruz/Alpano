@@ -20,15 +20,13 @@ public final class LabeledListStringConverter extends StringConverter<Integer> {
      * @param strings the list of string
      */
     public LabeledListStringConverter(String...strings) {
-        //TODO
-        checkArgument(strings.length > 0);
         this.strings = strings;
     }
     
     @Override
     public Integer fromString(String s) {
         if(s == null) {
-            return 0;
+            return -1;
         }
         
         for(int i = 0; i < strings.length; i++) {
@@ -37,7 +35,7 @@ public final class LabeledListStringConverter extends StringConverter<Integer> {
             }
         }
         //TODO
-        return 0;
+        return -1;
     }
 
     @Override
@@ -45,8 +43,7 @@ public final class LabeledListStringConverter extends StringConverter<Integer> {
         if(i == null) {
             return "";
         }
-        //TODO
-        checkArgument(i >= 0 && i < strings.length);
+
         return strings[i];
     }
 
