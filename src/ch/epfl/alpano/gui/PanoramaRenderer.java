@@ -20,7 +20,7 @@ public interface PanoramaRenderer {
      * @return the resulting image
      * @see javafx.scene.image#Image
      */
-    static Image renderPanorama(Panorama panorama, ImagePainter painter) {
+    public static Image renderPanorama(Panorama panorama, ImagePainter painter) {
         
         WritableImage image = new WritableImage(panorama.parameters().width(), panorama.parameters().height());
         PixelWriter writer = image.getPixelWriter();

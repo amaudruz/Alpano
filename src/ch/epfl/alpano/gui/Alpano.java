@@ -55,14 +55,17 @@ public final class Alpano extends Application {
 
     private final PanoramaParametersBean parametersBean;
     private final PanoramaComputerBean computerBean;
-    private TextArea informationTextArea;
+    private final TextArea informationTextArea;
 
     
     public Alpano() throws Exception {
         List<Summit> summits = GazetteerParser.readSummitsFrom(new File("alps.txt"));  
         ContinuousElevationModel dem = createDem();
-        parametersBean = new PanoramaParametersBean(PredefinedPanoramas.JURA_ALPS);
+        parametersBean = new PanoramaParametersBean(PredefinedPanoramas.PELICAN_BEACH);
         computerBean = new PanoramaComputerBean(summits, dem);
+        
+        informationTextArea = new TextArea();
+
     }
     
     @Override
@@ -79,6 +82,7 @@ public final class Alpano extends Application {
 
     }
 
+    @SuppressWarnings("resource")
     private ContinuousElevationModel createDem() throws Exception {
         DiscreteElevationModel dem1 = new HgtDiscreteElevationModel(new File("N45E006.hgt")).
                 union(new HgtDiscreteElevationModel(new File("N45E007.hgt"))).
@@ -152,7 +156,6 @@ public final class Alpano extends Application {
         /*
          * Initialize the text area with information about the point under the mouse
          */
-        informationTextArea = new TextArea();
         informationTextArea.setEditable(false);
         informationTextArea.setPrefRowCount(2);
         
@@ -162,7 +165,7 @@ public final class Alpano extends Application {
         grid.addColumn(1, latitudeText, azimuthText, widthText);
         grid.addColumn(3, longitudeText, angleText, heightText);
         grid.addColumn(5, altitudeText, visibilityText, superSampling);
-        grid.add(informationTextArea, 7, 0, 1, 3);
+        grid.add(informationTextArea, 6, 0, 1, 3);
 
         /*
          * Add style to the grid
@@ -219,12 +222,7 @@ public final class Alpano extends Application {
         updateNotice.visibleProperty().bind(computerBean.parametersProperty().isNotEqualTo(parametersBean.parametersProperty()));
         
         //if clicked, the parameters, and thus the output image, are updated
-        updateNotice.setOnMouseClicked(x -> {
-           // if(updateNotice.isVisible()) { //est-ce util?
-                computerBean.setParameters(parametersBean.parametersProperty().get());
-           // }
-            
-        });
+        updateNotice.setOnMouseClicked(x -> computerBean.setParameters(parametersBean.parametersProperty().get()));
         //updateNotice.setMinSize(0, 0);
         
         return updateNotice;

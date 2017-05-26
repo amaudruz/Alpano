@@ -34,6 +34,7 @@ public class PanoramaParametersBean {
         for(UserParameter m : UserParameter.values()) {
             objectPropertiesMap.put(m, new SimpleObjectProperty<>(parameters.get(m)));
             
+            //must synchronize its value with the new parameters
             objectPropertiesMap.get(m).addListener((b, o, n) ->
             runLater(this::synchronizeParameters));
         }
@@ -41,6 +42,7 @@ public class PanoramaParametersBean {
     
     //update all the parameters when the parameters changed
     private void synchronizeParameters() {
+        //Update the parameters
         Map<UserParameter, Integer> map = new EnumMap<>(UserParameter.class);
         for(UserParameter m : objectPropertiesMap.keySet()) {
             map.put(m, objectPropertiesMap.get(m).get());
@@ -50,52 +52,91 @@ public class PanoramaParametersBean {
         
         this.parameters.set(parameters);
         
+        //copy the correct values
         for(UserParameter m : objectPropertiesMap.keySet()) {
             objectPropertiesMap.get(m).set(parameters.get(m));
         }
     }
     
-    //TODO
+    
+    /**
+     * The property of the parameters
+     * @return the property
+     */
     public ReadOnlyObjectProperty<PanoramaUserParameters> parametersProperty() {
         return parameters;
     }
     
+    /**
+     * The property of the observer longitude
+     * @return the property
+     */
     public ObjectProperty<Integer> observerLongitudeProperty() {
         return objectPropertiesMap.get(OBSERVER_LONGITUDE);
     }
     
+    /**
+     * The property of the observer latitude
+     * @return the property
+     */
     public ObjectProperty<Integer> observerLatitudeProperty() {
         return objectPropertiesMap.get(OBSERVER_LATITUDE);
     }
     
+    /**
+     * The property of the observer elevation
+     * @return the property
+     */
     public ObjectProperty<Integer> observerElevationProperty() {
         return objectPropertiesMap.get(OBSERVER_ELEVATION);
     }
     
+    /**
+     * The property of the center azimuth of the panorama
+     * @return the property
+     */
     public ObjectProperty<Integer> centerAzimuthProperty() {
         return objectPropertiesMap.get(CENTER_AZIMUTH);
     }
     
+    /**
+     * The property of the total horizontal field of view
+     * @return the property
+     */
     public ObjectProperty<Integer> horizontalFieldOfViewProperty() {
         return objectPropertiesMap.get(HORIZONTAL_FIELD_OF_VIEW);
     }
     
+    /**
+     * The property of the maximum distance that can be seen
+     * @return the property
+     */
     public ObjectProperty<Integer> maxDistanceProperty() {
         return objectPropertiesMap.get(MAX_DISTANCE);
     }
     
+    /**
+     * The property of the width
+     * @return the property
+     */
     public ObjectProperty<Integer> widthProperty() {
         return objectPropertiesMap.get(WIDTH);
     }
 
+    /**
+     * The property of the height
+     * @return the property
+     */
     public ObjectProperty<Integer> heightProperty() {
         return objectPropertiesMap.get(HEIGHT);
     }
     
+    /**
+     * The property of the super sampling exponent
+     * @return the property
+     */
     public ObjectProperty<Integer> superSamplingExponentProperty() {
         return objectPropertiesMap.get(SUPER_SAMPLING_EXPONENT);
     }
     
-    
-
 }

@@ -7,6 +7,7 @@ import javafx.scene.paint.Color;
  * @author Louis Amaudruz (271808)
  * @author Mathieu Chevalley (274698)
  */
+
 @FunctionalInterface
 public interface ImagePainter {
 

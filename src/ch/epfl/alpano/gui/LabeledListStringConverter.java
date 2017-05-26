@@ -1,7 +1,6 @@
 package ch.epfl.alpano.gui;
 
 import javafx.util.StringConverter;
-import static ch.epfl.alpano.Preconditions.checkArgument;
 
 /**
  * Represents a converter from a list of String to Integer and the other way around
@@ -43,7 +42,6 @@ public final class LabeledListStringConverter extends StringConverter<Integer> {
         if(i == null) {
             return "";
         }
-
         return strings[i];
     }
 

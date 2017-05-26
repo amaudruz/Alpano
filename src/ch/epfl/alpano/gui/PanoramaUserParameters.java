@@ -10,7 +10,6 @@ import ch.epfl.alpano.PanoramaParameters;
 
 import static ch.epfl.alpano.gui.UserParameter.*;
 import static java.lang.Math.*;
-import static java.util.Objects.requireNonNull;
 
 
 /**
@@ -38,6 +37,7 @@ public final class PanoramaUserParameters {
             parameters.put(m, m.sanitize(parameters.get(m)));
         }
         
+        //correct the maximum height
         int maxHeight = (VERTICAL_LIMIT * (parameters.get(WIDTH) - 1) / parameters.get(HORIZONTAL_FIELD_OF_VIEW)) + 1;
         
         if(parameters.get(HEIGHT) > maxHeight) {
@@ -84,22 +84,29 @@ public final class PanoramaUserParameters {
         return userParameters;
     }
     
-    private static final double TO_DOUBLE_FORMAT = 10000d;
-    private static final int TO_METERS_FORMAT = 1000;
     
     /**
-     * Construct the panorama parameters that will be calculated (using Oversampling)
+     * Construct the panorama parameters that will be calculated (using supersampling)
      *  @return the Panorama parameters using Oversampling
      */
     public PanoramaParameters panoramaParameters() {
-        return new PanoramaParameters(new GeoPoint(toRadians(observerLongitude()/TO_DOUBLE_FORMAT), toRadians(observerLatitude()/TO_DOUBLE_FORMAT)), observerElevation(), toRadians(azimuth()), toRadians(HorizontalFieldOfView()), maxDistance() * TO_METERS_FORMAT, (int) Math.pow(2, superSamplingExponent()) * width(), (int) Math.pow(2, superSamplingExponent()) * height());
+        return createPanoramaParameters((int) Math.pow(2, superSamplingExponent()));
     }
     /**
-     * Construct the panorama parameters that will be drawn (without using Oversampling)
-     *  @return the Panorama parameters without using Oversampling
+     * Construct the panorama parameters that will be drawn (without using supersampling)
+     * @return the Panorama parameters without using Oversampling
      */
     public PanoramaParameters panoramaDisplayParameters() {
-        return new PanoramaParameters(new GeoPoint(toRadians(observerLongitude()/TO_DOUBLE_FORMAT), toRadians(observerLatitude()/TO_DOUBLE_FORMAT)), observerElevation(), toRadians(azimuth()), toRadians(HorizontalFieldOfView()), maxDistance() * TO_METERS_FORMAT, width(), height());
+        return createPanoramaParameters(1);
+    }
+    
+    private static final double TO_DOUBLE_FORMAT = 10000d;
+    private static final int TO_METERS_FORMAT = 1000;
+
+    private PanoramaParameters createPanoramaParameters(int superSampling) {
+        return new PanoramaParameters(new GeoPoint(toRadians(observerLongitude()/TO_DOUBLE_FORMAT), toRadians(observerLatitude()/TO_DOUBLE_FORMAT)), 
+                observerElevation(), toRadians(azimuth()), toRadians(HorizontalFieldOfView()), maxDistance() * TO_METERS_FORMAT,
+                superSampling * width(), superSampling * height());
     }
     
     @Override
@@ -112,43 +119,83 @@ public final class PanoramaUserParameters {
         return userParameters.hashCode();
     }
     
-    //TODO
+    /**
+     * Get the value given a parameter name
+     * @param parameter the parameter
+     * @return the value of this parameter
+     */
     public int get(UserParameter parameter) {
         return userParameters.get(parameter);
     }
     
+    /**
+     * The longitude of the observer
+     * @return the longitude
+     */
     public int observerLongitude() {
         return get(OBSERVER_LONGITUDE);
     }
     
+    /**
+     * The latitude of the observer
+     * @return the latitude
+     */
     public int observerLatitude() {
         return get(OBSERVER_LATITUDE);
     }
     
+    /**
+     * The elevation of the observer
+     * @return the elevation
+     */
     public int observerElevation() {
         return get(OBSERVER_ELEVATION);
     }
     
+    /**
+     * The central azimuth of the panorama
+     * @return the azimuth
+     */
     public int azimuth() {
         return get(CENTER_AZIMUTH);
     }
     
+    /**
+     * The total horizontal field of view
+     * @return the horizontal field of view
+     */
     public int HorizontalFieldOfView() {
         return get(HORIZONTAL_FIELD_OF_VIEW);
     }
     
+    /**
+     * The maximum distance that can be seen
+     * @return the maximum distance
+     */
     public int maxDistance() {
         return get(MAX_DISTANCE);
     }
     
+    /**
+     * The width of the image
+     * @return the width
+     */
     public int width() {
         return get(WIDTH);
     }
     
+    /**
+     * The height of the image
+     * @return the height
+     */
     public int height() {
         return get(HEIGHT);
     }
     
+    /**
+     * The exponent of super sampling to compute the image
+     * @return the super sampling exponent
+     */
     public int superSamplingExponent() {
         return get(SUPER_SAMPLING_EXPONENT);
     }

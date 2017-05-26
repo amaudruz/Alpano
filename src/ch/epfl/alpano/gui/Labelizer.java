@@ -96,7 +96,7 @@ public final class Labelizer {
         
         int width = parameters.width();
         
-        BitSet available = new BitSet(width - 2 * SIDE_BORDER); 
+        BitSet availablePos = new BitSet(width - 2 * SIDE_BORDER); 
         
         int minHeight = 0;
         boolean first = true;
@@ -109,14 +109,14 @@ public final class Labelizer {
             if(x >= SIDE_BORDER 
                     && x <= (width - SIDE_BORDER)
                     && y >= ABOVE_BORDER
-                    && available(available, x - SIDE_BORDER)) {
+                    && available(availablePos, x - SIDE_BORDER)) {
                 
                 if(first) {
-                    minHeight = y - LINE_LENGTH;
+                    minHeight = y - LINE_LENGTH - LINE_TO_SUMMIT_PIXELS;
                     first = false;
                 }
-                //TODO positionnement
-                labels.add(new Line(x, minHeight, x, y));
+
+                labels.add(new Line(x, minHeight + LINE_TO_SUMMIT_PIXELS, x, y));
                 
                 Text text = new Text(s.toString());
                 text.getTransforms().addAll(new Translate(x, minHeight), new Rotate(TEXT_ROTATION));
@@ -219,7 +219,7 @@ public final class Labelizer {
         
         @Override
         public String toString() {
-            return summit.name() + " (" + summit.elevation() + ")";
+            return getSummit().name() + " (" + getSummit().elevation() + ")";
         }
     }
 }

@@ -14,7 +14,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.image.Image;
-import static java.util.Objects.requireNonNull;
 
 /**
  * A bean that contains the proprieties of the panorama (image, labels...)
@@ -81,31 +80,67 @@ public final class PanoramaComputerBean {
         return PanoramaRenderer.renderPanorama(panorama, painter);
     }
 
-    
+    /**
+     * The property of the panorama parameters
+     * @return the property
+     */
     public ObjectProperty<PanoramaUserParameters> parametersProperty() {
         return parameters;
     }
+    
+    /**
+     * The parameters of the panorama
+     * @return the parameters
+     */
     public PanoramaUserParameters getParameters() {
         return parametersProperty().get();
     }
+    
+    /**
+     * Change the parameters of the panorama
+     * @param newParameters the new parameters
+     */
     public void setParameters(PanoramaUserParameters newParameters) {
         parametersProperty().set(newParameters);
     }
     
+    
+    /**
+     * The property of the panorama
+     * @return the property
+     */
     public ReadOnlyObjectProperty<Panorama> panoramaProperty() {
         return panorama;
     }
+    
+    /**
+     * The panorama
+     * @return the panorama
+     */
     public Panorama getPanorama() {
         return panoramaProperty().get();
     }
     
+    /**
+     * The property of the image
+     * @return the property
+     */
     public ReadOnlyObjectProperty<Image> imageProperty() {
         return image;
     }
+    
+    /**
+     * The image
+     * @return the image
+     */
     public Image getImage() {
         return imageProperty().get();
     }
    
+    /**
+     * An observable list of the labels
+     * @return the list
+     */
     public ObservableList<Node> getLabels() {
         return unmodifiableLabels;
     }
