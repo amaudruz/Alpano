@@ -1,7 +1,5 @@
 package ch.epfl.alpano;
 
-import static ch.epfl.alpano.Preconditions.checkArgument;
-import static java.util.Objects.requireNonNull;
 
 import java.util.Arrays;
 

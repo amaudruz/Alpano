@@ -18,9 +18,7 @@ import static java.lang.Math.*;
  * @author Louis Amaudruz (271808)
  *
  */
-public final class PanoramaUserParameters {
-    
-
+public final class PanoramaUserParameters { 
 
     private final Map<UserParameter, Integer> userParameters;
     

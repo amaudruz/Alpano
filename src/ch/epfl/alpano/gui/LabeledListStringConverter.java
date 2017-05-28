@@ -7,7 +7,7 @@ import javafx.util.StringConverter;
  * @author Mathieu Chevalley (274698)
  * @author Louis Amaudruz (271808)
  *
- *@see StringConverter<Integer>
+ * @see StringConverter<Integer>
  */
 public final class LabeledListStringConverter extends StringConverter<Integer> {
 
@@ -22,10 +22,12 @@ public final class LabeledListStringConverter extends StringConverter<Integer> {
         this.strings = strings;
     }
     
+    private final static int DEFAULT_VALUE = -1;
+    
     @Override
     public Integer fromString(String s) {
         if(s == null) {
-            return -1;
+            return DEFAULT_VALUE;
         }
         
         for(int i = 0; i < strings.length; i++) {
@@ -33,8 +35,7 @@ public final class LabeledListStringConverter extends StringConverter<Integer> {
                 return i;
             }
         }
-        //TODO
-        return -1;
+        return DEFAULT_VALUE;
     }
 
     @Override

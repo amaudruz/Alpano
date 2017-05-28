@@ -1,6 +1,7 @@
 package ch.epfl.alpano.dem;
-import java.util.Objects;
+
 import static java.util.Objects.requireNonNull;
+import static ch.epfl.alpano.Preconditions.*;
 
 import ch.epfl.alpano.Interval2D;
 
@@ -40,19 +41,16 @@ final class CompositeDiscreteElevationModel implements DiscreteElevationModel {
 
 	@Override
 	public double elevationSample(int x, int y) {
+	    
+	    checkArgument(extent().contains(x, y));
 
-		if (extent().contains(x,y)) {
-			if (dem1.extent().contains(x, y)) {
-				return dem1.elevationSample(x, y);
-			}
-
-			return dem2.elevationSample(x, y);
-			
-		}
-		else {
-			throw new IllegalArgumentException("the point does not belong to the MNT");
-		}
-			
+	    if (dem1.extent().contains(x, y)) {
+	        return dem1.elevationSample(x, y);
+   		}
+        
+	    return dem2.elevationSample(x, y);
+        		
+        			
 	}
 
 	@Override

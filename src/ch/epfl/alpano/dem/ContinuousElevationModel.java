@@ -1,6 +1,5 @@
 package ch.epfl.alpano.dem;
 import ch.epfl.alpano.GeoPoint;
-import ch.epfl.alpano.Interval2D;
 import static ch.epfl.alpano.Math2.*;
 import static ch.epfl.alpano.Distance.*;
 import ch.epfl.alpano.dem.DiscreteElevationModel;
@@ -21,7 +20,7 @@ import static ch.epfl.alpano.dem.DiscreteElevationModel.sampleIndex;
 final public class ContinuousElevationModel {
 
     private final DiscreteElevationModel dem;
-    private static final double d = toMeters(1/SAMPLES_PER_RADIAN);
+    private static final double d = toMeters(1 / SAMPLES_PER_RADIAN);
 
    /**
     * The dem to be rendered continuous

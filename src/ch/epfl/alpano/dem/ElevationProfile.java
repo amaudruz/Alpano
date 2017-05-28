@@ -24,6 +24,8 @@ public final class ElevationProfile {
 	private final ContinuousElevationModel elevationModel;
 	private final GeoPoint[] positions;
 	private final double length;
+	
+	private final static double POINT_INTERVAL = 4096;
 
 	/**
 	 * Construct a profile 
@@ -42,14 +44,14 @@ public final class ElevationProfile {
 		this.elevationModel = requireNonNull(elevationModel);
 		
 		//construct an array containing several positions split regularly  
-		positions = new GeoPoint[(int) ceil((length/4096)) + 1];
+		positions = new GeoPoint[(int) ceil((length/POINT_INTERVAL)) + 1];
 		
 		for (int i = 0 ; i < positions.length; ++i) {
-			double latitude = asin((sin(origin.latitude()) * cos(Distance.toRadians(i* 4096))) 
-					+  (cos(origin.latitude()) * sin(Distance.toRadians(i* 4096)) * cos(toMath(azimuth))));
+			double latitude = asin((sin(origin.latitude()) * cos(Distance.toRadians(i* POINT_INTERVAL))) 
+					+  (cos(origin.latitude()) * sin(Distance.toRadians(i* POINT_INTERVAL)) * cos(toMath(azimuth))));
 		
 			
-	        double longitude = angularDistance(asin((sin(toMath(azimuth)) * sin(Distance.toRadians(i*4096))) / cos(latitude)), origin.longitude());
+	        double longitude = angularDistance(asin((sin(toMath(azimuth)) * sin(Distance.toRadians(i*POINT_INTERVAL))) / cos(latitude)), origin.longitude());
 
 			positions[i] = new GeoPoint(longitude , latitude);
 		}
@@ -92,10 +94,10 @@ public final class ElevationProfile {
 	 */
 	public GeoPoint positionAt(double x) {
 		checkArgument(x <= length && x >= 0);
-		int x1 = (int)(x/4096.0);
+		int x1 = (int)(x/POINT_INTERVAL);
 
-		double longitude = lerp(positions[x1].longitude(), positions[x1 + 1].longitude(), x / 4096 - x1) ;
-		double latitude = lerp(positions[x1].latitude(), positions[x1 + 1].latitude(), x / 4096 - x1);
+		double longitude = lerp(positions[x1].longitude(), positions[x1 + 1].longitude(), x / POINT_INTERVAL - x1) ;
+		double latitude = lerp(positions[x1].latitude(), positions[x1 + 1].latitude(), x / POINT_INTERVAL - x1);
 		return new GeoPoint(longitude, latitude);
 	}
 	

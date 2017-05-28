@@ -2,7 +2,6 @@ package ch.epfl.alpano.summit;
 
 import ch.epfl.alpano.GeoPoint;
 import static java.util.Objects.requireNonNull;
-import static ch.epfl.alpano.Preconditions.*;
 
 /**
  * Class that represents a summit (immutable)

@@ -4,7 +4,6 @@ import java.io.File;
 
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.Integer;
 import java.nio.ShortBuffer;
@@ -12,9 +11,7 @@ import java.nio.channels.FileChannel.MapMode;
 
 import ch.epfl.alpano.Interval1D;
 import ch.epfl.alpano.Interval2D;
-import static ch.epfl.alpano.Azimuth.*;
 import static ch.epfl.alpano.Preconditions.*;
-import static ch.epfl.alpano.dem.DiscreteElevationModel.*;
 
 
 

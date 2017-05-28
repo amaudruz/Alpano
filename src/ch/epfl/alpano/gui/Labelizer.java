@@ -20,6 +20,7 @@ import javafx.scene.transform.Translate;
 import static ch.epfl.alpano.Math2.angularDistance;
 import static java.util.Objects.requireNonNull;
 import static java.lang.Math.*;
+import static ch.epfl.alpano.PanoramaComputer.rayToGroundDistance;
 
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -135,7 +136,7 @@ public final class Labelizer {
     
     private boolean available(BitSet set, int index) {
         
-        
+        //true = place is taken
         for(int i = index; i < index + SPACE; i++) {
             
             if(set.get(i)) {
@@ -171,10 +172,10 @@ public final class Labelizer {
             
             int observerElevation = parameters.observerElevation();
             
-            double h = PanoramaComputer.rayToGroundDistance(profile, observerElevation, 0).applyAsDouble(distanceTo);
-            double slope = -h / distanceTo;
+            double height = rayToGroundDistance(profile, observerElevation, 0).applyAsDouble(distanceTo);
+            double slope = -height / distanceTo;
             
-            DoubleUnaryOperator f = PanoramaComputer.rayToGroundDistance(profile, observerElevation, slope);
+            DoubleUnaryOperator f = rayToGroundDistance(profile, observerElevation, slope);
             
             double altitude = atan(slope);
             
@@ -199,21 +200,21 @@ public final class Labelizer {
         private final int x;
         private final int y;
         
-        private VisibleSummit(Summit s, int x, int y) {
+        public VisibleSummit(Summit s, int x, int y) {
             summit = s;
             this.x = x;
             this.y = y;
         }
         
-        private int getX() {
+        public int getX() {
             return x;
         }
         
-        private int getY() {
+        public int getY() {
             return y;
         }
         
-        private Summit getSummit() {
+        public Summit getSummit() {
             return summit;
         }
         
