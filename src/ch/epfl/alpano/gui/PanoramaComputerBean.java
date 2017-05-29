@@ -54,13 +54,13 @@ public final class PanoramaComputerBean {
     }
     
     //Compute all the values with the new parameters
-    private void compute(PanoramaUserParameters n) {
+    private void compute(PanoramaUserParameters newParam) {
         
-        PanoramaParameters parameters = n.panoramaParameters();
+        PanoramaParameters parameters = newParam.panoramaParameters();
         
         panorama.set(computer.computePanorama(parameters));
         
-        labels.setAll(labelizer.labels(n.panoramaDisplayParameters()));
+        labels.setAll(labelizer.labels(newParam.panoramaDisplayParameters()));
         
         image.set(computeImage(getPanorama()));
     }

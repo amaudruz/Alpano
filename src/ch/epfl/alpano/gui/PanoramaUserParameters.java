@@ -21,6 +21,8 @@ import static java.lang.Math.*;
 public final class PanoramaUserParameters { 
 
     private final Map<UserParameter, Integer> userParameters;
+    private final PanoramaParameters panoramaParameters;
+    private final PanoramaParameters panoramaDisplayParameters;
     
     private static final int VERTICAL_LIMIT = 170;
 
@@ -43,6 +45,10 @@ public final class PanoramaUserParameters {
         }
         
         userParameters = Collections.unmodifiableMap(new EnumMap<>(parameters));
+        
+        panoramaDisplayParameters = createPanoramaParameters(1);
+        panoramaParameters = createPanoramaParameters((int) Math.pow(2, superSamplingExponent()));
+        
     }
     
     /**
@@ -88,14 +94,14 @@ public final class PanoramaUserParameters {
      *  @return the Panorama parameters using Oversampling
      */
     public PanoramaParameters panoramaParameters() {
-        return createPanoramaParameters((int) Math.pow(2, superSamplingExponent()));
+        return panoramaParameters;
     }
     /**
      * Construct the panorama parameters that will be drawn (without using supersampling)
      * @return the Panorama parameters without using Oversampling
      */
     public PanoramaParameters panoramaDisplayParameters() {
-        return createPanoramaParameters(1);
+        return panoramaDisplayParameters;
     }
     
     private static final double TO_DOUBLE_FORMAT = 10000d;
@@ -109,7 +115,8 @@ public final class PanoramaUserParameters {
     
     @Override
     public boolean equals(Object other) {
-        return other instanceof PanoramaUserParameters && userParameters.equals(((PanoramaUserParameters)other).userParameters);
+        return other instanceof PanoramaUserParameters 
+                && userParameters.equals(((PanoramaUserParameters)other).userParameters);
     }
     
     @Override

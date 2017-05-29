@@ -17,7 +17,7 @@ import static javafx.application.Platform.runLater;
  * @author Louis Amaudruz (271808)
  *
  */
-public class PanoramaParametersBean {
+public final class PanoramaParametersBean {
     
     private final ObjectProperty<PanoramaUserParameters> parameters;
     private final Map<UserParameter, ObjectProperty<Integer>> objectPropertiesMap;
@@ -52,7 +52,7 @@ public class PanoramaParametersBean {
         
         this.parameters.set(parameters);
         
-        //copy the correct values
+        //copy the corrected values
         for(UserParameter m : objectPropertiesMap.keySet()) {
             objectPropertiesMap.get(m).set(parameters.get(m));
         }

@@ -6,7 +6,6 @@ import java.util.function.DoubleUnaryOperator;
 
 import ch.epfl.alpano.GeoPoint;
 import ch.epfl.alpano.Math2;
-import ch.epfl.alpano.PanoramaComputer;
 import ch.epfl.alpano.PanoramaParameters;
 import ch.epfl.alpano.dem.ContinuousElevationModel;
 import ch.epfl.alpano.dem.ElevationProfile;
@@ -51,7 +50,7 @@ public final class Labelizer {
     private static final int ABOVE_BORDER = 170;
     private static final int LINE_TO_SUMMIT_PIXELS = 2;
     private static final int SIDE_BORDER = 20;
-    private static final int LINE_LENGTH = 20;
+    private static final int MIN_LINE_LENGTH = 20;
     private static final int TEXT_ROTATION = -60;
 
     
@@ -100,7 +99,7 @@ public final class Labelizer {
         BitSet availablePos = new BitSet(width - 2 * SIDE_BORDER); 
         
         int minHeight = 0;
-        boolean first = true;
+        boolean firstAcceptedSummit = true;
         
         for(VisibleSummit s : visibleSummits) {
             
@@ -112,9 +111,10 @@ public final class Labelizer {
                     && y >= ABOVE_BORDER
                     && available(availablePos, x - SIDE_BORDER)) {
                 
-                if(first) {
-                    minHeight = y - LINE_LENGTH - LINE_TO_SUMMIT_PIXELS;
-                    first = false;
+                if(firstAcceptedSummit) {
+                    minHeight = y - MIN_LINE_LENGTH - LINE_TO_SUMMIT_PIXELS;
+                    System.out.println(minHeight);
+                    firstAcceptedSummit = false;
                 }
 
                 labels.add(new Line(x, minHeight + LINE_TO_SUMMIT_PIXELS, x, y));
@@ -143,6 +143,7 @@ public final class Labelizer {
                 return false;
             }
         }
+        
        
         set.set(index, index + SPACE, true);
 
@@ -220,7 +221,7 @@ public final class Labelizer {
         
         @Override
         public String toString() {
-            return getSummit().name() + " (" + getSummit().elevation() + ")";
+            return summit.name() + " (" + summit.elevation() + ")";
         }
     }
 }

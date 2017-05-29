@@ -20,6 +20,7 @@ import ch.epfl.alpano.summit.Summit;
 import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
@@ -55,16 +56,15 @@ public final class Alpano extends Application {
 
     private final PanoramaParametersBean parametersBean;
     private final PanoramaComputerBean computerBean;
-    private final TextArea informationTextArea;
+    private final ObjectProperty<String> infoText;
 
     
     public Alpano() throws Exception {
         List<Summit> summits = GazetteerParser.readSummitsFrom(new File("alps.txt"));  
         ContinuousElevationModel dem = createDem();
-        parametersBean = new PanoramaParametersBean(PredefinedPanoramas.PELICAN_BEACH);
+        parametersBean = new PanoramaParametersBean(PredefinedPanoramas.JURA_ALPS);
         computerBean = new PanoramaComputerBean(summits, dem);
-        
-        informationTextArea = new TextArea();
+        infoText = new SimpleObjectProperty<>();
 
     }
     
@@ -72,7 +72,6 @@ public final class Alpano extends Application {
     public void start(Stage primaryStage) throws Exception {
                 
         BorderPane root = new BorderPane(panoPane(), null, null, paramsGrid(), null);
-        BorderPane.setMargin(root.getBottom(), new Insets(4));
         Scene scene = new Scene(root);
         
 
@@ -133,15 +132,17 @@ public final class Alpano extends Application {
         TextField widthText = createTextField(4);
         TextField heightText = createTextField(4);
         
-       
-        addTextFormatter(latitudeText, 4, parametersBean.observerLatitudeProperty());
-        addTextFormatter(longitudeText, 4, parametersBean.observerLongitudeProperty());        
-        addTextFormatter(altitudeText, 0, parametersBean.observerElevationProperty());
-        addTextFormatter(azimuthText, 0, parametersBean.centerAzimuthProperty());
-        addTextFormatter(angleText, 0, parametersBean.horizontalFieldOfViewProperty());      
-        addTextFormatter(visibilityText, 0, parametersBean.maxDistanceProperty());       
-        addTextFormatter(widthText, 0, parametersBean.widthProperty());
-        addTextFormatter(heightText, 0, parametersBean.heightProperty());
+        StringConverter<Integer> stringConverter4 = new FixedPointStringConverter(4);
+        StringConverter<Integer> stringConverter0 = new FixedPointStringConverter(0);
+
+        addTextFormatter(latitudeText, stringConverter4, parametersBean.observerLatitudeProperty());
+        addTextFormatter(longitudeText, stringConverter4, parametersBean.observerLongitudeProperty());        
+        addTextFormatter(altitudeText, stringConverter0, parametersBean.observerElevationProperty());
+        addTextFormatter(azimuthText, stringConverter0, parametersBean.centerAzimuthProperty());
+        addTextFormatter(angleText, stringConverter0, parametersBean.horizontalFieldOfViewProperty());      
+        addTextFormatter(visibilityText, stringConverter0, parametersBean.maxDistanceProperty());       
+        addTextFormatter(widthText, stringConverter0, parametersBean.widthProperty());
+        addTextFormatter(heightText, stringConverter0, parametersBean.heightProperty());
       
         /*
          * Create the choice box with options 'non', '2x' and '4x'
@@ -156,8 +157,10 @@ public final class Alpano extends Application {
         /*
          * Initialize the text area with information about the point under the mouse
          */
+        TextArea informationTextArea = new TextArea();
         informationTextArea.setEditable(false);
         informationTextArea.setPrefRowCount(2);
+        informationTextArea.textProperty().bind(infoText);
         
         /*
          * Place the fields
@@ -170,15 +173,15 @@ public final class Alpano extends Application {
         /*
          * Add style to the grid
          */
-        grid.setHgap(5);
+        grid.setHgap(10);
         grid.setVgap(3);
         grid.setAlignment(CENTER);
+        grid.setPadding(new Insets(7,5,5,5));
 
         return grid;
     }
 
-    private void addTextFormatter(TextField textField, int numberOfDecimals, ObjectProperty<Integer> parameterProperty) {
-        StringConverter<Integer> stringConverter = new FixedPointStringConverter(numberOfDecimals);
+    private void addTextFormatter(TextField textField, StringConverter<Integer> stringConverter, ObjectProperty<Integer> parameterProperty) {
 
         TextFormatter<Integer> textFormatter = new TextFormatter<>(stringConverter);
         textFormatter.valueProperty().bindBidirectional(parameterProperty);
@@ -301,7 +304,7 @@ public final class Alpano extends Application {
                 toDegrees(latitude), toDegrees(longitude), distance/1000, elevation, 
                 toDegrees(azimuth), toDegrees(altitude));
         
-        informationTextArea.setText(s);
+        infoText.set(s);
     }
 
     private void onMouseClicked(MouseEvent e) throws Error {

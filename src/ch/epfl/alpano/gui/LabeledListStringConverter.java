@@ -1,5 +1,8 @@
 package ch.epfl.alpano.gui;
 
+import java.util.Arrays;
+import java.util.List;
+
 import javafx.util.StringConverter;
 
 /**
@@ -11,7 +14,7 @@ import javafx.util.StringConverter;
  */
 public final class LabeledListStringConverter extends StringConverter<Integer> {
 
-    private final String[] strings;
+    private final List<String> strings;
     
     /**
      * Construct the converter with a list of string
@@ -19,23 +22,16 @@ public final class LabeledListStringConverter extends StringConverter<Integer> {
      * @param strings the list of string
      */
     public LabeledListStringConverter(String...strings) {
-        this.strings = strings;
+        this.strings = Arrays.asList(strings);
     }
     
-    private final static int DEFAULT_VALUE = -1;
     
     @Override
     public Integer fromString(String s) {
         if(s == null) {
-            return DEFAULT_VALUE;
+            return -1;
         }
-        
-        for(int i = 0; i < strings.length; i++) {
-            if(strings[i].equals(s)) {
-                return i;
-            }
-        }
-        return DEFAULT_VALUE;
+        return strings.indexOf(s);      
     }
 
     @Override
@@ -43,7 +39,7 @@ public final class LabeledListStringConverter extends StringConverter<Integer> {
         if(i == null) {
             return "";
         }
-        return strings[i];
+        return strings.get(i);
     }
 
 }
