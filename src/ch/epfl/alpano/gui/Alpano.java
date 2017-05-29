@@ -1,6 +1,5 @@
 package ch.epfl.alpano.gui;
 
-
 import javafx.util.StringConverter;
 
 import java.io.File;
@@ -47,10 +46,8 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
-import static javafx.geometry.Pos.*; 
+import static javafx.geometry.Pos.*;
 import static java.lang.Math.*;
-
-
 
 public final class Alpano extends Application {
 
@@ -58,22 +55,23 @@ public final class Alpano extends Application {
     private final PanoramaComputerBean computerBean;
     private final ObjectProperty<String> infoText;
 
-    
     public Alpano() throws Exception {
-        List<Summit> summits = GazetteerParser.readSummitsFrom(new File("alps.txt"));  
+        List<Summit> summits = GazetteerParser
+                .readSummitsFrom(new File("alps.txt"));
         ContinuousElevationModel dem = createDem();
-        parametersBean = new PanoramaParametersBean(PredefinedPanoramas.JURA_ALPS);
+        parametersBean = new PanoramaParametersBean(
+                PredefinedPanoramas.JURA_ALPS);
         computerBean = new PanoramaComputerBean(summits, dem);
         infoText = new SimpleObjectProperty<>();
 
     }
-    
+
     @Override
     public void start(Stage primaryStage) throws Exception {
-                
-        BorderPane root = new BorderPane(panoPane(), null, null, paramsGrid(), null);
+
+        BorderPane root = new BorderPane(panoPane(), null, null, paramsGrid(),
+                null);
         Scene scene = new Scene(root);
-        
 
         primaryStage.setTitle("Alpano");
         primaryStage.setScene(scene);
@@ -83,22 +81,28 @@ public final class Alpano extends Application {
 
     @SuppressWarnings("resource")
     private ContinuousElevationModel createDem() throws Exception {
-        DiscreteElevationModel dem1 = new HgtDiscreteElevationModel(new File("N45E006.hgt")).
-                union(new HgtDiscreteElevationModel(new File("N45E007.hgt"))).
-                union(new HgtDiscreteElevationModel(new File("N45E008.hgt"))).
-                union(new HgtDiscreteElevationModel(new File("N45E009.hgt")));
-        DiscreteElevationModel dem2 = new HgtDiscreteElevationModel(new File("N46E006.hgt")).
-                union(new HgtDiscreteElevationModel(new File("N46E007.hgt"))).
-                union(new HgtDiscreteElevationModel(new File("N46E008.hgt"))).
-                union(new HgtDiscreteElevationModel(new File("N46E009.hgt")));
-        
+        DiscreteElevationModel dem1 = new HgtDiscreteElevationModel(
+                new File("N45E006.hgt")).union(
+                        new HgtDiscreteElevationModel(new File("N45E007.hgt")))
+                        .union(new HgtDiscreteElevationModel(
+                                new File("N45E008.hgt")))
+                        .union(new HgtDiscreteElevationModel(
+                                new File("N45E009.hgt")));
+        DiscreteElevationModel dem2 = new HgtDiscreteElevationModel(
+                new File("N46E006.hgt")).union(
+                        new HgtDiscreteElevationModel(new File("N46E007.hgt")))
+                        .union(new HgtDiscreteElevationModel(
+                                new File("N46E008.hgt")))
+                        .union(new HgtDiscreteElevationModel(
+                                new File("N46E009.hgt")));
+
         return new ContinuousElevationModel(dem1.union(dem2));
     }
 
     private GridPane paramsGrid() {
-        
+
         GridPane grid = new GridPane();
-        
+
         /*
          * Create the labels
          */
@@ -111,15 +115,14 @@ public final class Alpano extends Application {
         Label widthLabel = newLabel("Largeur (px) :");
         Label heightLabel = newLabel("Hauteur (px) :");
         Label superSamplingLabel = newLabel("Suréchantillonage :");
-        
+
         /*
          * Place the labels in the grid
          */
         grid.addColumn(0, latitudeLabel, azimuthLabel, widthLabel);
         grid.addColumn(2, longitudeLabel, angleLabel, heightLabel);
         grid.addColumn(4, altitudeLabel, visibilityLabel, superSamplingLabel);
-        
-        
+
         /*
          * Create all the text fields
          */
@@ -131,37 +134,51 @@ public final class Alpano extends Application {
         TextField visibilityText = createTextField(3);
         TextField widthText = createTextField(4);
         TextField heightText = createTextField(4);
-        
-        StringConverter<Integer> stringConverter4 = new FixedPointStringConverter(4);
-        StringConverter<Integer> stringConverter0 = new FixedPointStringConverter(0);
 
-        addTextFormatter(latitudeText, stringConverter4, parametersBean.observerLatitudeProperty());
-        addTextFormatter(longitudeText, stringConverter4, parametersBean.observerLongitudeProperty());        
-        addTextFormatter(altitudeText, stringConverter0, parametersBean.observerElevationProperty());
-        addTextFormatter(azimuthText, stringConverter0, parametersBean.centerAzimuthProperty());
-        addTextFormatter(angleText, stringConverter0, parametersBean.horizontalFieldOfViewProperty());      
-        addTextFormatter(visibilityText, stringConverter0, parametersBean.maxDistanceProperty());       
-        addTextFormatter(widthText, stringConverter0, parametersBean.widthProperty());
-        addTextFormatter(heightText, stringConverter0, parametersBean.heightProperty());
-      
+        StringConverter<Integer> stringConverter4 = new FixedPointStringConverter(
+                4);
+        StringConverter<Integer> stringConverter0 = new FixedPointStringConverter(
+                0);
+
+        addTextFormatter(latitudeText, stringConverter4,
+                parametersBean.observerLatitudeProperty());
+        addTextFormatter(longitudeText, stringConverter4,
+                parametersBean.observerLongitudeProperty());
+        addTextFormatter(altitudeText, stringConverter0,
+                parametersBean.observerElevationProperty());
+        addTextFormatter(azimuthText, stringConverter0,
+                parametersBean.centerAzimuthProperty());
+        addTextFormatter(angleText, stringConverter0,
+                parametersBean.horizontalFieldOfViewProperty());
+        addTextFormatter(visibilityText, stringConverter0,
+                parametersBean.maxDistanceProperty());
+        addTextFormatter(widthText, stringConverter0,
+                parametersBean.widthProperty());
+        addTextFormatter(heightText, stringConverter0,
+                parametersBean.heightProperty());
+
         /*
          * Create the choice box with options 'non', '2x' and '4x'
          */
-        ObservableList<Integer> boxList = FXCollections.observableArrayList(Arrays.asList(0,1,2));   
+        ObservableList<Integer> boxList = FXCollections
+                .observableArrayList(Arrays.asList(0, 1, 2));
         ChoiceBox<Integer> superSampling = new ChoiceBox<>(boxList);
-        
-        StringConverter<Integer> converter = new LabeledListStringConverter("non", "2x", "4x");
+
+        StringConverter<Integer> converter = new LabeledListStringConverter(
+                "non", "2x", "4x");
         superSampling.setConverter(converter);
-        superSampling.valueProperty().bindBidirectional(parametersBean.superSamplingExponentProperty());
-        
+        superSampling.valueProperty().bindBidirectional(
+                parametersBean.superSamplingExponentProperty());
+
         /*
-         * Initialize the text area with information about the point under the mouse
+         * Initialize the text area with information about the point under the
+         * mouse
          */
         TextArea informationTextArea = new TextArea();
         informationTextArea.setEditable(false);
         informationTextArea.setPrefRowCount(2);
         informationTextArea.textProperty().bind(infoText);
-        
+
         /*
          * Place the fields
          */
@@ -176,18 +193,20 @@ public final class Alpano extends Application {
         grid.setHgap(10);
         grid.setVgap(3);
         grid.setAlignment(CENTER);
-        grid.setPadding(new Insets(7,5,5,5));
+        grid.setPadding(new Insets(7, 5, 5, 5));
 
         return grid;
     }
 
-    private void addTextFormatter(TextField textField, StringConverter<Integer> stringConverter, ObjectProperty<Integer> parameterProperty) {
+    private void addTextFormatter(TextField textField,
+            StringConverter<Integer> stringConverter,
+            ObjectProperty<Integer> parameterProperty) {
 
-        TextFormatter<Integer> textFormatter = new TextFormatter<>(stringConverter);
+        TextFormatter<Integer> textFormatter = new TextFormatter<>(
+                stringConverter);
         textFormatter.valueProperty().bindBidirectional(parameterProperty);
         textField.setTextFormatter(textFormatter);
     }
-
 
     private Label newLabel(String labelText) {
         Label l = new Label(labelText);
@@ -203,127 +222,138 @@ public final class Alpano extends Application {
     }
 
     private StackPane panoPane() {
-        
+
         StackPane panoGroup = new StackPane(panoView(), labelsPane());
-       
+
         ScrollPane panoScrollPane = new ScrollPane(panoGroup);
 
         StackPane panoPane = new StackPane(panoScrollPane, updateNotice());
-        
+
         return panoPane;
     }
 
     private StackPane updateNotice() {
-        
-        Text text = new Text("Les paramètres du panorama ont changé. \nCliquez ici pour mettre le dessin à jour.");
+
+        Text text = new Text(
+                "Les paramètres du panorama ont changé. \nCliquez ici pour mettre le dessin à jour.");
         text.setFont(new Font(40));
         text.setTextAlignment(TextAlignment.CENTER);
-        
+
         StackPane updateNotice = new StackPane(text);
-        //Background is white but transparent
-        updateNotice.setBackground(new Background(new BackgroundFill(new Color(1, 1, 1, 0.9), CornerRadii.EMPTY, Insets.EMPTY)));
-        updateNotice.visibleProperty().bind(computerBean.parametersProperty().isNotEqualTo(parametersBean.parametersProperty()));
-        
-        //if clicked, the parameters, and thus the output image, are updated
-        updateNotice.setOnMouseClicked(x -> computerBean.setParameters(parametersBean.parametersProperty().get()));
-        //updateNotice.setMinSize(0, 0);
-        
+        // Background is white but transparent
+        updateNotice.setBackground(new Background(new BackgroundFill(
+                new Color(1, 1, 1, 0.9), CornerRadii.EMPTY, Insets.EMPTY)));
+        updateNotice.visibleProperty().bind(computerBean.parametersProperty()
+                .isNotEqualTo(parametersBean.parametersProperty()));
+
+        // if clicked, the parameters, and thus the output image, are updated
+        updateNotice.setOnMouseClicked(x -> computerBean
+                .setParameters(parametersBean.parametersProperty().get()));
+        // updateNotice.setMinSize(0, 0);
+
         return updateNotice;
     }
 
     private Pane labelsPane() {
-        
+
         Pane labelsPane = new Pane();
-        
+
         labelsPane.prefWidthProperty().bind(parametersBean.widthProperty());
         labelsPane.prefHeightProperty().bind(parametersBean.heightProperty());
-        
-        Bindings.bindContent(labelsPane.getChildren(), computerBean.getLabels());
-        
-        labelsPane.setMouseTransparent(true); //User can only interact with the panorama image
-        
+
+        Bindings.bindContent(labelsPane.getChildren(),
+                computerBean.getLabels());
+
+        labelsPane.setMouseTransparent(true); // User can only interact with the
+                                              // panorama image
+
         return labelsPane;
     }
 
     private ImageView panoView() {
-        
+
         ImageView imageView = new ImageView();
-        
+
         imageView.imageProperty().bind(computerBean.imageProperty());
         imageView.fitWidthProperty().bind(parametersBean.widthProperty());
-        
+
         imageView.setPreserveRatio(true);
         imageView.setSmooth(true);
-            
-        
+
         /*
          * Open an online map with the parameters of the mouse
          */
         imageView.setOnMouseClicked(e -> onMouseClicked(e));
-        
+
         /*
          * Update information about the point under the mouse
          */
         imageView.setOnMouseMoved(e -> onMouseMoved(e));
-        
+
         return imageView;
     }
 
     private void onMouseMoved(MouseEvent e) {
-        
+
         double longitude, latitude, elevation, distance, altitude, azimuth;
-        
-        PanoramaUserParameters computerParameters = computerBean.getParameters();
-        
+
+        PanoramaUserParameters computerParameters = computerBean
+                .getParameters();
+
         double resize = pow(2, computerParameters.superSamplingExponent());
-        
+
         double x = e.getX() * resize;
         double y = e.getY() * resize;
-        
-        PanoramaParameters panoramaParameters = computerParameters.panoramaParameters();
-        
+
+        PanoramaParameters panoramaParameters = computerParameters
+                .panoramaParameters();
+
         altitude = panoramaParameters.altitudeForY(y);
         azimuth = panoramaParameters.azimuthForX(x);
-        
+
         int indexX = (int) round(x);
         int indexY = (int) round(y);
-        
+
         Panorama panorama = computerBean.getPanorama();
-        
+
         distance = panorama.distanceAt(indexX, indexY);
         latitude = panorama.latitudeAt(indexX, indexY);
         longitude = panorama.longitudeAt(indexX, indexY);
         elevation = panorama.elevationAt(indexX, indexY);
-        
+
         Locale l = null;
 
-        String s = String.format(l, "Position : %.4f°N %.4f°E" +
-                "\nDistance : %.1f km" +
-                "\nAltitude : %.0f m" +
-                "\nAzimuth : %.1f° (" + Azimuth.toOctantString(azimuth, "N", "E", "S", "W") + ")   Elevation : %.1f°", 
-                toDegrees(latitude), toDegrees(longitude), distance/1000, elevation, 
-                toDegrees(azimuth), toDegrees(altitude));
-        
+        String s = String.format(l,
+                "Position : %.4f°N %.4f°E" + "\nDistance : %.1f km"
+                        + "\nAltitude : %.0f m" + "\nAzimuth : %.1f° ("
+                        + Azimuth.toOctantString(azimuth, "N", "E", "S", "W")
+                        + ")   Elevation : %.1f°",
+                toDegrees(latitude), toDegrees(longitude), distance / 1000,
+                elevation, toDegrees(azimuth), toDegrees(altitude));
+
         infoText.set(s);
     }
 
     private void onMouseClicked(MouseEvent e) throws Error {
-        
-        double resize = pow(2, computerBean.getParameters().superSamplingExponent());
-        
+
+        double resize = pow(2,
+                computerBean.getParameters().superSamplingExponent());
+
         int x = (int) round(e.getX() * resize);
         int y = (int) round(e.getY() * resize);
-        
+
         Panorama panorama = computerBean.getPanorama();
-        
+
         double latitude = panorama.latitudeAt(x, y);
         double longitude = panorama.longitudeAt(x, y);
-        
+
         Locale l = null;
-        
-        String qy = String.format(l, "mlat=%f&mlon=%f", toDegrees(latitude), toDegrees(longitude));  
-        String fg = String.format(l, "map=15/%f/%f", toDegrees(latitude), toDegrees(longitude));  
-        
+
+        String qy = String.format(l, "mlat=%f&mlon=%f", toDegrees(latitude),
+                toDegrees(longitude));
+        String fg = String.format(l, "map=15/%f/%f", toDegrees(latitude),
+                toDegrees(longitude));
+
         try {
             URI osmURI = new URI("http", "www.openstreetmap.org", "/", qy, fg);
             java.awt.Desktop.getDesktop().browse(osmURI);
