@@ -155,13 +155,17 @@ public interface Math2 {
      */
     public static double improveRoot(DoubleUnaryOperator f, double x1,
             double x2, double epsilon) {
-        checkArgument(f.applyAsDouble(x1) * f.applyAsDouble(x2) <= 0);
+
+        double valueAtX1 = f.applyAsDouble(x1);
+        double valueAtX2 = f.applyAsDouble(x2);
+
+        checkArgument(valueAtX1 * valueAtX2 <= 0);
         checkArgument(epsilon > 0);
 
         // check if one of the bounds is a zero
-        if (f.applyAsDouble(x1) == 0) {
+        if (valueAtX1 == 0) {
             return x1;
-        } else if (f.applyAsDouble(x2) == 0) {
+        } else if (valueAtX2 == 0) {
             return x2;
         }
 
@@ -173,10 +177,12 @@ public interface Math2 {
             return x1;
         }
 
+        double valueAtXm = f.applyAsDouble(xm);
+
         // choose the next interval
-        if (f.applyAsDouble(xm) * f.applyAsDouble(x1) < 0) {
+        if (valueAtXm * valueAtX1 < 0) {
             return improveRoot(f, x1, xm, epsilon);
-        } else if (f.applyAsDouble(xm) * f.applyAsDouble(x2) < 0) {
+        } else if (valueAtXm * valueAtX2 < 0) {
             return improveRoot(f, xm, x2, epsilon);
         }
 

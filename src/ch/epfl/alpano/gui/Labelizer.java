@@ -72,12 +72,12 @@ public final class Labelizer {
 
         Collections.sort(visibleSummits, (x, y) -> {
 
-            int Yx = x.getY();
-            int Yy = y.getY();
+            int xY = x.getY();
+            int yY = y.getY();
 
-            if (Yx > Yy) {
+            if (xY > yY) {
                 return 1;
-            } else if (Yx < Yy) {
+            } else if (xY < yY) {
                 return -1;
             } else {
 
@@ -94,10 +94,10 @@ public final class Labelizer {
             }
         });
 
-        final int width = parameters.width();
-        final int toRightField = width - SIDE_BORDER;
+        int width = parameters.width();
+        int maxX = width - SIDE_BORDER;
 
-        final BitSet availablePos = new BitSet(width - 2 * SIDE_BORDER);
+        BitSet availablePos = new BitSet(width - 2 * SIDE_BORDER);
 
         int minHeight = 0;
         boolean firstAcceptedSummit = true;
@@ -107,7 +107,7 @@ public final class Labelizer {
             int x = s.getX();
             int y = s.getY();
 
-            if (x >= SIDE_BORDER && x <= toRightField
+            if (x >= SIDE_BORDER && x <= maxX
                     && y >= ABOVE_BORDER
                     && available(availablePos, x - SIDE_BORDER)) {
 
@@ -157,13 +157,12 @@ public final class Labelizer {
 
         List<VisibleSummit> visibleSummits = new ArrayList<>();
 
-        /*
-         * Usefull parameters
-         */
+        
         GeoPoint observerPosition = parameters.observerPosition();
         int observerElevation = parameters.observerElevation();
         int maxDistance = parameters.maxDistance();
         double centerAzimuth = parameters.centerAzimuth();
+        
         double halfHorizontal = parameters.horizontalFieldOfView() / 2d;
         double halfVertical = parameters.verticalFieldOfView() / 2d;
 
@@ -171,29 +170,29 @@ public final class Labelizer {
 
             GeoPoint summitPosition = s.position();
 
-            double distanceTo = observerPosition.distanceTo(summitPosition);
-            double azimuthTo = observerPosition.azimuthTo(summitPosition);
+            double distance = observerPosition.distanceTo(summitPosition);
+            double azimuth = observerPosition.azimuthTo(summitPosition);
 
             ElevationProfile profile = new ElevationProfile(cem,
-                    observerPosition, azimuthTo, distanceTo);
+                    observerPosition, azimuth, distance);
 
             double height = rayToGroundDistance(profile, observerElevation, 0)
-                    .applyAsDouble(distanceTo);
-            double slope = -height / distanceTo;
+                    .applyAsDouble(distance);
+            double slope = -height / distance;
 
             DoubleUnaryOperator f = rayToGroundDistance(profile,
                     observerElevation, slope);
 
             double altitude = atan(slope);
 
-            if (distanceTo <= maxDistance
+            if (distance <= maxDistance
                     && abs(angularDistance(centerAzimuth,
-                            azimuthTo)) <= halfHorizontal
+                            azimuth)) <= halfHorizontal
                     && abs(altitude) <= halfVertical
-                    && Math2.firstIntervalContainingRoot(f, 0, distanceTo,
-                            INTERVAL) >= distanceTo - ERROR_CONSTANT) {
+                    && Math2.firstIntervalContainingRoot(f, 0, distance,
+                            INTERVAL) >= distance - ERROR_CONSTANT) {
                 
-                int x = (int) round(parameters.xForAzimuth(azimuthTo));
+                int x = (int) round(parameters.xForAzimuth(azimuth));
                 int y = (int) round(parameters.yForAltitude(altitude));
                 visibleSummits.add(new VisibleSummit(s, x, y));
             }

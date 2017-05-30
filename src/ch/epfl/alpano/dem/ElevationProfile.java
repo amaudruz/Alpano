@@ -53,25 +53,25 @@ public final class ElevationProfile {
 
         // construct an array containing several positions split regularly
         positions = new GeoPoint[(int) ceil((length / POINT_INTERVAL)) + 1];
-        
-        final double oriLatitude = origin.latitude();
-        final double cosLat = cos(oriLatitude);
-        final double sinLat = sin(oriLatitude);
-        final double mathAzimuth = toMath(azimuth);
-        final double sinAz = sin(mathAzimuth);
-        final double cosAz = cos(mathAzimuth);
-        final double oriLongitude = origin.longitude();
+
+        double oriLatitude = origin.latitude();
+        double cosLat = cos(oriLatitude);
+        double sinLat = sin(oriLatitude);
+        double mathAzimuth = toMath(azimuth);
+        double sinAz = sin(mathAzimuth);
+        double cosAz = cos(mathAzimuth);
+        double oriLongitude = origin.longitude();
 
         for (int i = 0; i < positions.length; ++i) {
             double latitude = asin((sinLat
                     * cos(Distance.toRadians(i * POINT_INTERVAL)))
-                    + (cosLat
-                            * sin(Distance.toRadians(i * POINT_INTERVAL))
+                    + (cosLat * sin(Distance.toRadians(i * POINT_INTERVAL))
                             * cosAz));
 
-            double longitude = angularDistance(asin((sinAz
-                    * sin(Distance.toRadians(i * POINT_INTERVAL)))
-                    / cos(latitude)), oriLongitude);
+            double longitude = angularDistance(
+                    asin((sinAz * sin(Distance.toRadians(i * POINT_INTERVAL)))
+                            / cos(latitude)),
+                    oriLongitude);
 
             positions[i] = new GeoPoint(longitude, latitude);
         }
@@ -121,7 +121,7 @@ public final class ElevationProfile {
      */
     public GeoPoint positionAt(double x) {
         checkArgument(x <= length && x >= 0);
-        int x1 = (int) (x / POINT_INTERVAL);
+        int x1 = (int) floor(x / POINT_INTERVAL);
 
         double longitude = lerp(positions[x1].longitude(),
                 positions[x1 + 1].longitude(), x / POINT_INTERVAL - x1);

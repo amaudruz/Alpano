@@ -21,6 +21,7 @@ public final class PanoramaParameters {
     private final int height;
     private final double verticalFieldOfView;
     private final double anglePerPixels;
+    
     private final double halfWidth;
     private final double halfHeight;
     private final double halfHorizontalFieldOfView;

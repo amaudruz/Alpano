@@ -51,6 +51,19 @@ import static java.lang.Math.*;
 
 public final class Alpano extends Application {
 
+    /*
+     * Parameters of the GUI
+     */
+    private static final PanoramaUserParameters FIRST_PANORAMA = PredefinedPanoramas.JURA_ALPS;
+    private static final Insets GRID_PADDING = new Insets(7, 5, 5, 5);
+    private static final int GRID_VERTICAL_GAP = 3;
+    private static final int GRID_HORIZONTAL_GAP = 10;
+    private static final Color UPDATE_NOTICE_BACKGROUND_COLOR = new Color(1, 1,
+            1, 0.9);
+    private static final int UPDATE_TEXT_SIZE = 40;
+    private static final String UPDATE_TEXT = "Les paramètres du panorama ont changé."
+            + " \nCliquez ici pour mettre le dessin à jour.";
+
     private final PanoramaParametersBean parametersBean;
     private final PanoramaComputerBean computerBean;
     private final ObjectProperty<String> infoText;
@@ -58,10 +71,10 @@ public final class Alpano extends Application {
     public Alpano() throws Exception {
         List<Summit> summits = GazetteerParser
                 .readSummitsFrom(new File("alps.txt"));
-        ContinuousElevationModel dem = createDem();
         parametersBean = new PanoramaParametersBean(
-                PredefinedPanoramas.JURA_ALPS);
-        computerBean = new PanoramaComputerBean(summits, dem);
+                FIRST_PANORAMA);
+        computerBean = new PanoramaComputerBean(summits, createDem());
+
         infoText = new SimpleObjectProperty<>();
 
     }
@@ -190,10 +203,10 @@ public final class Alpano extends Application {
         /*
          * Add style to the grid
          */
-        grid.setHgap(10);
-        grid.setVgap(3);
+        grid.setHgap(GRID_HORIZONTAL_GAP);
+        grid.setVgap(GRID_VERTICAL_GAP);
         grid.setAlignment(CENTER);
-        grid.setPadding(new Insets(7, 5, 5, 5));
+        grid.setPadding(GRID_PADDING);
 
         return grid;
     }
@@ -234,22 +247,21 @@ public final class Alpano extends Application {
 
     private StackPane updateNotice() {
 
-        Text text = new Text(
-                "Les paramètres du panorama ont changé. \nCliquez ici pour mettre le dessin à jour.");
-        text.setFont(new Font(40));
+        Text text = new Text(UPDATE_TEXT);
+        text.setFont(new Font(UPDATE_TEXT_SIZE));
         text.setTextAlignment(TextAlignment.CENTER);
 
         StackPane updateNotice = new StackPane(text);
         // Background is white but transparent
-        updateNotice.setBackground(new Background(new BackgroundFill(
-                new Color(1, 1, 1, 0.9), CornerRadii.EMPTY, Insets.EMPTY)));
+        updateNotice.setBackground(new Background(
+                new BackgroundFill(UPDATE_NOTICE_BACKGROUND_COLOR,
+                        CornerRadii.EMPTY, Insets.EMPTY)));
         updateNotice.visibleProperty().bind(computerBean.parametersProperty()
                 .isNotEqualTo(parametersBean.parametersProperty()));
 
         // if clicked, the parameters, and thus the output image, are updated
         updateNotice.setOnMouseClicked(x -> computerBean
                 .setParameters(parametersBean.parametersProperty().get()));
-        // updateNotice.setMinSize(0, 0);
 
         return updateNotice;
     }
